@@ -21,3 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "android_app_audioGuide"
 include(":app")
+include(":feature")
+include(":feature:search")
+include(":common")
+include(":common:ui")
