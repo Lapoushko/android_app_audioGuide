@@ -96,7 +96,7 @@ fun ExcursionCard(
                 ) {
                     Text(text = "$category • $price • $distance", style = Typography.bodyMedium)
                     Text(
-                        text = distance,
+                        text = description,
                         style = Typography.bodyMedium,
                         maxLines = 2,
                         modifier = Modifier.padding(bottom = 4.dp),
