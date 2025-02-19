@@ -34,7 +34,8 @@ import com.lapoushko.ui.theme.Typography
 @Composable
 fun ExcursionCard(
     onClick: () -> Unit,
-    excursion: ExcursionItem
+    excursion: ExcursionItem,
+    modifier: Modifier = Modifier
 ) {
     val category = excursion.category
     val price = excursion.price
@@ -44,7 +45,7 @@ fun ExcursionCard(
     val countRating = excursion.countRating
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),

@@ -110,6 +110,7 @@ fun CustomCard(
                             color = Color.White
                         )
                     }
+
                     is CarouselItem.Category -> {
                         Text(
                             text = item.category,
