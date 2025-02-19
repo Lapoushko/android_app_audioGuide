@@ -23,19 +23,31 @@ import com.lapoushko.ui.theme.Typography
  */
 @Composable
 fun SearchScreen() {
+    val interesting =
+        List(5) { CarouselItem.TitleDescription(title = "Название", description = "Описание") }
+    val categories = List(5) { CarouselItem.Category("Категория") }
+
+    val excursions = List(5) {
+        ExcursionItem(
+            0,
+            "Название",
+            "Описание",
+            "Категория",
+            "Бесплатно",
+            "1.2км",
+            2.5,
+            1
+        )
+    }
+
     Scaffold(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
     ) { innerPadding ->
-
-        val interesting = List(5) { CarouselItem.TitleDescription(title = "Название", description = "Описание") }
-        val categories = List(5) { CarouselItem.Category("Категория") }
-
-        val excursions = List(5) { ExcursionItem(0, "Название", "Описание", "Категория", "Бесплатно", "1.2км", 2.5, 1) }
-
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp)
         ) {
             CustomSearchBar(modifier = Modifier.padding(vertical = 20.dp))
             LazyColumn {
@@ -52,7 +64,7 @@ fun SearchScreen() {
                     Column(modifier = Modifier.padding(vertical = 20.dp)) {
                         TextTitle("Интересное")
                         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            excursions.forEach{ excursion ->
+                            excursions.forEach { excursion ->
                                 ExcursionCard(onClick = {}, excursion = excursion)
                             }
                         }
