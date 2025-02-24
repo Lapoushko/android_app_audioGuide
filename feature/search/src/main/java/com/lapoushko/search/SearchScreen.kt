@@ -3,14 +3,10 @@ package com.lapoushko.search
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -45,7 +41,9 @@ fun SearchScreen(
     ) {
         item {
             CustomSearchBar(
-                modifier = Modifier.padding(vertical = 20.dp).heightIn(max = 64.dp)
+                modifier = Modifier
+                    .padding(vertical = 20.dp)
+                    .heightIn(max = 64.dp)
             )
         }
 
