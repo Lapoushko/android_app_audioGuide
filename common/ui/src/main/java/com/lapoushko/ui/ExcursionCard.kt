@@ -112,5 +112,15 @@ fun ExcursionCard(
 @Preview(showBackground = true)
 @Composable
 private fun ExcursionCardPreview() {
-    ExcursionCard(excursion = ExcursionItem(0, "Название", "Описание", "Категория", "Бесплатно", "1.2км", 2.5, 1), onClick = {})
+    ExcursionCard(
+        excursion = ExcursionItem(
+            0,
+            "Название",
+            "Описание",
+            "Категория",
+            "Бесплатно",
+            "1.2км",
+            2.5,
+            1
+        ), onClick = {})
 }

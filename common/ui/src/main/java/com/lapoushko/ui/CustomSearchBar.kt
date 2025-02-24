@@ -62,15 +62,13 @@ fun CustomSearchBar(
                 },
                 expanded = isActive,
                 onExpandedChange = {
-                    isActive = false
+                    isActive = it
                 },
                 placeholder = {
                     Text(text = placeholder, style = Typography.bodyLarge)
                 },
                 leadingIcon = {
-                    if (!isActive) {
-                        iconSearch.invoke()
-                    }
+                    iconSearch.invoke()
                 },
                 trailingIcon = {
                     if (isActive) {
@@ -78,18 +76,18 @@ fun CustomSearchBar(
                             imageVector = Icons.Outlined.Close,
                             onClick = {
                                 query = ""
+                                isActive = false
                             }
                         )
                     }
                 },
             )
         },
-        expanded = isActive,
-        onExpandedChange = {
-            isActive = true
-        },
+        expanded = false,
+        onExpandedChange = {},
     ) {}
 }
+
 
 @Composable
 private fun IconSearchBar(

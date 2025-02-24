@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.theme.Typography
 
 /**
@@ -35,7 +36,7 @@ import com.lapoushko.ui.theme.Typography
  */
 @Composable
 fun CustomCarousel(
-    onClick: () -> Unit,
+    onClick: (Int) -> Unit,
     width: Dp,
     height: Dp,
     items: List<CarouselItem>
@@ -53,7 +54,7 @@ fun CustomCarousel(
         val item = items[index]
         CustomCard(
             item = item,
-            onClick = onClick,
+            onClick = { onClick(index) },
             modifier = Modifier
                 .height(height)
                 .maskClip(RoundedCornerShape(18.dp))
@@ -70,7 +71,7 @@ fun CustomCard(
     Card(
         modifier = modifier
             .fillMaxWidth(),
-        onClick = onClick
+        onClick = { onClick() }
     ) {
         Box(
             modifier = Modifier
@@ -136,7 +137,7 @@ private fun CustomCarouselPreview1() {
         onClick = {},
         width = 162.dp,
         height = 238.dp,
-        items = List(5) { CarouselItem.TitleDescription("Название", "Описание") }
+        items = List(5) { CarouselItem.TitleDescription("Название", "Описание") },
     )
 }
 
@@ -147,6 +148,6 @@ private fun CustomCarouselPreview2() {
         onClick = {},
         width = 348.dp,
         height = 214.dp,
-        items = List(5) { CarouselItem.Category("Категория") }
+        items = List(5) { CarouselItem.Category("Категория") },
     )
 }
