@@ -1,4 +1,4 @@
-package com.lapoushko.navigation.util
+package com.lapoushko.util
 
 import android.os.Build
 import android.os.Bundle

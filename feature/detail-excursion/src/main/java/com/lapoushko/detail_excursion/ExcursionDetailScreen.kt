@@ -59,7 +59,7 @@ fun ExcursionDetailScreen(
                 .align(Alignment.CenterHorizontally)
         ) {
             ExtendedFloatingActionButton(
-                onClick = { /*TODO*/ },
+                onClick = { handler.onPlayExcursion(excursion) },
                 icon = {
                     Icon(
                         Icons.AutoMirrored.Filled.DirectionsWalk,
@@ -124,6 +124,6 @@ fun ExcursionDetailScreenPreview() {
             2.5,
             1
         ),
-        handler = ExcursionScreenHandler(onBack = {}, onToDetail = {})
+        handler = ExcursionScreenHandler(onBack = {}, onToDetail = {}, onPlayExcursion = {})
     )
 }

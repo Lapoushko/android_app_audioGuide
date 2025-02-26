@@ -51,6 +51,8 @@ dependencies {
     implementation(project(":feature:detail-excursion"))
     implementation(project(":feature:favourite"))
     implementation(project(":feature:profile"))
+    implementation(project(":common:util"))
+    implementation(project(":feature:guide"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

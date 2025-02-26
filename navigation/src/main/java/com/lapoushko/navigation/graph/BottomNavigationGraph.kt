@@ -9,14 +9,16 @@ import com.lapoushko.detail_excursion.ExcursionDetailScreen
 import com.lapoushko.detail_excursion.ExcursionScreenHandler
 import com.lapoushko.favourite.FavouriteScreen
 import com.lapoushko.feature.model.ExcursionItem
+import com.lapoushko.guide.GuideScreen
+import com.lapoushko.guide.GuideScreenHandler
 import com.lapoushko.navigation.model.Screen
 import com.lapoushko.navigation.model.ScreenBar
-import com.lapoushko.navigation.util.ExcursionNavType
 import com.lapoushko.profile.ProfileScreen
 import com.lapoushko.search.SearchScreen
 import com.lapoushko.search.SearchScreenHandler
 import com.lapoushko.selection.CategoryScreen
 import com.lapoushko.selection.CategoryScreenHandler
+import com.lapoushko.util.ExcursionNavType
 import kotlin.reflect.typeOf
 
 /**
@@ -77,6 +79,19 @@ fun BottomNavigationGraph(navController: NavHostController) {
                 excursion = excursion.excursion,
                 handler = ExcursionScreenHandler(
                     onToDetail = { navController.navigate(Screen.ExcursionDetail(it)) },
+                    onBack = onBack,
+                    onPlayExcursion = { navController.navigate(Screen.AudioGuide(excursion = excursion.excursion)) }
+                )
+            )
+        }
+
+        composable<Screen.AudioGuide>(
+            typeMap = mapOf(typeOf<ExcursionItem>() to ExcursionNavType)
+        ) { backStackEntry ->
+            val excursion = backStackEntry.toRoute<Screen.AudioGuide>().excursion
+            GuideScreen(
+                excursion = excursion,
+                handler = GuideScreenHandler(
                     onBack = onBack
                 )
             )
