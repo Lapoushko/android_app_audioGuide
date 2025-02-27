@@ -24,7 +24,7 @@ val viewModelModule = module {
     //profile
     single<ProfileScreenViewModel>{ProfileScreenViewModel()}
     single<SaveExcursionScreenViewModel>{SaveExcursionScreenViewModel(get(), get())}
-    single<SettingProfileScreenViewModel> { SettingProfileScreenViewModel() }
+    single<SettingProfileScreenViewModel> { SettingProfileScreenViewModel(get()) }
     //guide
     single<AudioScreenViewModel> { AudioScreenViewModel() }
     single<MapScreenViewModel> { MapScreenViewModel() }
