@@ -22,6 +22,7 @@ import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.ExcursionCard
 import com.lapoushko.ui.theme.Typography
 import com.lapoushko.ui.theme.onSurfaceLight
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * @author Lapoushko
@@ -30,20 +31,11 @@ import com.lapoushko.ui.theme.onSurfaceLight
 @Composable
 fun SaveExcursionScreen(
     onDetail: (ExcursionItem) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    viewModel: SaveExcursionScreenViewModel = koinViewModel()
 ) {
-    val excursions = List(5) { index ->
-        ExcursionItem(
-            id = index.toLong(),
-            name = "Название $index",
-            description = "Описание $index",
-            category = "Категория",
-            price = "Цена $index",
-            distance = "Расстояние $index",
-            rating = index.toDouble(),
-            countRating = index.toLong(),
-        )
-    }
+    val state = viewModel.state
+    val excursions = state.excursions
 
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),

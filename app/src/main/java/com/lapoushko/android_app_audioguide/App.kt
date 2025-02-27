@@ -3,6 +3,9 @@ package com.lapoushko.android_app_audioguide
 import android.app.Application
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
+import com.lapoushko.android_app_audioguide.di.mapperModule
+import com.lapoushko.android_app_audioguide.di.repositoryModule
+import com.lapoushko.android_app_audioguide.di.useCaseModule
 import com.lapoushko.android_app_audioguide.di.viewModelModule
 import com.lapoushko.navigation.screen.BottomBarScreen
 import org.koin.android.ext.koin.androidContext
@@ -18,7 +21,12 @@ class App : Application() {
         startKoin {
             androidLogger()
             androidContext(this@App)
-            modules(viewModelModule)
+            modules(
+                viewModelModule,
+                useCaseModule,
+                repositoryModule,
+                mapperModule
+            )
         }
     }
 

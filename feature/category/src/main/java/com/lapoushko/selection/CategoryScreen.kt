@@ -9,12 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.CustomTopAppBar
 import com.lapoushko.ui.ExcursionCard
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * @author Lapoushko
@@ -23,19 +24,14 @@ import com.lapoushko.ui.ExcursionCard
 @Composable
 fun CategoryScreen(
     handler: CategoryScreenHandler,
-    category: String
+    category: String,
+    viewModel: CategoryScreenViewModel = koinViewModel()
 ) {
-    val excursions = List(100) {
-        ExcursionItem(
-            0,
-            "Название",
-            "Описание",
-            "Категория",
-            "Бесплатно",
-            "1.2км",
-            2.5,
-            1
-        )
+    val state = viewModel.state
+    val excursions = state.excursions
+
+    LaunchedEffect(Unit) {
+        viewModel.loadExcursions(category)
     }
 
     LazyColumn(

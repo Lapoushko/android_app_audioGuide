@@ -49,6 +49,7 @@ dependencies {
     api(libs.androidx.material.icons.extended)
     api(libs.androidx.ui.tooling.preview)
     api(libs.androidx.material3)
+    implementation(project(":domain"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
