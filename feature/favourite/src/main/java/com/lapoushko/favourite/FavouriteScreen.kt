@@ -9,4 +9,5 @@ import androidx.compose.runtime.Composable
 @Composable
 fun FavouriteScreen(){
     Text("Избранное")
+
 }

@@ -7,7 +7,8 @@ import com.lapoushko.feature.model.ExcursionItem
  */
 class ExcursionScreenHandler(
     private val onBack: () -> Unit,
-    private val onToDetail: (ExcursionItem) -> Unit
+    private val onToDetail: (ExcursionItem) -> Unit,
+    private val onPlayExcursion: (ExcursionItem) -> Unit
 ) {
     fun onBack(){
         onBack.invoke()
@@ -15,5 +16,9 @@ class ExcursionScreenHandler(
 
     fun onToDetail(excursion: ExcursionItem){
         onToDetail.invoke(excursion)
+    }
+
+    fun onPlayExcursion(excursion: ExcursionItem){
+        onPlayExcursion.invoke(excursion)
     }
 }

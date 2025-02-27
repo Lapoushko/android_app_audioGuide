@@ -1,7 +1,5 @@
 package com.lapoushko.guide
 
-import com.lapoushko.feature.model.ExcursionItem
-
 /**
  * @author Lapoushko
  */

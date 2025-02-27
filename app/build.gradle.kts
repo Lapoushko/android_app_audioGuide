@@ -54,6 +54,7 @@ dependencies {
     implementation(project(":navigation"))
     implementation(project(":feature:search"))
     implementation(project(":feature:detail-excursion"))
+    implementation(project(":feature:profile:setting"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

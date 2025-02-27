@@ -14,10 +14,13 @@ import com.lapoushko.guide.GuideScreenHandler
 import com.lapoushko.navigation.model.Screen
 import com.lapoushko.navigation.model.ScreenBar
 import com.lapoushko.profile.ProfileScreen
+import com.lapoushko.profile.ProfileScreenHandler
+import com.lapoushko.save.SaveExcursionScreen
 import com.lapoushko.search.SearchScreen
 import com.lapoushko.search.SearchScreenHandler
 import com.lapoushko.selection.CategoryScreen
 import com.lapoushko.selection.CategoryScreenHandler
+import com.lapoushko.setting.SettingProfileScreen
 import com.lapoushko.util.ExcursionNavType
 import kotlin.reflect.typeOf
 
@@ -55,8 +58,14 @@ fun BottomNavigationGraph(navController: NavHostController) {
             FavouriteScreen()
         }
 
-        composable(route = ScreenBar.Profile.route) {
-            ProfileScreen()
+        composable(route = ScreenBar.Profile.route) { backStackEntry ->
+            ProfileScreen(
+                ProfileScreenHandler(
+                    onBack = onBack,
+                    onSettings = { navController.navigate(Screen.SettingProfile) },
+                    onSaves = { navController.navigate(Screen.SavesExcursions) },
+                )
+            )
         }
         composable<Screen.Category> {
             CategoryScreen(
@@ -95,6 +104,15 @@ fun BottomNavigationGraph(navController: NavHostController) {
                     onBack = onBack
                 )
             )
+        }
+        composable<Screen.SavesExcursions> {
+            SaveExcursionScreen(
+                onDetail = { navController.navigate(Screen.ExcursionDetail(it)) },
+                onBack = onBack
+            )
+        }
+        composable<Screen.SettingProfile> {
+            SettingProfileScreen(onBack = onBack)
         }
     }
 }

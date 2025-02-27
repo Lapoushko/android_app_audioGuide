@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.lapoushko.audio.AudioScreen
 import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.map.MapScreen
+import com.lapoushko.ui.CustomOutlinedButton
 import com.lapoushko.ui.theme.Typography
 import com.lapoushko.ui.theme.primaryLight
 import com.lapoushko.ui.theme.tertiaryContainerLight
@@ -101,51 +102,20 @@ private fun TopMenu(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                CustomButton(
+                CustomOutlinedButton(
                     text = "Описание",
                     onClick = { onPageSelected(0) },
                     imageVector = Icons.Filled.MusicNote,
                     isActive = currentPage == 0
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                CustomButton(
+                CustomOutlinedButton(
                     text = "Карта",
                     onClick = { onPageSelected(1) },
                     imageVector = Icons.Filled.Map,
                     isActive = currentPage == 1
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun CustomButton(
-    text: String,
-    imageVector: ImageVector,
-    onClick: () -> Unit,
-    isActive: Boolean
-) {
-    OutlinedButton(
-        modifier = Modifier.size(width = 170.dp, height = 54.dp),
-        onClick = { onClick() },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (isActive) tertiaryContainerLight else Color.Transparent,
-            contentColor = primaryLight,
-        ),
-        shape = RoundedCornerShape(8.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                imageVector = imageVector,
-                contentDescription = null,
-                modifier = Modifier.size(18.dp)
-            )
-            Spacer(Modifier.width(8.dp))
-            Text(text = text, textAlign = TextAlign.Center, style = Typography.labelLarge)
         }
     }
 }

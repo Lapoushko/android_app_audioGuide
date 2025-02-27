@@ -53,6 +53,8 @@ dependencies {
     implementation(project(":feature:profile"))
     implementation(project(":common:util"))
     implementation(project(":feature:guide"))
+    implementation(project(":feature:profile:save"))
+    implementation(project(":feature:profile:setting"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
