@@ -27,9 +27,9 @@ fun SearchScreen(
     handler: SearchScreenHandler,
     viewModel: SearchScreenViewModel = koinViewModel()
 ) {
+    val popular = viewModel.state.popular
     val interesting = viewModel.state.interesting
     val categories = viewModel.state.categories
-    val excursions = viewModel.state.excursions
 
     LazyColumn(
         contentPadding = PaddingValues(
@@ -51,10 +51,10 @@ fun SearchScreen(
             Column {
                 TextTitle("Популярное")
                 CustomCarousel(
-                    onClick = { handler.onToDetail(interesting[it]) },
+                    onClick = { handler.onToDetail(popular[it]) },
                     width = 162.dp,
                     height = 238.dp,
-                    items = interesting.map {
+                    items = popular.map {
                         CarouselItem.TitleDescription(
                             it.name,
                             it.description
@@ -66,9 +66,9 @@ fun SearchScreen(
 
         item {
             Column {
-                TextTitle("Экскурсии")
+                TextTitle("Интересное")
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    excursions.forEach { excursion ->
+                    interesting.forEach { excursion ->
                         ExcursionCard(
                             onClick = { handler.onToDetail(excursion) },
                             excursion = excursion

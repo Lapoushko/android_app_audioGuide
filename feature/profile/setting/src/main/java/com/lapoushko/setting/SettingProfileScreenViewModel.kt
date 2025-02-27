@@ -5,19 +5,36 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.lapoushko.domain.usecase.SubscribeGetUser
 import com.lapoushko.ui.model.Error
 import com.lapoushko.ui.model.Input
 import com.lapoushko.ui.model.ProfileErrors
 import com.lapoushko.ui.model.checkErrorInput
+import kotlinx.coroutines.launch
 
 /**
  * @author Lapoushko
  */
-class SettingProfileScreenViewModel : ViewModel() {
+class SettingProfileScreenViewModel(
+    private val getUserUseCase: SubscribeGetUser
+) : ViewModel() {
     private var _state = MutableSettingProfileScreenState()
     val state = _state as SettingProfileScreenState
 
     private val errors: MutableSet<Error> = mutableSetOf()
+
+    init {
+        loadUser()
+    }
+
+    private fun loadUser(){
+        viewModelScope.launch {
+            val user = getUserUseCase.getUser()
+            updateName(user.name)
+            updateEmail(user.email)
+        }
+    }
 
     fun updateName(input: String) {
         val errorsByChecks = hashMapOf(
