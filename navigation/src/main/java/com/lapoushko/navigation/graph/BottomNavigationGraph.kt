@@ -61,7 +61,6 @@ fun BottomNavigationGraph(navController: NavHostController) {
         composable(route = ScreenBar.Profile.route) { backStackEntry ->
             ProfileScreen(
                 ProfileScreenHandler(
-                    onBack = onBack,
                     onSettings = { navController.navigate(Screen.SettingProfile) },
                     onSaves = { navController.navigate(Screen.SavesExcursions) },
                 )

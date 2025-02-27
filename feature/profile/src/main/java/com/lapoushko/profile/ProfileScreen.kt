@@ -66,5 +66,5 @@ fun ProfileScreen(
 @Preview(showBackground = true)
 @Composable
 private fun ProfileScreenPreview() {
-    ProfileScreen(ProfileScreenHandler({}, {}, {}))
+    ProfileScreen(ProfileScreenHandler({}, {}))
 }
