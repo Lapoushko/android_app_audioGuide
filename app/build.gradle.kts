@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -64,6 +65,8 @@ dependencies {
     implementation(project(":feature:profile"))
     implementation(project(":domain"))
     implementation(project(":feature"))
+    implementation(project(":data"))
+    implementation(project(":data:network"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,4 +79,6 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.navigation)
     implementation(libs.koin.androidx.compose)
+
+    implementation(platform(libs.firebase.bom))
 }

@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
 import com.lapoushko.android_app_audioguide.di.mapperModule
 import com.lapoushko.android_app_audioguide.di.repositoryModule
+import com.lapoushko.android_app_audioguide.di.serviceModule
 import com.lapoushko.android_app_audioguide.di.useCaseModule
 import com.lapoushko.android_app_audioguide.di.viewModelModule
 import com.lapoushko.navigation.screen.BottomBarScreen
@@ -25,7 +26,8 @@ class App : Application() {
                 viewModelModule,
                 useCaseModule,
                 repositoryModule,
-                mapperModule
+                mapperModule,
+                serviceModule
             )
         }
     }

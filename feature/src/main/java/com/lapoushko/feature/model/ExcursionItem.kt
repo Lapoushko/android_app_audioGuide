@@ -10,10 +10,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Parcelize
 data class ExcursionItem(
-    val id: Long,
+    val id: String,
     val name: String,
     val description: String,
-    val category: String,
+    val category: List<String>,
     val price: String,
     val distance: String,
     val rating: Double,

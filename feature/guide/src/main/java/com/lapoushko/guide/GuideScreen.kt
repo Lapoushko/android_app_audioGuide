@@ -115,10 +115,10 @@ private fun TopMenu(
 fun TabsScreenPreview() {
     GuideScreen(
         excursion = ExcursionItem(
-            0,
+            "",
             "Название",
             "Описание",
-            "Категория",
+            listOf("Категория"),
             "Бесплатно",
             "1.2км",
             2.5,

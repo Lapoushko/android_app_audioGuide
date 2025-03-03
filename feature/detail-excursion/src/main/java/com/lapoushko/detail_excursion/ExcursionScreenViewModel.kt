@@ -12,10 +12,10 @@ class ExcursionScreenViewModel : ViewModel() {
     init {
         _state.value = List(5){ index ->
             ExcursionItem(
-                id = index.toLong(),
+                id = "",
                 name = "Название $index",
                 description = "Описание $index",
-                category = "Категория",
+                category = listOf("Категория"),
                 price = "Цена $index",
                 distance = "Расстояние $index",
                 rating = index.toDouble(),
