@@ -3,11 +3,15 @@ package com.lapoushko.network.service
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 import com.lapoushko.domain.entity.Excursion
 import com.lapoushko.domain.service.ExcursionService
 import com.lapoushko.network.entity.ExcursionNetwork
 import com.lapoushko.network.mapper.ExcursionNetworkMapper
 import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * @author Lapoushko
@@ -17,14 +21,18 @@ class ExcursionServiceImpl(
 ) : ExcursionService {
     private val fireStore: FirebaseFirestore = Firebase.firestore
     override suspend fun getSavedExcursions(): List<Excursion> {
-        return try {
-            val querySnapshot = fireStore.collection("excursions").get().await()
-            querySnapshot.map {
-                mapper.toDomain(it.toObject(ExcursionNetwork::class.java))
-            }
-        } catch (e: Exception) {
-            println("Error retrieving excursions: ${e.message}")
-            emptyList()
+        return suspendCoroutine { continuation ->
+            fireStore.collection("excursions").get()
+                .addOnSuccessListener { value ->
+                    val excursions = value?.documents?.map {
+                        mapper.toDomain(it.toObject(ExcursionNetwork::class.java)!!)
+                    } ?: emptyList()
+                    continuation.resume(excursions)
+                }
+                .addOnFailureListener { error ->
+                    println(error)
+                    continuation.resumeWithException(error)
+                }
         }
     }
 

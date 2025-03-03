@@ -17,7 +17,7 @@ class ExcursionNetworkMapperImpl() : ExcursionNetworkMapper{
                 id = id ?: "",
                 name = name ?: "",
                 description = description ?: "",
-                categories = categories?.map { it ?: "" } ?: emptyList(),
+                categories = categories?.map { it } ?: emptyList(),
                 price = price ?: 0.0,
                 distance = distance ?: 0,
                 rating = rating ?: 0.0,
