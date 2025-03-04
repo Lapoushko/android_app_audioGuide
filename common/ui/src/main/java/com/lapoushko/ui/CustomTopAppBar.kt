@@ -1,7 +1,5 @@
 package com.lapoushko.ui
 
-import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,9 +19,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.lapoushko.ui.theme.Typography
 
 /**
@@ -31,18 +29,18 @@ import com.lapoushko.ui.theme.Typography
  */
 @Composable
 fun CustomTopAppBar(
-    image: Uri,
+    image: String?,
     onClickBack: () -> Unit,
     text: String,
     modifier: Modifier = Modifier
 ) {
     Box {
-        Image(
+        AsyncImage(
             modifier = modifier
                 .fillMaxWidth()
                 .height(400.dp)
                 .clip(RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp)),
-            painter = painterResource(R.drawable.example),
+            model = image ?: R.drawable.example,
             contentDescription = null,
             contentScale = ContentScale.Crop
         )
@@ -80,7 +78,7 @@ fun CustomTopAppBar(
 @Composable
 private fun CustomTopAppBarPreview() {
     CustomTopAppBar(
-        image = Uri.EMPTY,
+        image = "",
         onClickBack = {},
         text = "Пример"
     )

@@ -2,8 +2,6 @@
 
 package com.lapoushko.audio
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,10 +36,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.R
 import com.lapoushko.ui.theme.Typography
@@ -57,7 +55,7 @@ fun AudioScreen(
     excursion: ExcursionItem
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        BackgroundImageWithOverlay(imageRes = R.drawable.example)
+        BackgroundImageWithOverlay(excursion.images.firstOrNull())
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -71,10 +69,10 @@ fun AudioScreen(
 }
 
 @Composable
-private fun BackgroundImageWithOverlay(@DrawableRes imageRes: Int) {
+private fun BackgroundImageWithOverlay(image: String?) {
     Box(modifier = Modifier.fillMaxSize()) {
-        Image(
-            painter = painterResource(imageRes),
+        AsyncImage(
+            model = image ?: R.drawable.example,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
@@ -159,14 +157,16 @@ private fun PlayerButton(
 private fun AudioScreenPreview() {
     AudioScreen(
         excursion = ExcursionItem(
-            0,
+            "",
             "Название",
             "Описание",
-            "Категория",
+            listOf("Категория"),
             "Бесплатно",
             "1.2км",
             2.5,
-            1
+            1,
+            emptyList(),
+            emptyList()
         )
     )
 }

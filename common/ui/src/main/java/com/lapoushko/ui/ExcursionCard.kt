@@ -12,19 +12,23 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
 import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.theme.Typography
 
@@ -44,6 +48,9 @@ fun ExcursionCard(
     val rating = excursion.rating
     val countRating = excursion.countRating
 
+    val painter = rememberAsyncImagePainter(excursion.images.firstOrNull())
+    val state by painter.state.collectAsState()
+
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -55,14 +62,27 @@ fun ExcursionCard(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Image(
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                painter = painterResource(R.drawable.example),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-            )
+            when (state) {
+                is AsyncImagePainter.State.Empty,
+                is AsyncImagePainter.State.Loading -> {
+                    CircularProgressIndicator()
+                }
+
+                is AsyncImagePainter.State.Success -> {
+                    Image(
+                        painter = painter,
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(RoundedCornerShape(12.dp)),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
+                is AsyncImagePainter.State.Error -> {
+                    CircularProgressIndicator()
+                }
+            }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -95,7 +115,11 @@ fun ExcursionCard(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    Text(text = "$category • $price • $distance", style = Typography.bodyMedium)
+                    Text(
+                        text = "${
+                            category.joinToString(separator = ", ") { it }
+                        } • $price • $distance", style = Typography.bodyMedium
+                    )
                     Text(
                         text = description,
                         style = Typography.bodyMedium,
@@ -114,13 +138,15 @@ fun ExcursionCard(
 private fun ExcursionCardPreview() {
     ExcursionCard(
         excursion = ExcursionItem(
-            0,
+            "",
             "Название",
             "Описание",
-            "Категория",
+            listOf("Категория"),
             "Бесплатно",
             "1.2км",
             2.5,
-            1
+            1,
+            emptyList(),
+            points = emptyList()
         ), onClick = {})
 }

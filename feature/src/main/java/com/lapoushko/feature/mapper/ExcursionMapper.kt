@@ -19,11 +19,13 @@ class ExcursionMapperImpl(): ExcursionMapper{
                 id = id,
                 name = name,
                 description = description,
-                category = category,
+                category = categories,
                 price = "$price р.",
                 distance = "$distance м.",
                 rating = rating,
                 countRating = countRating,
+                images = images,
+                points = points
             )
         }
     }
@@ -34,11 +36,13 @@ class ExcursionMapperImpl(): ExcursionMapper{
                 id = id,
                 name = name,
                 description = description,
-                category = category,
+                categories = category,
                 price = price.split(" ")[0].toDouble(),
                 distance = price.split(" ")[0].toLong(),
                 rating = rating,
-                countRating = countRating
+                countRating = countRating,
+                images = images,
+                points = points
             )
         }
     }

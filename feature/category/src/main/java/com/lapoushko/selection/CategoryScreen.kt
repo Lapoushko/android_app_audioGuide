@@ -1,6 +1,5 @@
 package com.lapoushko.selection
 
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,7 +38,7 @@ fun CategoryScreen(
     ) {
         item {
             CustomTopAppBar(
-                image = Uri.EMPTY,
+                image = null,
                 onClickBack = { handler.onBack() },
                 text = category,
             )

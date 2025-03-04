@@ -2,7 +2,6 @@
 
 package com.lapoushko.detail_excursion
 
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +17,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,13 +41,17 @@ fun ExcursionDetailScreen(
     viewModel: ExcursionScreenViewModel = koinViewModel(),
     handler: ExcursionScreenHandler
 ) {
-    val excursions = viewModel.state.collectAsState().value
+    LaunchedEffect(Unit) {
+        viewModel.setCurrentExcursion(excursion)
+    }
+
+    val excursions = viewModel.state.interestingExcursion
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
     ) {
         CustomTopAppBar(
-            image = Uri.EMPTY,
+            image = excursion.images.firstOrNull(),
             onClickBack = { handler.onBack() },
             text = excursion.name
         )
@@ -115,14 +118,16 @@ fun ExcursionDetailScreen(
 fun ExcursionDetailScreenPreview() {
     ExcursionDetailScreen(
         ExcursionItem(
-            0,
+            "",
             "Название",
             "Экскурсия включает такие объекты, как: здание Парламента, прогулка по крыше здания Оперы (построено в 2008 году), крепость Акершуз (возведена более 700 лет назад), набережная Акер-Бригге и посещение городской Ратуши, где ежегодно вручается Нобелевская премия мира.",
-            "Категория",
+            listOf("Категория"),
             "Бесплатно",
             "1.2км",
             2.5,
-            1
+            1,
+            images = emptyList(),
+            points = emptyList()
         ),
         handler = ExcursionScreenHandler(onBack = {}, onToDetail = {}, onPlayExcursion = {})
     )

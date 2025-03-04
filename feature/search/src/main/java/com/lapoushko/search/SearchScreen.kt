@@ -56,8 +56,9 @@ fun SearchScreen(
                     height = 238.dp,
                     items = popular.map {
                         CarouselItem.TitleDescription(
-                            it.name,
-                            it.description
+                            title = it.name,
+                            description = it.description,
+                            image = it.images.firstOrNull()
                         )
                     }
                 )
