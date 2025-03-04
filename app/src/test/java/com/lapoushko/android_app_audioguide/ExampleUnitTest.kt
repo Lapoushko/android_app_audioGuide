@@ -1,8 +1,7 @@
 package com.lapoushko.android_app_audioguide
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
