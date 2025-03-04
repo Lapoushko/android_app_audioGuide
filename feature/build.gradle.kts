@@ -65,4 +65,8 @@ dependencies {
     api(libs.koin.android)
     api(libs.koin.androidx.navigation)
     api(libs.koin.androidx.compose)
+
+    //Coil
+    api(libs.coil.compose)
+    api(libs.coil.network.okhttp)
 }
