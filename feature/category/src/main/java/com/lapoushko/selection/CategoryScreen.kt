@@ -39,7 +39,7 @@ fun CategoryScreen(
     ) {
         item {
             CustomTopAppBar(
-                image = Uri.EMPTY,
+                image = null,
                 onClickBack = { handler.onBack() },
                 text = category,
             )

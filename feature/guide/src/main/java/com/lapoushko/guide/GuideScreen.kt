@@ -122,7 +122,9 @@ fun TabsScreenPreview() {
             "Бесплатно",
             "1.2км",
             2.5,
-            1
+            1,
+            images = emptyList(),
+            emptyList()
         ),
         GuideScreenHandler(onBack = {}),
     )

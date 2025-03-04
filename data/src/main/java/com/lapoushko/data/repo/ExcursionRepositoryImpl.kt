@@ -22,6 +22,8 @@ class ExcursionRepositoryImpl(
             distance = index * 50L,
             rating = index.toDouble(),
             countRating = index.toLong(),
+            images = emptyList(),
+            points = emptyList()
         )
     }
 

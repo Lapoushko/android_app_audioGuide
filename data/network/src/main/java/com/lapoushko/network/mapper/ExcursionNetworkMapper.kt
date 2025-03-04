@@ -22,6 +22,8 @@ class ExcursionNetworkMapperImpl() : ExcursionNetworkMapper{
                 distance = distance ?: 0,
                 rating = rating ?: 0.0,
                 countRating = countRating ?: 0,
+                images = images ?: emptyList(),
+                points = points?.map { Pair(it.latitude, it.longitude) } ?: emptyList()
             )
         }
     }

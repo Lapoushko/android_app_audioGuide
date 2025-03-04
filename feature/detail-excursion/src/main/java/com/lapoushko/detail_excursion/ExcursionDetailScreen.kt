@@ -18,6 +18,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,13 +43,17 @@ fun ExcursionDetailScreen(
     viewModel: ExcursionScreenViewModel = koinViewModel(),
     handler: ExcursionScreenHandler
 ) {
-    val excursions = viewModel.state.collectAsState().value
+    LaunchedEffect(Unit) {
+        viewModel.setCurrentExcursion(excursion)
+    }
+
+    val excursions = viewModel.state.interestingExcursion
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
     ) {
         CustomTopAppBar(
-            image = Uri.EMPTY,
+            image = excursion.images.firstOrNull(),
             onClickBack = { handler.onBack() },
             text = excursion.name
         )
@@ -122,7 +127,9 @@ fun ExcursionDetailScreenPreview() {
             "Бесплатно",
             "1.2км",
             2.5,
-            1
+            1,
+            images = emptyList(),
+            points = emptyList()
         ),
         handler = ExcursionScreenHandler(onBack = {}, onToDetail = {}, onPlayExcursion = {})
     )

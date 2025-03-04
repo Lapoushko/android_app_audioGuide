@@ -11,5 +11,7 @@ class Excursion(
     val price: Double,
     val distance: Long,
     val rating: Double,
-    val countRating: Long
+    val countRating: Long,
+    val images: List<String>,
+    val points: List<Pair<Double, Double>>
 )

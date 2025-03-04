@@ -2,7 +2,6 @@
 
 package com.lapoushko.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,10 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.lapoushko.ui.theme.Typography
 
 /**
@@ -67,6 +66,8 @@ fun CustomCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val image = (item as? CarouselItem.WithImage)?.image ?: R.drawable.example
+
     Card(
         modifier = modifier
             .fillMaxWidth(),
@@ -76,8 +77,8 @@ fun CustomCard(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            Image(
-                painter = painterResource(R.drawable.example),
+            AsyncImage(
+                model = image,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -124,9 +125,13 @@ fun CustomCard(
     }
 }
 
-sealed class CarouselItem {
-    data class TitleDescription(val title: String, val description: String) : CarouselItem()
-    data class Category(val category: String) : CarouselItem()
+sealed class CarouselItem() {
+    interface WithImage {
+        val image: String?
+    }
+
+    data class TitleDescription(val title: String, val description: String, override val image: String? = null) : CarouselItem(), WithImage
+    data class Category(val category: String, override val image: String? = null) : CarouselItem(), WithImage
 }
 
 @Preview
