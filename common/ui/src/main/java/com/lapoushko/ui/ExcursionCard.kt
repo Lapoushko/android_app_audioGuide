@@ -23,12 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import com.lapoushko.feature.model.ExcursionItem
@@ -119,34 +117,36 @@ fun ExcursionCard(
                 ) {
                     Text(
                         text = "${
-                            category.joinToString(separator = ", ") { it }} • $price • $distance", style = Typography.bodyMedium)
-                                    Text (
-                                    text = description,
-                            style = Typography.bodyMedium,
-                            maxLines = 2,
-                            modifier = Modifier.padding(bottom = 4.dp),
-                            lineHeight = 16.sp
-                            )
-                        }
+                            category.joinToString(separator = ", ") { it }
+                        } • $price • $distance", style = Typography.bodyMedium
+                    )
+                    Text(
+                        text = description,
+                        style = Typography.bodyMedium,
+                        maxLines = 2,
+                        modifier = Modifier.padding(bottom = 4.dp),
+                        lineHeight = 16.sp
+                    )
                 }
             }
         }
     }
+}
 
-    @Preview(showBackground = true)
-    @Composable
-    private fun ExcursionCardPreview() {
-        ExcursionCard(
-            excursion = ExcursionItem(
-                "",
-                "Название",
-                "Описание",
-                listOf("Категория"),
-                "Бесплатно",
-                "1.2км",
-                2.5,
-                1,
-                emptyList(),
-                points = emptyList()
-            ), onClick = {})
-    }
+@Preview(showBackground = true)
+@Composable
+private fun ExcursionCardPreview() {
+    ExcursionCard(
+        excursion = ExcursionItem(
+            "",
+            "Название",
+            "Описание",
+            listOf("Категория"),
+            "Бесплатно",
+            "1.2км",
+            2.5,
+            1,
+            emptyList(),
+            points = emptyList()
+        ), onClick = {})
+}

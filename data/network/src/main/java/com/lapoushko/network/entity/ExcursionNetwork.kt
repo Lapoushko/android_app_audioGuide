@@ -1,6 +1,5 @@
 package com.lapoushko.network.entity
 
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.GeoPoint
 
 /**

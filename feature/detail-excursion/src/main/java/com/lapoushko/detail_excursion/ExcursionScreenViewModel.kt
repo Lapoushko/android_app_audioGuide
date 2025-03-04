@@ -5,8 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.lapoushko.feature.model.ExcursionItem
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 class ExcursionScreenViewModel : ViewModel() {
     private var _state = MutableExcursionScreenState()
@@ -16,12 +14,12 @@ class ExcursionScreenViewModel : ViewModel() {
         loadInterestingExcursions()
     }
 
-    fun setCurrentExcursion(excursion: ExcursionItem){
+    fun setCurrentExcursion(excursion: ExcursionItem) {
         _state.curExcursion = excursion
     }
 
-    private fun loadInterestingExcursions(){
-        _state.interestingExcursion = List(5){ index ->
+    private fun loadInterestingExcursions() {
+        _state.interestingExcursion = List(5) { index ->
             ExcursionItem(
                 id = "",
                 name = "Название $index",
@@ -37,7 +35,7 @@ class ExcursionScreenViewModel : ViewModel() {
         }
     }
 
-    private class MutableExcursionScreenState(): ExcursionScreenState{
+    private class MutableExcursionScreenState() : ExcursionScreenState {
         override var curExcursion: ExcursionItem by mutableStateOf(ExcursionItem())
         override var interestingExcursion: List<ExcursionItem> by mutableStateOf(emptyList())
 
