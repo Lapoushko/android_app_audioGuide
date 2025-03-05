@@ -23,7 +23,10 @@ class ExcursionNetworkMapperImpl() : ExcursionNetworkMapper{
                 rating = rating ?: 0.0,
                 countRating = countRating ?: 0,
                 images = images ?: emptyList(),
-                points = points?.map { Pair(it.latitude, it.longitude) } ?: emptyList()
+                points = points?.map { Pair(it.latitude, it.longitude) } ?: emptyList(),
+                texts = texts ?: emptyList(),
+                namesPoints = namesPoints ?: emptyList(),
+                audio = audio ?: emptyList()
             )
         }
     }

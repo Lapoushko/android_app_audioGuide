@@ -25,7 +25,10 @@ class ExcursionMapperImpl(): ExcursionMapper{
                 rating = rating,
                 countRating = countRating,
                 images = images,
-                points = points
+                points = points,
+                texts = texts,
+                namesPoints = namesPoints,
+                audio = audio
             )
         }
     }
@@ -42,7 +45,10 @@ class ExcursionMapperImpl(): ExcursionMapper{
                 rating = rating,
                 countRating = countRating,
                 images = images,
-                points = points
+                points = points,
+                texts = texts,
+                namesPoints = namesPoints,
+                audio = audio
             )
         }
     }

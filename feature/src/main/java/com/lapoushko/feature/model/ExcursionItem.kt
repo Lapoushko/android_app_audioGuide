@@ -19,5 +19,8 @@ data class ExcursionItem(
     val rating: Double = 0.0,
     val countRating: Long = 0,
     val images: List<String> = emptyList(),
-    val points: List<Pair<Double, Double>> = emptyList()
+    val points: List<Pair<Double, Double>> = emptyList(),
+    val audio: List<String> = emptyList(),
+    val texts: List<String> = emptyList(),
+    val namesPoints: List<String> = emptyList()
 ) : Parcelable

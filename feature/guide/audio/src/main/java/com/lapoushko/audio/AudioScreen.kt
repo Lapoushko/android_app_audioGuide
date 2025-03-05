@@ -2,6 +2,7 @@
 
 package com.lapoushko.audio
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -30,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,24 +50,83 @@ import com.lapoushko.ui.theme.Typography
 import com.lapoushko.ui.theme.onPrimaryLight
 import com.lapoushko.ui.theme.primaryLight
 import com.lapoushko.ui.theme.secondaryContainerLight
+import kotlinx.coroutines.launch
 
 /**
  * @author Lapoushko
  */
+//@Composable
+//fun AudioScreen(
+//    excursion: ExcursionItem
+//) {
+//    Box(modifier = Modifier.fillMaxSize()) {
+//        BackgroundImageWithOverlay(excursion.images.firstOrNull())
+//        Column(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(horizontal = 20.dp),
+//            verticalArrangement = Arrangement.SpaceEvenly
+//        ) {
+//            DescriptionText(text = excursion.description)
+//            AudioPlayerControl({},{})
+//        }
+//    }
+//}
 @Composable
 fun AudioScreen(
     excursion: ExcursionItem
 ) {
+    val pagerState = rememberPagerState { excursion.points.size }
+    val scope = rememberCoroutineScope()
+
     Box(modifier = Modifier.fillMaxSize()) {
-        BackgroundImageWithOverlay(excursion.images.firstOrNull())
+        val currentImage = excursion.images.getOrNull(pagerState.currentPage)
+        BackgroundImageWithOverlay(currentImage)
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            DescriptionText(text = excursion.description)
-            AudioPlayerControl()
+            HorizontalPager(
+                state = pagerState,
+//                modifier = Modifier.weight(1f)
+            ) { page ->
+                Column(
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    AsyncImage(
+                        model = excursion.images.getOrNull(page) ?: R.drawable.example,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    DescriptionText(text = excursion.namesPoints[page])
+                }
+            }
+
+            AudioPlayerControl(
+                onPrevious = {
+                    scope.launch {
+                        pagerState.animateScrollToPage(
+                            (pagerState.currentPage - 1).coerceAtLeast(0)
+                        )
+                    }
+                },
+                onNext = {
+                    scope.launch {
+                        pagerState.animateScrollToPage(
+                            (pagerState.currentPage + 1).coerceAtMost(excursion.points.size - 1)
+                        )
+                    }
+                }
+            )
         }
     }
 }
@@ -80,7 +143,7 @@ private fun BackgroundImageWithOverlay(image: String?) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f))
+                .background(Color.Black.copy(alpha = 0.8f))
         )
     }
 }
@@ -100,7 +163,10 @@ private fun DescriptionText(text: String) {
 }
 
 @Composable
-private fun AudioPlayerControl() {
+private fun AudioPlayerControl(
+    onNext: () -> Unit,
+    onPrevious: () -> Unit
+) {
     var sliderPosition by remember { mutableFloatStateOf(0f) }
     Column {
         Slider(
@@ -124,9 +190,9 @@ private fun AudioPlayerControl() {
         ) {
             Text(text = "00:00", style = Typography.bodyMedium, color = Color.White)
 
-            PlayerButton(imageVector = Icons.Filled.SkipPrevious, onClick = { /*TODO*/ })
+            PlayerButton(imageVector = Icons.Filled.SkipPrevious, onClick = { onPrevious() })
             PlayerButton(imageVector = Icons.Filled.PlayArrow, onClick = { /*TODO*/ })
-            PlayerButton(imageVector = Icons.Filled.SkipNext, onClick = { /*TODO*/ })
+            PlayerButton(imageVector = Icons.Filled.SkipNext, onClick = { onNext() })
 
             Text(text = "02:00", style = Typography.bodyMedium, color = Color.White)
         }
@@ -165,8 +231,8 @@ private fun AudioScreenPreview() {
             "1.2км",
             2.5,
             1,
-            emptyList(),
-            emptyList()
+            texts = emptyList(),
+            namesPoints = emptyList()
         )
     )
 }

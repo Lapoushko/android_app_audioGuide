@@ -23,7 +23,10 @@ class ExcursionRepositoryImpl(
             rating = index.toDouble(),
             countRating = index.toLong(),
             images = emptyList(),
-            points = emptyList()
+            points = emptyList(),
+            texts = emptyList(),
+            namesPoints = emptyList(),
+            audio = emptyList()
         )
     }
 
