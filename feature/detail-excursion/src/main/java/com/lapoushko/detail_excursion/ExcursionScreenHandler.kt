@@ -10,15 +10,15 @@ class ExcursionScreenHandler(
     private val onToDetail: (ExcursionItem) -> Unit,
     private val onPlayExcursion: (ExcursionItem) -> Unit
 ) {
-    fun onBack(){
+    fun onBack() {
         onBack.invoke()
     }
 
-    fun onToDetail(excursion: ExcursionItem){
+    fun onToDetail(excursion: ExcursionItem) {
         onToDetail.invoke(excursion)
     }
 
-    fun onPlayExcursion(excursion: ExcursionItem){
+    fun onPlayExcursion(excursion: ExcursionItem) {
         onPlayExcursion.invoke(excursion)
     }
 }

@@ -8,9 +8,10 @@ import com.lapoushko.domain.repo.CategoryRepository
 interface SubscribeGetCategories {
     suspend fun getCategories(): List<String>
 }
+
 class SubscribeGetCategoriesImpl(
     private val repo: CategoryRepository
-): SubscribeGetCategories{
+) : SubscribeGetCategories {
     override suspend fun getCategories(): List<String> {
         return repo.getCategories()
     }

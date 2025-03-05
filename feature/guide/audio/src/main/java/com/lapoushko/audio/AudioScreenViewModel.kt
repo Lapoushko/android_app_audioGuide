@@ -5,5 +5,5 @@ import androidx.lifecycle.ViewModel
 /**
  * @author Lapoushko
  */
-class AudioScreenViewModel(): ViewModel() {
+class AudioScreenViewModel() : ViewModel() {
 }

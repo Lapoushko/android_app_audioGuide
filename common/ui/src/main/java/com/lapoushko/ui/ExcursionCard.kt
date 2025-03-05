@@ -48,7 +48,7 @@ fun ExcursionCard(
     val rating = excursion.rating
     val countRating = excursion.countRating
 
-    val painter = rememberAsyncImagePainter(excursion.images.firstOrNull())
+    val painter = rememberAsyncImagePainter(excursion.points.firstOrNull()?.image)
     val state by painter.state.collectAsState()
 
     Card(
@@ -147,6 +147,5 @@ private fun ExcursionCardPreview() {
             2.5,
             1,
             emptyList(),
-            points = emptyList()
         ), onClick = {})
 }

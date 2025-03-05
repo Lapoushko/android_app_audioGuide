@@ -5,5 +5,5 @@ import androidx.lifecycle.ViewModel
 /**
  * @author Lapoushko
  */
-class GuideScreenViewModel(): ViewModel() {
+class GuideScreenViewModel() : ViewModel() {
 }

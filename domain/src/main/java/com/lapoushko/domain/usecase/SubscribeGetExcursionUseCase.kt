@@ -6,7 +6,7 @@ import com.lapoushko.domain.repo.ExcursionRepository
 /**
  * @author Lapoushko
  */
-interface SubscribeGetExcursionUseCase{
+interface SubscribeGetExcursionUseCase {
     suspend fun getSavedExcursions(): List<Excursion>
 
     suspend fun getInterestingExcursions(): List<Excursion>
@@ -20,7 +20,7 @@ interface SubscribeGetExcursionUseCase{
 
 class SubscribeGetExcursionUseCaseImpl(
     private val repo: ExcursionRepository
-): SubscribeGetExcursionUseCase{
+) : SubscribeGetExcursionUseCase {
     override suspend fun getSavedExcursions(): List<Excursion> {
         return repo.getSavedExcursions()
     }

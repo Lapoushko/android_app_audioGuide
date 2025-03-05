@@ -4,8 +4,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.lapoushko.domain.service.CategoryService
-import com.lapoushko.network.entity.ExcursionNetwork
-import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -19,7 +17,8 @@ class CategoryServiceImpl : CategoryService {
         return suspendCoroutine { continuation ->
             fireStore.collection("categories").get()
                 .addOnSuccessListener { value ->
-                    val categories = value?.documents?.map { it.getString("naming") ?: "" } ?: emptyList()
+                    val categories =
+                        value?.documents?.map { it.getString("naming") ?: "" } ?: emptyList()
                     continuation.resume(categories)
                 }
                 .addOnFailureListener { error ->

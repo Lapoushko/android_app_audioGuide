@@ -18,9 +18,15 @@ data class ExcursionItem(
     val distance: String = "",
     val rating: Double = 0.0,
     val countRating: Long = 0,
-    val images: List<String> = emptyList(),
-    val points: List<Pair<Double, Double>> = emptyList(),
-    val audio: List<String> = emptyList(),
-    val texts: List<String> = emptyList(),
-    val namesPoints: List<String> = emptyList()
+    val points: List<PointItem> = emptyList(),
+) : Parcelable
+
+@Serializable
+@Parcelize
+data class PointItem(
+    val name: String = "",
+    val text: String = "",
+    val image: String = "",
+    val point: Pair<Double, Double> = Pair(0.0, 0.0),
+    val audio: String = ""
 ) : Parcelable

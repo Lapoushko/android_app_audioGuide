@@ -54,23 +54,6 @@ import kotlinx.coroutines.launch
 /**
  * @author Lapoushko
  */
-//@Composable
-//fun AudioScreen(
-//    excursion: ExcursionItem
-//) {
-//    Box(modifier = Modifier.fillMaxSize()) {
-//        BackgroundImageWithOverlay(excursion.images.firstOrNull())
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(horizontal = 20.dp),
-//            verticalArrangement = Arrangement.SpaceEvenly
-//        ) {
-//            DescriptionText(text = excursion.description)
-//            AudioPlayerControl({},{})
-//        }
-//    }
-//}
 @Composable
 fun AudioScreen(
     excursion: ExcursionItem
@@ -79,7 +62,7 @@ fun AudioScreen(
     val scope = rememberCoroutineScope()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        val currentImage = excursion.images.getOrNull(pagerState.currentPage)
+        val currentImage = excursion.points.getOrNull(pagerState.currentPage)?.image
         BackgroundImageWithOverlay(currentImage)
 
         Column(
@@ -90,13 +73,13 @@ fun AudioScreen(
         ) {
             HorizontalPager(
                 state = pagerState,
-//                modifier = Modifier.weight(1f)
             ) { page ->
                 Column(
                     verticalArrangement = Arrangement.Center
                 ) {
                     AsyncImage(
-                        model = excursion.images.getOrNull(page) ?: R.drawable.example,
+                        model = excursion.points.getOrNull(page)?.image
+                            ?: R.drawable.example, //excursion.images.getOrNull(page)
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -106,7 +89,7 @@ fun AudioScreen(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    DescriptionText(text = excursion.namesPoints[page])
+                    DescriptionText(text = excursion.points[page].text)
                 }
             }
 
@@ -152,8 +135,8 @@ private fun DescriptionText(text: String) {
     Text(
         modifier = Modifier
             .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .height(200.dp),
+            .height(200.dp)
+            .verticalScroll(rememberScrollState()),
         text = text,
         style = Typography.titleMedium,
         color = Color.White,
@@ -230,8 +213,6 @@ private fun AudioScreenPreview() {
             "1.2км",
             2.5,
             1,
-            texts = emptyList(),
-            namesPoints = emptyList()
         )
     )
 }

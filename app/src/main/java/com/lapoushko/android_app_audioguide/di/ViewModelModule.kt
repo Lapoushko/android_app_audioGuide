@@ -18,12 +18,12 @@ import org.koin.dsl.module
 val viewModelModule = module {
     single<SearchScreenViewModel> { SearchScreenViewModel(get(), get(), get()) }
     single<ExcursionScreenViewModel> { ExcursionScreenViewModel() }
-    single<CategoryScreenViewModel> { CategoryScreenViewModel(get(),get()) }
+    single<CategoryScreenViewModel> { CategoryScreenViewModel(get(), get()) }
     single<FavouriteScreenViewModel> { FavouriteScreenViewModel() }
 
     //profile
-    single<ProfileScreenViewModel>{ProfileScreenViewModel()}
-    single<SaveExcursionScreenViewModel>{SaveExcursionScreenViewModel(get(), get())}
+    single<ProfileScreenViewModel> { ProfileScreenViewModel() }
+    single<SaveExcursionScreenViewModel> { SaveExcursionScreenViewModel(get(), get()) }
     single<SettingProfileScreenViewModel> { SettingProfileScreenViewModel(get()) }
     //guide
     single<AudioScreenViewModel> { AudioScreenViewModel() }

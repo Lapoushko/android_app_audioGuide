@@ -22,16 +22,12 @@ class ExcursionRepositoryImpl(
             distance = index * 50L,
             rating = index.toDouble(),
             countRating = index.toLong(),
-            images = emptyList(),
             points = emptyList(),
-            texts = emptyList(),
-            namesPoints = emptyList(),
-            audio = emptyList()
         )
     }
 
     override suspend fun getSavedExcursions(): List<Excursion> {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             excursionService.getSavedExcursions().take(10)
         }
     }

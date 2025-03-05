@@ -14,22 +14,6 @@ data class ExcursionNetwork(
     val countRating: Long? = null,
     val price: Double? = null,
     val rating: Double? = null,
-    val images: List<String>? = null,
-    val points: List<GeoPoint>? = null,
-    val audio: List<String>? = null,
-    val namesPoints: List<String>? = null,
-    val texts: List<String>? = null
-)
-
-data class ExcursionNetworkV2(
-    val id: String? = "",
-    val name: String? = "",
-    val description: String? = "",
-    val distance: Long? = null,
-    val categories: List<String>? = null,
-    val countRating: Long? = null,
-    val price: Double? = null,
-    val rating: Double? = null,
     val points: List<Point>? = null
 )
 

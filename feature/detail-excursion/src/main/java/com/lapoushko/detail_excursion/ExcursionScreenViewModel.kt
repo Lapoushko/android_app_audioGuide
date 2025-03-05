@@ -29,7 +29,6 @@ class ExcursionScreenViewModel : ViewModel() {
                 distance = "Расстояние $index",
                 rating = index.toDouble(),
                 countRating = index.toLong(),
-                images = emptyList(),
                 points = emptyList()
             )
         }

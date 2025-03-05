@@ -12,9 +12,13 @@ class Excursion(
     val distance: Long,
     val rating: Double,
     val countRating: Long,
-    val images: List<String>,
-    val points: List<Pair<Double, Double>>,
-    val texts: List<String>,
-    val namesPoints: List<String>,
-    val audio: List<String>
+    val points: List<Point>,
+)
+
+class Point(
+    val name: String,
+    val text: String,
+    val image: String,
+    val point: Pair<Double, Double>,
+    val audio: String
 )

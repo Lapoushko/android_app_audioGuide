@@ -58,7 +58,7 @@ fun SearchScreen(
                         CarouselItem.TitleDescription(
                             title = it.name,
                             description = it.description,
-                            image = it.images.firstOrNull()
+                            image = it.points.firstOrNull()?.image
                         )
                     }
                 )

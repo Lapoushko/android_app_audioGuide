@@ -8,12 +8,12 @@ import androidx.compose.ui.tooling.preview.Preview
  * @author Lapoushko
  */
 @Composable
-fun MapScreen(){
+fun MapScreen() {
     Text("Здесь будут карты")
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun MapScreenPreview(){
+private fun MapScreenPreview() {
     MapScreen()
 }

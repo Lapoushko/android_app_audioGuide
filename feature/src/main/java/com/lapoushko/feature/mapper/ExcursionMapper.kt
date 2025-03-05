@@ -1,7 +1,9 @@
 package com.lapoushko.feature.mapper
 
 import com.lapoushko.domain.entity.Excursion
+import com.lapoushko.domain.entity.Point
 import com.lapoushko.feature.model.ExcursionItem
+import com.lapoushko.feature.model.PointItem
 
 /**
  * @author Lapoushko
@@ -9,10 +11,10 @@ import com.lapoushko.feature.model.ExcursionItem
 interface ExcursionMapper {
     fun toUi(excursion: Excursion): ExcursionItem
 
-    fun toDomain(excursionItem: ExcursionItem) : Excursion
+    fun toDomain(excursionItem: ExcursionItem): Excursion
 }
 
-class ExcursionMapperImpl(): ExcursionMapper{
+class ExcursionMapperImpl : ExcursionMapper {
     override fun toUi(excursion: Excursion): ExcursionItem {
         excursion.apply {
             return ExcursionItem(
@@ -20,15 +22,19 @@ class ExcursionMapperImpl(): ExcursionMapper{
                 name = name,
                 description = description,
                 category = categories,
-                price = "$price р.",
+                price = if (price == 0.0) "Бесплатно" else "$price р.",
                 distance = "$distance м.",
                 rating = rating,
                 countRating = countRating,
-                images = images,
-                points = points,
-                texts = texts,
-                namesPoints = namesPoints,
-                audio = audio
+                points = points.map {
+                    PointItem(
+                        name = it.name,
+                        text = it.text,
+                        image = it.image,
+                        audio = it.audio,
+                        point = it.point
+                    )
+                },
             )
         }
     }
@@ -40,15 +46,19 @@ class ExcursionMapperImpl(): ExcursionMapper{
                 name = name,
                 description = description,
                 categories = category,
-                price = price.split(" ")[0].toDouble(),
+                price = if (price == "Бесплатно") 0.0 else price.split(" ")[0].toDouble(),
                 distance = price.split(" ")[0].toLong(),
                 rating = rating,
                 countRating = countRating,
-                images = images,
-                points = points,
-                texts = texts,
-                namesPoints = namesPoints,
-                audio = audio
+                points = points.map {
+                    Point(
+                        name = it.name,
+                        text = it.text,
+                        image = it.image,
+                        audio = it.audio,
+                        point = it.point
+                    )
+                },
             )
         }
     }

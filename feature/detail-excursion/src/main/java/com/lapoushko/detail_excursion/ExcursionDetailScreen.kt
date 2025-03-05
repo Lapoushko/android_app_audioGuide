@@ -51,7 +51,7 @@ fun ExcursionDetailScreen(
             .verticalScroll(rememberScrollState())
     ) {
         CustomTopAppBar(
-            image = excursion.images.firstOrNull(),
+            image = excursion.points.firstOrNull()?.image,
             onClickBack = { handler.onBack() },
             text = excursion.name
         )
@@ -126,7 +126,6 @@ fun ExcursionDetailScreenPreview() {
             "1.2км",
             2.5,
             1,
-            images = emptyList(),
             points = emptyList()
         ),
         handler = ExcursionScreenHandler(onBack = {}, onToDetail = {}, onPlayExcursion = {})
