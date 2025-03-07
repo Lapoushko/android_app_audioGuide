@@ -1,8 +1,10 @@
 package com.lapoushko.domain.service
 
+import kotlinx.coroutines.flow.Flow
+
 /**
  * @author Lapoushko
  */
 interface CategoryService {
-    suspend fun getCategories(): List<String>
+    fun getCategories(): Flow<List<String>>
 }

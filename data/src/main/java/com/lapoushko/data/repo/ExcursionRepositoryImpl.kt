@@ -4,6 +4,7 @@ import com.lapoushko.domain.entity.Excursion
 import com.lapoushko.domain.repo.ExcursionRepository
 import com.lapoushko.domain.service.ExcursionService
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 /**
@@ -27,15 +28,15 @@ class ExcursionRepositoryImpl(
     }
 
     override suspend fun getSavedExcursions(): List<Excursion> {
-        return excursionService.getSavedExcursions().take(10)
+        return excursions.take(10)
     }
 
-    override suspend fun getInterestingExcursions(): List<Excursion> {
-        return excursionService.getSavedExcursions().take(10)
+    override fun getInterestingExcursions(): Flow<List<Excursion>> {
+        return excursionService.getInterestingExcursions()
     }
 
     override suspend fun getPopularityExcursions(): List<Excursion> {
-        return excursionService.getSavedExcursions().take(10)
+        return excursions.take(10)
     }
 
     override suspend fun getExcursionsByCategory(category: String): List<Excursion> {

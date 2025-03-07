@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,7 +68,6 @@ fun SearchScreen(
                 )
             }
         }
-
         item {
             Column {
                 TextTitle("Интересное")
@@ -81,11 +81,11 @@ fun SearchScreen(
                 }
             }
         }
-        item {
+        items(categories) { category ->
             Column {
                 TextTitle("Категории")
                 CustomCarousel(
-                    onClick = { handler.onToCategory(categories[it].category) },
+                    onClick = { handler.onToCategory(category.category) },
                     width = 348.dp,
                     height = 214.dp,
                     items = categories

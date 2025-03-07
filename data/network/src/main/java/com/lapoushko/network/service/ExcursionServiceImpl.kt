@@ -8,6 +8,9 @@ import com.lapoushko.domain.service.ExcursionService
 import com.lapoushko.network.entity.ExcursionNetwork
 import com.lapoushko.network.entity.Point
 import com.lapoushko.network.mapper.ExcursionNetworkMapper
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 /**
@@ -18,29 +21,37 @@ class ExcursionServiceImpl(
 ) : ExcursionService {
     private val fireStore: FirebaseFirestore = Firebase.firestore
     override suspend fun getSavedExcursions(): List<Excursion> {
-        return try {
-            val querySnapshot = fireStore.collection("excursions_v.01").get().await()
-
-            querySnapshot.map { document ->
-                val excursion =
-                    document.toObject(ExcursionNetwork::class.java).copy(id = document.id)
-
-                val pointsSnapshot =
-                    document.reference.collection("points").orderBy("id").get().await()
-                val points = pointsSnapshot.map { it.toObject(Point::class.java) }
-                mapper.toDomain(excursion.copy(points = points))
-            }
-        } catch (e: Exception) {
-            println("Error retrieving excursions: ${e.message}")
-            emptyList()
-        }
+        return emptyList()
     }
 
-    override suspend fun getInterestingExcursions(): List<Excursion> {
-        TODO("Not yet implemented")
+    override fun getInterestingExcursions(): Flow<List<Excursion>> = callbackFlow {
+        fireStore.collection("excursions_v.01").get()
+            .addOnSuccessListener { querySnapshot ->
+                val excursions = mutableListOf<Excursion>()
+                querySnapshot.forEach { document ->
+                    val excursion = document.toObject(ExcursionNetwork::class.java).copy(id = document.id)
+
+                    document.reference.collection("points").orderBy("id").get()
+                        .addOnSuccessListener { pointsSnapshot ->
+                            val points = pointsSnapshot.map { it.toObject(Point::class.java) }
+                            excursions.add(mapper.toDomain(excursion.copy(points = points)))
+                            trySend(excursions)
+                        }
+                        .addOnFailureListener { e ->
+                            println("Error retrieving points: ${e.message}")
+                            trySend(emptyList())
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                println("Error retrieving excursions: ${e.message}")
+                trySend(emptyList())
+            }
+        awaitClose {}
     }
 
     override suspend fun getPopularityExcursions(): List<Excursion> {
+        return emptyList()
         TODO("Not yet implemented")
     }
 

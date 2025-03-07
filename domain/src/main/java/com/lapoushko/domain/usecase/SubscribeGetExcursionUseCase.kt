@@ -2,6 +2,7 @@ package com.lapoushko.domain.usecase
 
 import com.lapoushko.domain.entity.Excursion
 import com.lapoushko.domain.repo.ExcursionRepository
+import kotlinx.coroutines.flow.Flow
 
 /**
  * @author Lapoushko
@@ -9,7 +10,7 @@ import com.lapoushko.domain.repo.ExcursionRepository
 interface SubscribeGetExcursionUseCase {
     suspend fun getSavedExcursions(): List<Excursion>
 
-    suspend fun getInterestingExcursions(): List<Excursion>
+    fun getInterestingExcursions(): Flow<List<Excursion>>
 
     suspend fun getPopularityExcursions(): List<Excursion>
 
@@ -25,7 +26,7 @@ class SubscribeGetExcursionUseCaseImpl(
         return repo.getSavedExcursions()
     }
 
-    override suspend fun getInterestingExcursions(): List<Excursion> {
+    override fun getInterestingExcursions(): Flow<List<Excursion>> {
         return repo.getInterestingExcursions()
     }
 
