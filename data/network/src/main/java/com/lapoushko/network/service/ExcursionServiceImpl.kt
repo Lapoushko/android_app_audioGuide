@@ -11,7 +11,6 @@ import com.lapoushko.network.mapper.ExcursionNetworkMapper
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.tasks.await
 
 /**
  * @author Lapoushko
@@ -52,7 +51,6 @@ class ExcursionServiceImpl(
 
     override suspend fun getPopularityExcursions(): List<Excursion> {
         return emptyList()
-        TODO("Not yet implemented")
     }
 
     override suspend fun getExcursionsByCategory(category: String): List<Excursion> {
