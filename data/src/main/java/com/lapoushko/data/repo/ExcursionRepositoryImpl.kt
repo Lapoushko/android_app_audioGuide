@@ -27,17 +27,15 @@ class ExcursionRepositoryImpl(
     }
 
     override suspend fun getSavedExcursions(): List<Excursion> {
-        return withContext(Dispatchers.IO) {
-            excursionService.getSavedExcursions().take(10)
-        }
+        return excursionService.getSavedExcursions().take(10)
     }
 
     override suspend fun getInterestingExcursions(): List<Excursion> {
-        return excursions.take(10)
+        return excursionService.getSavedExcursions().take(10)
     }
 
     override suspend fun getPopularityExcursions(): List<Excursion> {
-        return excursions.take(10)
+        return excursionService.getSavedExcursions().take(10)
     }
 
     override suspend fun getExcursionsByCategory(category: String): List<Excursion> {

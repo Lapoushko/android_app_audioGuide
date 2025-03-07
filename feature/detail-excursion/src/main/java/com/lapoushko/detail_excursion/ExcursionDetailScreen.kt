@@ -38,8 +38,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ExcursionDetailScreen(
     excursion: ExcursionItem,
-    viewModel: ExcursionScreenViewModel = koinViewModel(),
-    handler: ExcursionScreenHandler
+    viewModel: ExcursionDetailScreenViewModel = koinViewModel(),
+    handler: ExcursionDetailScreenHandler
 ) {
     LaunchedEffect(Unit) {
         viewModel.setCurrentExcursion(excursion)
@@ -128,6 +128,6 @@ fun ExcursionDetailScreenPreview() {
             1,
             points = emptyList()
         ),
-        handler = ExcursionScreenHandler(onBack = {}, onToDetail = {}, onPlayExcursion = {})
+        handler = ExcursionDetailScreenHandler(onBack = {}, onToDetail = {}, onPlayExcursion = {})
     )
 }

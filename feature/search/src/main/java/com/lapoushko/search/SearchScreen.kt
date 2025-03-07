@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,9 +28,11 @@ fun SearchScreen(
     handler: SearchScreenHandler,
     viewModel: SearchScreenViewModel = koinViewModel()
 ) {
-    val popular = viewModel.state.popular
-    val interesting = viewModel.state.interesting
-    val categories = viewModel.state.categories
+    val state = viewModel.state
+
+    val popular = state.popular
+    val interesting = state.interesting
+    val categories = state.categories
 
     LazyColumn(
         contentPadding = PaddingValues(

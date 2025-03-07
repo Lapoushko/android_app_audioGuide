@@ -21,13 +21,13 @@ class SearchScreenViewModel(
     private val mapper: ExcursionMapper
 ) : ViewModel() {
 
-    private var _state = MutableSearchScreenState()
+    private val _state = MutableSearchScreenState()
     val state = _state as SearchScreenState
 
     init {
+        loadCategories()
         loadInterestingExcursions()
         loadPopularityExcursions()
-        loadCategories()
     }
 
     private fun loadInterestingExcursions() {

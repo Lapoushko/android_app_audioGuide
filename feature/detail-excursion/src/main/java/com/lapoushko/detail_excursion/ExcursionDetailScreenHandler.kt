@@ -5,7 +5,7 @@ import com.lapoushko.feature.model.ExcursionItem
 /**
  * @author Lapoushko
  */
-class ExcursionScreenHandler(
+class ExcursionDetailScreenHandler(
     private val onBack: () -> Unit,
     private val onToDetail: (ExcursionItem) -> Unit,
     private val onPlayExcursion: (ExcursionItem) -> Unit

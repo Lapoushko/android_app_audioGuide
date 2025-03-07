@@ -1,7 +1,7 @@
 package com.lapoushko.android_app_audioguide.di
 
-import com.lapoushko.audio.AudioScreenViewModel
-import com.lapoushko.detail_excursion.ExcursionScreenViewModel
+import com.lapoushko.audio.screen.AudioScreenViewModel
+import com.lapoushko.detail_excursion.ExcursionDetailScreenViewModel
 import com.lapoushko.favourite.FavouriteScreenViewModel
 import com.lapoushko.guide.GuideScreenViewModel
 import com.lapoushko.map.MapScreenViewModel
@@ -17,7 +17,7 @@ import org.koin.dsl.module
  */
 val viewModelModule = module {
     single<SearchScreenViewModel> { SearchScreenViewModel(get(), get(), get()) }
-    single<ExcursionScreenViewModel> { ExcursionScreenViewModel() }
+    single<ExcursionDetailScreenViewModel> { ExcursionDetailScreenViewModel() }
     single<CategoryScreenViewModel> { CategoryScreenViewModel(get(), get()) }
     single<FavouriteScreenViewModel> { FavouriteScreenViewModel() }
 
@@ -26,7 +26,7 @@ val viewModelModule = module {
     single<SaveExcursionScreenViewModel> { SaveExcursionScreenViewModel(get(), get()) }
     single<SettingProfileScreenViewModel> { SettingProfileScreenViewModel(get()) }
     //guide
-    single<AudioScreenViewModel> { AudioScreenViewModel() }
+    single<AudioScreenViewModel> { AudioScreenViewModel(get()) }
     single<MapScreenViewModel> { MapScreenViewModel() }
     single<GuideScreenViewModel> { GuideScreenViewModel() }
 }
