@@ -1,6 +1,7 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
 package com.lapoushko.audio.screen
+
 import android.Manifest
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -37,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -58,6 +60,7 @@ import com.lapoushko.ui.theme.Typography
 import com.lapoushko.ui.theme.onPrimaryLight
 import com.lapoushko.ui.theme.primaryLight
 import com.lapoushko.ui.theme.secondaryContainerLight
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -70,10 +73,13 @@ fun AudioScreen(
     excursion: ExcursionItem,
     viewModel: AudioScreenViewModel = koinViewModel()
 ) {
+    val state = viewModel.state
     val pagerState = rememberPagerState { excursion.points.size }
     val scope = rememberCoroutineScope()
 
     val context = LocalContext.current
+
+    val currentPosition = state.currentPosition
 
     LaunchedEffect(Unit) {
         val playlist = excursion.points.map { PlaylistItem(it.text, it.audio) }
@@ -98,7 +104,7 @@ fun AudioScreen(
                 ) {
                     AsyncImage(
                         model = excursion.points.getOrNull(page)?.image
-                            ?: R.drawable.example, //excursion.images.getOrNull(page)
+                            ?: R.drawable.example,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -113,12 +119,20 @@ fun AudioScreen(
             }
 
             AudioPlayerControl(
+                currentPosition = currentPosition,
+                totalDurationInMS = viewModel.state.totalDurationInMS,
                 isPlaying = viewModel.state.isPlaying,
                 onPlayPause = { viewModel.updatePlaylist(ControlButtons.PLAY) },
                 onNext = {
-                    if (viewModel.state.currentIndex != excursion.points.size - 1) viewModel.updatePlaylist(ControlButtons.NEXT)
+                    if (viewModel.state.currentIndex != excursion.points.size - 1) viewModel.updatePlaylist(
+                        ControlButtons.NEXT
+                    )
                     scope.launch {
-                        pagerState.animateScrollToPage((pagerState.currentPage + 1).coerceAtMost(excursion.points.size - 1))
+                        pagerState.animateScrollToPage(
+                            (pagerState.currentPage + 1).coerceAtMost(
+                                excursion.points.size - 1
+                            )
+                        )
                     }
                 },
                 onPrevious = {
@@ -126,7 +140,8 @@ fun AudioScreen(
                     scope.launch {
                         pagerState.animateScrollToPage((pagerState.currentPage - 1).coerceAtLeast(0))
                     }
-                }
+                },
+                onSeekTo = { viewModel.updatePlayerPosition(it) }
             )
         }
     }
@@ -165,18 +180,29 @@ private fun DescriptionText(text: String) {
 
 @Composable
 private fun AudioPlayerControl(
+    currentPosition: Long,
     isPlaying: Boolean,
+    totalDurationInMS: Long,
     onPlayPause: () -> Unit,
+    onSeekTo: (Long) -> Unit,
     onNext: () -> Unit,
     onPrevious: () -> Unit
 ) {
-    var sliderPosition by remember { mutableFloatStateOf(0f) }
+    var sliderPosition by remember { mutableFloatStateOf(currentPosition.toFloat()) }
+
+    LaunchedEffect(currentPosition) {
+        sliderPosition = currentPosition.toFloat()
+    }
+
 
     Column {
         Slider(
             value = sliderPosition,
-            onValueChange = { sliderPosition = it },
-            valueRange = 0f..1f,
+            onValueChange = {
+                sliderPosition = it
+                onSeekTo(sliderPosition.toLong())
+            },
+            valueRange = 0f..totalDurationInMS.toFloat(),
             colors = SliderDefaults.colors(
                 thumbColor = onPrimaryLight,
                 inactiveTrackColor = secondaryContainerLight,
@@ -192,16 +218,26 @@ private fun AudioPlayerControl(
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "00:00", style = Typography.bodyMedium, color = Color.White)
+            Text(text = formatTime(currentPosition), style = Typography.bodyMedium, color = Color.White)
 
-            PlayerButton(imageVector = Icons.Filled.SkipPrevious, onClick = onPrevious)
+            PlayerButton(imageVector = Icons.Filled.SkipPrevious, onClick = {
+                onPrevious()
+                sliderPosition = 0f
+            })
             PlayerButton(
                 imageVector = if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
                 onClick = onPlayPause
             )
-            PlayerButton(imageVector = Icons.Filled.SkipNext, onClick = onNext)
+            PlayerButton(imageVector = Icons.Filled.SkipNext, onClick = {
+                onNext()
+                sliderPosition = 0f
+            })
 
-            Text(text = "02:00", style = Typography.bodyMedium, color = Color.White)
+            Text(
+                text = formatTime(totalDurationInMS),
+                style = Typography.bodyMedium,
+                color = Color.White
+            )
         }
     }
 }
@@ -244,13 +280,20 @@ private fun AudioScreenPreview() {
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun  RequestNotificationPermissions () {
-    var hasNotificationPermission by remember { mutableStateOf( false ) }
+fun RequestNotificationPermissions() {
+    var hasNotificationPermission by remember { mutableStateOf(false) }
     val permissionResult = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { hasNotificationPermission = it }
     )
-    LaunchedEffect(key1 = true ) {
+    LaunchedEffect(key1 = true) {
         permissionResult.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
+}
+
+private fun formatTime(milliseconds: Long): String {
+    val totalSeconds = (milliseconds / 1000).toInt()
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return String.format("%02d:%02d", minutes, seconds)
 }

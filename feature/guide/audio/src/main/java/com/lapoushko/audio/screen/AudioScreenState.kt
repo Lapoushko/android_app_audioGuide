@@ -7,4 +7,5 @@ interface AudioScreenState {
     val isPlaying: Boolean
     val totalDurationInMS: Long
     val currentIndex: Int
+    val currentPosition: Long
 }

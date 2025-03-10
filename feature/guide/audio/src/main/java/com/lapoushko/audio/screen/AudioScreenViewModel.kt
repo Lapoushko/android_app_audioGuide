@@ -27,6 +27,7 @@ import androidx.media3.session.MediaSession
 import androidx.media3.ui.PlayerNotificationManager
 import com.lapoushko.audio.manager.MediaNotificationManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -45,6 +46,15 @@ class AudioScreenViewModel(
     private lateinit var mediaSession: MediaSession
 
     private var isStarted = false
+
+    init {
+        viewModelScope.launch {
+            while (true) {
+                _state.currentPosition = player.currentPosition
+                delay(500)
+            }
+        }
+    }
 
     fun preparePlayer(context: Context, playlist: List<PlaylistItem>) {
         viewModelScope.launch(Dispatchers.Main) {
@@ -101,11 +111,15 @@ class AudioScreenViewModel(
         }
     }
 
+    fun getPlayerPosition(): Long{
+        return player.currentPosition
+    }
+
     fun updatePlayerPosition(position: Long) {
         player.seekTo(position)
     }
 
-    fun onStart(context: Context) {
+    private fun onStart(context: Context) {
         if (isStarted) return
         isStarted = true
         val sessionActivityPendingIntent =
@@ -146,7 +160,7 @@ class AudioScreenViewModel(
     /**
      * Close audio notification
      */
-    fun onClose() {
+    private fun onClose() {
         if (!isStarted) return
 
         isStarted = false
@@ -224,6 +238,7 @@ class AudioScreenViewModel(
         override var isPlaying: Boolean by mutableStateOf(false)
         override var totalDurationInMS: Long by mutableLongStateOf(0L)
         override var currentIndex: Int by mutableIntStateOf(0)
+        override var currentPosition: Long by mutableLongStateOf(0)
     }
 }
 
