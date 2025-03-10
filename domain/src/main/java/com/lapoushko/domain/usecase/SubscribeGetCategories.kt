@@ -1,17 +1,19 @@
 package com.lapoushko.domain.usecase
 
 import com.lapoushko.domain.repo.CategoryRepository
+import kotlinx.coroutines.flow.Flow
 
 /**
  * @author Lapoushko
  */
 interface SubscribeGetCategories {
-    suspend fun getCategories(): List<String>
+    fun getCategories(): Flow<List<String>>
 }
+
 class SubscribeGetCategoriesImpl(
     private val repo: CategoryRepository
-): SubscribeGetCategories{
-    override suspend fun getCategories(): List<String> {
+) : SubscribeGetCategories {
+    override fun getCategories(): Flow<List<String>> {
         return repo.getCategories()
     }
 }

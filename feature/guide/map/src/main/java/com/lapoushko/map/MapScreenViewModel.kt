@@ -5,5 +5,5 @@ import androidx.lifecycle.ViewModel
 /**
  * @author Lapoushko
  */
-class MapScreenViewModel(): ViewModel() {
+class MapScreenViewModel() : ViewModel() {
 }

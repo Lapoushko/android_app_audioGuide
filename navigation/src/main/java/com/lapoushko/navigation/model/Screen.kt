@@ -16,7 +16,7 @@ sealed class Screen {
     data class ExcursionDetail(val excursion: ExcursionItem) : Screen()
 
     @Serializable
-    data class AudioGuide(val excursion: ExcursionItem): Screen()
+    data class AudioGuide(val excursion: ExcursionItem) : Screen()
 
     @Serializable
     data object SavesExcursions : Screen()

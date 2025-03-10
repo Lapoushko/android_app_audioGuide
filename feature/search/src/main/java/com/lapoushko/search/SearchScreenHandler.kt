@@ -13,7 +13,7 @@ class SearchScreenHandler(
         onToCategory.invoke(category)
     }
 
-    fun onToDetail(excursion: ExcursionItem){
+    fun onToDetail(excursion: ExcursionItem) {
         onToDetail.invoke(excursion)
     }
 }

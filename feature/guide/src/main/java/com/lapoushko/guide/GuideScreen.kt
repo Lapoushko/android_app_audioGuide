@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.lapoushko.audio.AudioScreen
+import com.lapoushko.audio.screen.AudioScreen
 import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.map.MapScreen
 import com.lapoushko.ui.CustomOutlinedButton
@@ -52,7 +52,8 @@ fun GuideScreen(
 
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            userScrollEnabled = false
         ) { page ->
             when (page) {
                 0 -> AudioScreen(excursion)
@@ -123,8 +124,6 @@ fun TabsScreenPreview() {
             "1.2км",
             2.5,
             1,
-            images = emptyList(),
-            emptyList()
         ),
         GuideScreenHandler(onBack = {}),
     )

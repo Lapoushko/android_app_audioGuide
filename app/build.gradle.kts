@@ -80,5 +80,11 @@ dependencies {
     implementation(libs.koin.androidx.navigation)
     implementation(libs.koin.androidx.compose)
 
+    //firebase
     implementation(platform(libs.firebase.bom))
+
+    //media3
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.common)
+    implementation(libs.androidx.media3.session)
 }

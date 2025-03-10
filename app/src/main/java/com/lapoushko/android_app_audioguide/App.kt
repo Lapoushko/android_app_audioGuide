@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
 import com.lapoushko.android_app_audioguide.di.mapperModule
+import com.lapoushko.android_app_audioguide.di.mediaModule
 import com.lapoushko.android_app_audioguide.di.repositoryModule
 import com.lapoushko.android_app_audioguide.di.serviceModule
 import com.lapoushko.android_app_audioguide.di.useCaseModule
@@ -27,7 +28,8 @@ class App : Application() {
                 useCaseModule,
                 repositoryModule,
                 mapperModule,
-                serviceModule
+                serviceModule,
+                mediaModule
             )
         }
     }

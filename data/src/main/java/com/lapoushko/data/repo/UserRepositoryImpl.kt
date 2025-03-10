@@ -6,7 +6,7 @@ import com.lapoushko.domain.repo.UserRepository
 /**
  * @author Lapoushko
  */
-class UserRepositoryImpl(): UserRepository {
+class UserRepositoryImpl() : UserRepository {
     override suspend fun getUser(): User {
         return User(
             id = 0L,

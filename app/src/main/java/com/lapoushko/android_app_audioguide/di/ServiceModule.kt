@@ -10,6 +10,6 @@ import org.koin.dsl.module
  * @author Lapoushko
  */
 val serviceModule = module {
-    single<CategoryService>{CategoryServiceImpl()}
+    single<CategoryService> { CategoryServiceImpl() }
     single<ExcursionService> { ExcursionServiceImpl(get()) }
 }

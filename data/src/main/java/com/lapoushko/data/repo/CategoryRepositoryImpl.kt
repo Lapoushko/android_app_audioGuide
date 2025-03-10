@@ -2,6 +2,7 @@ package com.lapoushko.data.repo
 
 import com.lapoushko.domain.repo.CategoryRepository
 import com.lapoushko.domain.service.CategoryService
+import kotlinx.coroutines.flow.Flow
 
 /**
  * @author Lapoushko
@@ -9,7 +10,7 @@ import com.lapoushko.domain.service.CategoryService
 class CategoryRepositoryImpl(
     private val categoryService: CategoryService
 ) : CategoryRepository {
-    override suspend fun getCategories(): List<String> {
+    override fun getCategories(): Flow<List<String>> {
         return categoryService.getCategories()
     }
 }

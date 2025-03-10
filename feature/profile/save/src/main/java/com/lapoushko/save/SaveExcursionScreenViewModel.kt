@@ -24,13 +24,13 @@ class SaveExcursionScreenViewModel(
         loadExcursions()
     }
 
-    private fun loadExcursions(){
-        viewModelScope.launch{
+    private fun loadExcursions() {
+        viewModelScope.launch {
             _state.excursions = getUseCase.getSavedExcursions().map { mapper.toUi(it) }
         }
     }
 
-    private class MutableSaveExcursionScreenState(): SaveExcursionsScreenState{
+    private class MutableSaveExcursionScreenState() : SaveExcursionsScreenState {
         override var excursions: List<ExcursionItem> by mutableStateOf(emptyList())
     }
 }

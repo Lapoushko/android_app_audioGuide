@@ -38,8 +38,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ExcursionDetailScreen(
     excursion: ExcursionItem,
-    viewModel: ExcursionScreenViewModel = koinViewModel(),
-    handler: ExcursionScreenHandler
+    viewModel: ExcursionDetailScreenViewModel = koinViewModel(),
+    handler: ExcursionDetailScreenHandler
 ) {
     LaunchedEffect(Unit) {
         viewModel.setCurrentExcursion(excursion)
@@ -51,7 +51,7 @@ fun ExcursionDetailScreen(
             .verticalScroll(rememberScrollState())
     ) {
         CustomTopAppBar(
-            image = excursion.images.firstOrNull(),
+            image = excursion.points.firstOrNull()?.image,
             onClickBack = { handler.onBack() },
             text = excursion.name
         )
@@ -126,9 +126,8 @@ fun ExcursionDetailScreenPreview() {
             "1.2км",
             2.5,
             1,
-            images = emptyList(),
             points = emptyList()
         ),
-        handler = ExcursionScreenHandler(onBack = {}, onToDetail = {}, onPlayExcursion = {})
+        handler = ExcursionDetailScreenHandler(onBack = {}, onToDetail = {}, onPlayExcursion = {})
     )
 }

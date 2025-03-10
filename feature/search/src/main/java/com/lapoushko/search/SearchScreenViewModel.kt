@@ -10,6 +10,8 @@ import com.lapoushko.domain.usecase.SubscribeGetExcursionUseCase
 import com.lapoushko.feature.mapper.ExcursionMapper
 import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.CarouselItem
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 /**
@@ -21,34 +23,34 @@ class SearchScreenViewModel(
     private val mapper: ExcursionMapper
 ) : ViewModel() {
 
-    private var _state = MutableSearchScreenState()
+    private val _state = MutableSearchScreenState()
     val state = _state as SearchScreenState
 
     init {
+        loadCategories()
         loadInterestingExcursions()
         loadPopularityExcursions()
-        loadCategories()
     }
 
     private fun loadInterestingExcursions() {
-        viewModelScope.launch {
-            _state.interesting =
-                getExcursionsUseCase.getPopularityExcursions().map { mapper.toUi(it) }
-        }
+        getExcursionsUseCase.getInterestingExcursions().onEach { excursions ->
+            _state.interesting = excursions.map { mapper.toUi(it) }
+        }.launchIn(viewModelScope)
     }
 
     private fun loadPopularityExcursions() {
         viewModelScope.launch {
-            _state.popular = getExcursionsUseCase.getInterestingExcursions().map { mapper.toUi(it) }
+            _state.popular = getExcursionsUseCase.getPopularityExcursions().map { mapper.toUi(it) }
         }
     }
 
     private fun loadCategories() {
-        viewModelScope.launch {
-            _state.categories = getCategoriesUseCase.getCategories().map {
-                CarouselItem.Category(it)
-            }
-        }
+        getCategoriesUseCase.getCategories()
+            .onEach { categories ->
+                _state.categories = categories.map {
+                    CarouselItem.Category(it)
+                }
+            }.launchIn(viewModelScope)
     }
 
     private class MutableSearchScreenState() : SearchScreenState {

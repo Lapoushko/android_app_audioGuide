@@ -1,8 +1,10 @@
 package com.lapoushko.domain.repo
 
+import kotlinx.coroutines.flow.Flow
+
 /**
  * @author Lapoushko
  */
 interface CategoryRepository {
-    suspend fun getCategories(): List<String>
+    fun getCategories(): Flow<List<String>>
 }

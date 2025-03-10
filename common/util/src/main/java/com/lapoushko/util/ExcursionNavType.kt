@@ -40,7 +40,7 @@ val ExcursionNavType =
 
         override fun serializeAsValue(value: ExcursionItem): String {
             val json = Json.encodeToString(value)
-            return URLEncoder.encode(json, "UTF-8")
+            return URLEncoder.encode(json, "UTF-8").replace("%", "%25")
         }
 
         override val name: String = ExcursionItem::class.java.name

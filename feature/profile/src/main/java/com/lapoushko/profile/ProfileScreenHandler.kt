@@ -7,12 +7,12 @@ class ProfileScreenHandler(
     private val onSettings: () -> Unit,
     private val onSaves: () -> Unit,
 
-) {
-    fun onSettings(){
+    ) {
+    fun onSettings() {
         onSettings.invoke()
     }
 
-    fun onSaves(){
+    fun onSaves() {
         onSaves.invoke()
     }
 }

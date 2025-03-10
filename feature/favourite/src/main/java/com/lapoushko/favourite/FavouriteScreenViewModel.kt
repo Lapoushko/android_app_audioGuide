@@ -5,5 +5,5 @@ import androidx.lifecycle.ViewModel
 /**
  * @author Lapoushko
  */
-class FavouriteScreenViewModel(): ViewModel() {
+class FavouriteScreenViewModel() : ViewModel() {
 }

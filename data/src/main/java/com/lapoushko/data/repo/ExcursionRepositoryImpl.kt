@@ -3,8 +3,7 @@ package com.lapoushko.data.repo
 import com.lapoushko.domain.entity.Excursion
 import com.lapoushko.domain.repo.ExcursionRepository
 import com.lapoushko.domain.service.ExcursionService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
 
 /**
  * @author Lapoushko
@@ -22,19 +21,16 @@ class ExcursionRepositoryImpl(
             distance = index * 50L,
             rating = index.toDouble(),
             countRating = index.toLong(),
-            images = emptyList(),
-            points = emptyList()
+            points = emptyList(),
         )
     }
 
     override suspend fun getSavedExcursions(): List<Excursion> {
-        return withContext(Dispatchers.IO){
-            excursionService.getSavedExcursions().take(10)
-        }
+        return excursions.take(10)
     }
 
-    override suspend fun getInterestingExcursions(): List<Excursion> {
-        return excursions.take(10)
+    override fun getInterestingExcursions(): Flow<List<Excursion>> {
+        return excursionService.getInterestingExcursions()
     }
 
     override suspend fun getPopularityExcursions(): List<Excursion> {

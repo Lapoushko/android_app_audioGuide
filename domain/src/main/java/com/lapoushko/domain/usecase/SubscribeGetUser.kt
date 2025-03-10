@@ -12,7 +12,7 @@ interface SubscribeGetUser {
 
 class SubscribeGetUserImpl(
     private val repo: UserRepository
-): SubscribeGetUser{
+) : SubscribeGetUser {
     override suspend fun getUser(): User {
         return repo.getUser()
     }

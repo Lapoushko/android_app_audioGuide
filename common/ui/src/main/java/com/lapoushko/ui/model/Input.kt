@@ -15,9 +15,9 @@ fun String.checkErrorInput(
     corrects: Map<Error, Boolean>
 ): Input {
     corrects.forEach { correct ->
-        if (correct.value){
+        if (correct.value) {
             removing(correct.key)
-        } else{
+        } else {
             adding(correct.key)
             return Input(text = this, error = correct.key)
         }
@@ -35,13 +35,32 @@ class Error(
 
 sealed class ProfileErrors(override val naming: List<Error>) : CustomErrors {
     data object NameError : ProfileErrors(
-        listOf("Неправильое имя","Такое имя уже существует").mapIndexed { index, s -> Error(Pair(index, s)) }
+        listOf("Неправильое имя", "Такое имя уже существует").mapIndexed { index, s ->
+            Error(
+                Pair(
+                    index,
+                    s
+                )
+            )
+        }
     )
 
     data object EmailError : ProfileErrors(
-        listOf("Неправильая почта","Такая почта уже существует").mapIndexed { index, s -> Error(Pair(index, s)) }
+        listOf("Неправильая почта", "Такая почта уже существует").mapIndexed { index, s ->
+            Error(
+                Pair(index, s)
+            )
+        }
     )
-    data object PasswordError: ProfileErrors(
-        listOf("Неправильный пароль","Пароль не повторяется").mapIndexed { index, s -> Error(Pair(index, s)) }
+
+    data object PasswordError : ProfileErrors(
+        listOf("Неправильный пароль", "Пароль не повторяется").mapIndexed { index, s ->
+            Error(
+                Pair(
+                    index,
+                    s
+                )
+            )
+        }
     )
 }

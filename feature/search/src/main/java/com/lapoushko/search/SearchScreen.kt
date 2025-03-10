@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,9 +28,11 @@ fun SearchScreen(
     handler: SearchScreenHandler,
     viewModel: SearchScreenViewModel = koinViewModel()
 ) {
-    val popular = viewModel.state.popular
-    val interesting = viewModel.state.interesting
-    val categories = viewModel.state.categories
+    val state = viewModel.state
+
+    val popular = state.popular
+    val interesting = state.interesting
+    val categories = state.categories
 
     LazyColumn(
         contentPadding = PaddingValues(
@@ -58,13 +61,12 @@ fun SearchScreen(
                         CarouselItem.TitleDescription(
                             title = it.name,
                             description = it.description,
-                            image = it.images.firstOrNull()
+                            image = it.points.firstOrNull()?.image
                         )
                     }
                 )
             }
         }
-
         item {
             Column {
                 TextTitle("Интересное")
@@ -78,11 +80,11 @@ fun SearchScreen(
                 }
             }
         }
-        item {
+        items(categories) { category ->
             Column {
                 TextTitle("Категории")
                 CustomCarousel(
-                    onClick = { handler.onToCategory(categories[it].category) },
+                    onClick = { handler.onToCategory(category.category) },
                     width = 348.dp,
                     height = 214.dp,
                     items = categories

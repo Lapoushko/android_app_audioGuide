@@ -6,9 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.lapoushko.feature.model.ExcursionItem
 
-class ExcursionScreenViewModel : ViewModel() {
-    private var _state = MutableExcursionScreenState()
-    val state = _state as ExcursionScreenState
+class ExcursionDetailScreenViewModel : ViewModel() {
+    private var _state = MutableExcursionDetailScreenState()
+    val state = _state as ExcursionDetailScreenState
 
     init {
         loadInterestingExcursions()
@@ -29,13 +29,12 @@ class ExcursionScreenViewModel : ViewModel() {
                 distance = "Расстояние $index",
                 rating = index.toDouble(),
                 countRating = index.toLong(),
-                images = emptyList(),
                 points = emptyList()
             )
         }
     }
 
-    private class MutableExcursionScreenState() : ExcursionScreenState {
+    private class MutableExcursionDetailScreenState() : ExcursionDetailScreenState {
         override var curExcursion: ExcursionItem by mutableStateOf(ExcursionItem())
         override var interestingExcursion: List<ExcursionItem> by mutableStateOf(emptyList())
 

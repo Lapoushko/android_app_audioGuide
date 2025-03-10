@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.lapoushko.detail_excursion.ExcursionDetailScreen
-import com.lapoushko.detail_excursion.ExcursionScreenHandler
+import com.lapoushko.detail_excursion.ExcursionDetailScreenHandler
 import com.lapoushko.favourite.FavouriteScreen
 import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.guide.GuideScreen
@@ -85,7 +85,7 @@ fun BottomNavigationGraph(navController: NavHostController) {
             val excursion = backStackEntry.toRoute<Screen.ExcursionDetail>()
             ExcursionDetailScreen(
                 excursion = excursion.excursion,
-                handler = ExcursionScreenHandler(
+                handler = ExcursionDetailScreenHandler(
                     onToDetail = { navController.navigate(Screen.ExcursionDetail(it)) },
                     onBack = onBack,
                     onPlayExcursion = { navController.navigate(Screen.AudioGuide(excursion = excursion.excursion)) }

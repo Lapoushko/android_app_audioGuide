@@ -28,7 +28,7 @@ class SettingProfileScreenViewModel(
         loadUser()
     }
 
-    private fun loadUser(){
+    private fun loadUser() {
         viewModelScope.launch {
             val user = getUserUseCase.getUser()
             updateName(user.name)
@@ -65,12 +65,12 @@ class SettingProfileScreenViewModel(
     fun updateFirstPassword(input: String) {
         val errorsByChecks = hashMapOf(
             ProfileErrors.PasswordError.naming[0] to (
-                input.length in 8..31 &&
-                input != input.uppercase() &&
-                input != input.lowercase() &&
-                !input.all { it.isDigit() } &&
-                !input.any { "!@#$%^&*()_+-=[]{}|;':\",.<>?/`~".contains(it) }
-            )
+                    input.length in 8..31 &&
+                            input != input.uppercase() &&
+                            input != input.lowercase() &&
+                            !input.all { it.isDigit() } &&
+                            !input.any { "!@#$%^&*()_+-=[]{}|;':\",.<>?/`~".contains(it) }
+                    )
         )
         _state.firstPassword = input.checkErrorInput(
             adding = { errors.add(it) },
@@ -98,12 +98,12 @@ class SettingProfileScreenViewModel(
         )
     }
 
-    fun saveSettings(onBack: () -> Unit){
+    fun saveSettings(onBack: () -> Unit) {
         updateName(state.name.text)
         updateEmail(state.email.text)
         updateFirstPassword(state.firstPassword.text)
         updateSecondPassword(state.secondPassword.text)
-        if (errors.isEmpty()){
+        if (errors.isEmpty()) {
             onBack()
         }
     }

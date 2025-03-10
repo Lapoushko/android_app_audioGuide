@@ -5,7 +5,7 @@ import com.lapoushko.feature.model.ExcursionItem
 /**
  * @author Lapoushko
  */
-interface ExcursionScreenState {
+interface ExcursionDetailScreenState {
     val curExcursion: ExcursionItem
     val interestingExcursion: List<ExcursionItem>
 }

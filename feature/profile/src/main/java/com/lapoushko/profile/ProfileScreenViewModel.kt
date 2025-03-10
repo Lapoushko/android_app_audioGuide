@@ -5,5 +5,5 @@ import androidx.lifecycle.ViewModel
 /**
  * @author Lapoushko
  */
-class ProfileScreenViewModel(): ViewModel() {
+class ProfileScreenViewModel() : ViewModel() {
 }

@@ -66,8 +66,9 @@ fun CustomInputField(
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         trailingIcon = {
             isVisiblePass?.let {
-                IconButton(onClick = { isVisiblePass = !isVisiblePass!!}) {
-                    val image = if (isVisiblePass!!) Icons.Filled.VisibilityOff else Icons.Filled.Visibility
+                IconButton(onClick = { isVisiblePass = !isVisiblePass!! }) {
+                    val image =
+                        if (isVisiblePass!!) Icons.Filled.VisibilityOff else Icons.Filled.Visibility
                     Icon(
                         imageVector = image, contentDescription = null
                     )

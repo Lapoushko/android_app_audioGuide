@@ -130,8 +130,14 @@ sealed class CarouselItem() {
         val image: String?
     }
 
-    data class TitleDescription(val title: String, val description: String, override val image: String? = null) : CarouselItem(), WithImage
-    data class Category(val category: String, override val image: String? = null) : CarouselItem(), WithImage
+    data class TitleDescription(
+        val title: String,
+        val description: String,
+        override val image: String? = null
+    ) : CarouselItem(), WithImage
+
+    data class Category(val category: String, override val image: String? = null) : CarouselItem(),
+        WithImage
 }
 
 @Preview
