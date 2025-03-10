@@ -2,12 +2,11 @@ package com.lapoushko.search
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -34,13 +33,13 @@ fun SearchScreen(
     val interesting = state.interesting
     val categories = state.categories
 
+    val isCategoriesLoaded = categories.isNotEmpty()
+
     LazyColumn(
-        contentPadding = PaddingValues(
-            start = 16.dp,
-            end = 16.dp,
-        ),
         verticalArrangement = Arrangement.spacedBy(20.dp),
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
     ) {
         item {
             CustomSearchBar(
@@ -50,49 +49,51 @@ fun SearchScreen(
             )
         }
 
+        // Популярное
         item {
-            Column {
-                TextTitle("Популярное")
-                CustomCarousel(
-                    onClick = { handler.onToDetail(popular[it]) },
-                    width = 162.dp,
-                    height = 238.dp,
-                    items = popular.map {
-                        CarouselItem.TitleDescription(
-                            title = it.name,
-                            description = it.description,
-                            image = it.points.firstOrNull()?.image
-                        )
-                    }
-                )
-            }
+            TextTitle("Популярное")
+            CustomCarousel(
+                onClick = { handler.onToDetail(popular[it]) },
+                width = 162.dp,
+                height = 238.dp,
+                items = popular.map {
+                    CarouselItem.TitleDescription(
+                        title = it.name,
+                        description = it.description,
+                        image = it.points.firstOrNull()?.image
+                    )
+                }
+            )
         }
+
         item {
-            Column {
-                TextTitle("Интересное")
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    interesting.forEach { excursion ->
-                        ExcursionCard(
-                            onClick = { handler.onToDetail(excursion) },
-                            excursion = excursion
-                        )
-                    }
+            TextTitle("Интересное")
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                interesting.forEach { excursion ->
+                    ExcursionCard(
+                        onClick = { handler.onToDetail(excursion) },
+                        excursion = excursion
+                    )
                 }
             }
         }
-        items(categories) { category ->
-            Column {
-                TextTitle("Категории")
+
+        item {
+            TextTitle("Категории")
+            if (isCategoriesLoaded) {
                 CustomCarousel(
-                    onClick = { handler.onToCategory(category.category) },
+                    onClick = { handler.onToCategory(categories[it].category) },
                     width = 348.dp,
                     height = 214.dp,
                     items = categories
                 )
+            } else {
+                CircularProgressIndicator()
             }
         }
     }
 }
+
 
 @Composable
 private fun TextTitle(text: String) {

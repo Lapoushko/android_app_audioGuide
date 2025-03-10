@@ -27,6 +27,7 @@ import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.CarouselItem
 import com.lapoushko.ui.CustomCarousel
 import com.lapoushko.ui.CustomTopAppBar
+import com.lapoushko.ui.NavigationIcon
 import com.lapoushko.ui.theme.Typography
 import com.lapoushko.ui.theme.onSecondaryContainerLight
 import com.lapoushko.ui.theme.primaryLight
@@ -53,7 +54,9 @@ fun ExcursionDetailScreen(
         CustomTopAppBar(
             image = excursion.points.firstOrNull()?.image,
             onClickBack = { handler.onBack() },
-            text = excursion.name
+            text = excursion.name,
+            saveState = NavigationIcon({},{},false),
+            favouriteState = NavigationIcon({},{},false)
         )
         Box(
             modifier = Modifier
