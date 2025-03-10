@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lapoushko.domain.usecase.SubscribeGetCategories
-import com.lapoushko.domain.usecase.SubscribeGetExcursionUseCase
+import com.lapoushko.domain.repo.CategoryRepository
+import com.lapoushko.domain.repo.ExcursionRepository
 import com.lapoushko.feature.mapper.ExcursionMapper
 import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.CarouselItem
@@ -18,8 +18,8 @@ import kotlinx.coroutines.launch
  * @author Lapoushko
  */
 class SearchScreenViewModel(
-    private val getExcursionsUseCase: SubscribeGetExcursionUseCase,
-    private val getCategoriesUseCase: SubscribeGetCategories,
+    private val excursionRepository: ExcursionRepository,
+    private val categoryRepository: CategoryRepository,
     private val mapper: ExcursionMapper
 ) : ViewModel() {
 
@@ -33,19 +33,19 @@ class SearchScreenViewModel(
     }
 
     private fun loadInterestingExcursions() {
-        getExcursionsUseCase.getInterestingExcursions().onEach { excursions ->
+        excursionRepository.getInterestingExcursions().onEach { excursions ->
             _state.interesting = excursions.map { mapper.toUi(it) }
         }.launchIn(viewModelScope)
     }
 
     private fun loadPopularityExcursions() {
         viewModelScope.launch {
-            _state.popular = getExcursionsUseCase.getPopularityExcursions().map { mapper.toUi(it) }
+            _state.popular = excursionRepository.getPopularityExcursions().map { mapper.toUi(it) }
         }
     }
 
     private fun loadCategories() {
-        getCategoriesUseCase.getCategories()
+        categoryRepository.getCategories()
             .onEach { categories ->
                 _state.categories = categories.map {
                     CarouselItem.Category(it)

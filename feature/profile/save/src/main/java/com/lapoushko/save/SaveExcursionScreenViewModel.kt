@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lapoushko.domain.usecase.SubscribeGetExcursionUseCase
+import com.lapoushko.domain.repo.ExcursionRepository
 import com.lapoushko.feature.mapper.ExcursionMapper
 import com.lapoushko.feature.model.ExcursionItem
 import kotlinx.coroutines.launch
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
  * @author Lapoushko
  */
 class SaveExcursionScreenViewModel(
-    private val getUseCase: SubscribeGetExcursionUseCase,
+    private val repository: ExcursionRepository,
     private val mapper: ExcursionMapper
 ) : ViewModel() {
     private var _state = MutableSaveExcursionScreenState()
@@ -26,7 +26,7 @@ class SaveExcursionScreenViewModel(
 
     private fun loadExcursions() {
         viewModelScope.launch {
-            _state.excursions = getUseCase.getSavedExcursions().map { mapper.toUi(it) }
+            _state.excursions = repository.getSavedExcursions().map { mapper.toUi(it) }
         }
     }
 
