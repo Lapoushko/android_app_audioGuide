@@ -7,7 +7,11 @@ import kotlinx.coroutines.flow.Flow
  * @author Lapoushko
  */
 interface ExcursionRepository {
-    suspend fun getSavedExcursions(): List<Excursion>
+    suspend fun deleteExcursion(excursion: Excursion)
+
+    suspend fun saveExcursion(excursion: Excursion)
+
+    fun getSavedExcursions(): Flow<List<Excursion>>
 
     fun getInterestingExcursions(): Flow<List<Excursion>>
 

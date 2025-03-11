@@ -19,10 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,8 +42,6 @@ fun CustomTopAppBar(
     text: String,
     modifier: Modifier = Modifier
 ) {
-    var isSaved by remember { mutableStateOf(saveState?.isActive ?: false) }
-    var isFavored by remember { mutableStateOf(favouriteState?.isActive ?: false) }
     Box {
         AsyncImage(
             modifier = modifier
@@ -92,32 +86,30 @@ fun CustomTopAppBar(
             Row {
                 saveState?.let {
                     IconButton(onClick = {
-                        if (isSaved) {
+                        if (saveState.isActive) {
                             saveState.onDeactivate()
                         } else {
                             saveState.onActivate()
                         }
-                        isSaved = !isSaved
                     }) {
                         Icon(
                             modifier = Modifier.size(24.dp),
-                            imageVector = if (isSaved) Icons.Outlined.FileDownloadOff else Icons.Outlined.FileDownload,
+                            imageVector = if (saveState.isActive) Icons.Outlined.FileDownloadOff else Icons.Outlined.FileDownload,
                             contentDescription = "Сохранить",
                         )
                     }
                 }
                 favouriteState?.let {
                     IconButton(onClick = {
-                        if (isFavored) {
+                        if (favouriteState.isActive) {
                             favouriteState.onDeactivate()
                         } else {
                             favouriteState.onActivate()
                         }
-                        isFavored = !isFavored
                     }) {
                         Icon(
                             modifier = Modifier.size(24.dp),
-                            imageVector = if (isFavored) Icons.Outlined.BookmarkRemove else Icons.Outlined.BookmarkAdd,
+                            imageVector = if (favouriteState.isActive) Icons.Outlined.BookmarkRemove else Icons.Outlined.BookmarkAdd,
                             contentDescription = "Избранное",
                         )
                     }
@@ -126,6 +118,7 @@ fun CustomTopAppBar(
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

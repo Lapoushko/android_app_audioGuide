@@ -4,9 +4,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.lapoushko.domain.repo.ExcursionRepository
+import com.lapoushko.feature.mapper.ExcursionMapper
 import com.lapoushko.feature.model.ExcursionItem
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
-class ExcursionDetailScreenViewModel : ViewModel() {
+class ExcursionDetailScreenViewModel(
+    private val repository: ExcursionRepository,
+    private val mapper: ExcursionMapper
+) : ViewModel() {
     private var _state = MutableExcursionDetailScreenState()
     val state = _state as ExcursionDetailScreenState
 
@@ -14,29 +24,47 @@ class ExcursionDetailScreenViewModel : ViewModel() {
         loadInterestingExcursions()
     }
 
-    fun setCurrentExcursion(excursion: ExcursionItem) {
-        _state.curExcursion = excursion
+    private fun loadInterestingExcursions() {
+        _state.interestingExcursion = List(5) { ExcursionItem() }
     }
 
-    private fun loadInterestingExcursions() {
-        _state.interestingExcursion = List(5) { index ->
-            ExcursionItem(
-                id = "",
-                name = "Название $index",
-                description = "Описание $index",
-                category = listOf("Категория"),
-                price = "Цена $index",
-                distance = "Расстояние $index",
-                rating = index.toDouble(),
-                countRating = index.toLong(),
-                points = emptyList()
-            )
+    fun setCurrentExcursion(excursion: ExcursionItem) {
+        _state.curExcursion = excursion
+        checkIsSaved()
+    }
+
+    private fun checkIsSaved(){
+        viewModelScope.launch {
+            repository.getSavedExcursions().collect{ excursions ->
+                _state.isSaved = excursions.any { it.id == state.curExcursion.id }
+            }
+        }
+//        repository.getSavedExcursions()
+//            .map { excursions ->
+//                excursions.any { it.id == _state.curExcursion.id }
+//            }
+//            .onEach { isSaved ->
+//                _state.isSaved = isSaved
+//            }
+//            .launchIn(viewModelScope)
+    }
+
+    fun saveExcursion(excursion: ExcursionItem){
+        viewModelScope.launch {
+            repository.saveExcursion(mapper.toDomain(excursion))
         }
     }
 
-    private class MutableExcursionDetailScreenState() : ExcursionDetailScreenState {
+    fun deleteExcursion(excursion: ExcursionItem){
+        viewModelScope.launch {
+            repository.deleteExcursion(mapper.toDomain(excursion))
+        }
+    }
+
+    private class MutableExcursionDetailScreenState : ExcursionDetailScreenState {
         override var curExcursion: ExcursionItem by mutableStateOf(ExcursionItem())
         override var interestingExcursion: List<ExcursionItem> by mutableStateOf(emptyList())
-
+        override var isSaved: Boolean by mutableStateOf(false)
+        override var isFavourite: Boolean by mutableStateOf(false)
     }
 }

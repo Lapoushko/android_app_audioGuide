@@ -47,7 +47,7 @@ class ExcursionMapperImpl : ExcursionMapper {
                 description = description,
                 categories = category,
                 price = if (price == "Бесплатно") 0.0 else price.split(" ")[0].toDouble(),
-                distance = price.split(" ")[0].toLong(),
+                distance = distance.split(" ")[0].toLong(),
                 rating = rating,
                 countRating = countRating,
                 points = points.map {

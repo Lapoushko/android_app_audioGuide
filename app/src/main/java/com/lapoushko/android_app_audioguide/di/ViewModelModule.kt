@@ -17,7 +17,7 @@ import org.koin.dsl.module
  */
 val viewModelModule = module {
     single<SearchScreenViewModel> { SearchScreenViewModel(get(), get(), get()) }
-    single<ExcursionDetailScreenViewModel> { ExcursionDetailScreenViewModel() }
+    single<ExcursionDetailScreenViewModel> { ExcursionDetailScreenViewModel(get(), get()) }
     single<CategoryScreenViewModel> { CategoryScreenViewModel(get(), get()) }
     single<FavouriteScreenViewModel> { FavouriteScreenViewModel() }
 

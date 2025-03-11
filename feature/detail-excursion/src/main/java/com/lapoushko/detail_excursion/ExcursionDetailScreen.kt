@@ -17,7 +17,12 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,11 +47,22 @@ fun ExcursionDetailScreen(
     viewModel: ExcursionDetailScreenViewModel = koinViewModel(),
     handler: ExcursionDetailScreenHandler
 ) {
-    LaunchedEffect(Unit) {
+    var forceUpdate by remember { mutableStateOf(false) }
+
+    LaunchedEffect(excursion.id, forceUpdate) {
         viewModel.setCurrentExcursion(excursion)
+        println("Экран загружен")
     }
 
-    val excursions = viewModel.state.interestingExcursion
+    DisposableEffect(Unit) {
+        onDispose {
+            forceUpdate = !forceUpdate
+            println("Экран уничтожен")
+        }
+    }
+
+    val state = viewModel.state
+    val excursions = state.interestingExcursion
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
@@ -55,8 +71,14 @@ fun ExcursionDetailScreen(
             image = excursion.points.firstOrNull()?.image,
             onClickBack = { handler.onBack() },
             text = excursion.name,
-            saveState = NavigationIcon({},{},false),
-            favouriteState = NavigationIcon({},{},false)
+            saveState = NavigationIcon(
+                onActivate = { viewModel.saveExcursion(excursion) },
+                onDeactivate = {
+                    viewModel.deleteExcursion(excursion)
+                },
+                isActive = state.isSaved
+            ),
+            favouriteState = NavigationIcon({}, {}, false)
         )
         Box(
             modifier = Modifier

@@ -8,7 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.lapoushko.domain.repo.ExcursionRepository
 import com.lapoushko.feature.mapper.ExcursionMapper
 import com.lapoushko.feature.model.ExcursionItem
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 /**
  * @author Lapoushko
@@ -20,17 +21,13 @@ class SaveExcursionScreenViewModel(
     private var _state = MutableSaveExcursionScreenState()
     val state = _state as SaveExcursionsScreenState
 
-    init {
-        loadExcursions()
+    fun loadExcursions() {
+        repository.getSavedExcursions().onEach { excursions ->
+            _state.excursions = excursions.map { mapper.toUi(it) }
+        }.launchIn(viewModelScope)
     }
 
-    private fun loadExcursions() {
-        viewModelScope.launch {
-            _state.excursions = repository.getSavedExcursions().map { mapper.toUi(it) }
-        }
-    }
-
-    private class MutableSaveExcursionScreenState() : SaveExcursionsScreenState {
+    private class MutableSaveExcursionScreenState : SaveExcursionsScreenState {
         override var excursions: List<ExcursionItem> by mutableStateOf(emptyList())
     }
 }

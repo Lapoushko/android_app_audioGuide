@@ -14,6 +14,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +42,10 @@ fun SaveExcursionScreen(
 ) {
     val state = viewModel.state
     val excursions = state.excursions
+
+    LaunchedEffect(Unit) {
+        viewModel.loadExcursions()
+    }
 
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),

@@ -3,6 +3,8 @@ package com.lapoushko.android_app_audioguide
 import android.app.Application
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
+import com.lapoushko.android_app_audioguide.di.daoModule
+import com.lapoushko.android_app_audioguide.di.dataSourceModule
 import com.lapoushko.android_app_audioguide.di.mapperModule
 import com.lapoushko.android_app_audioguide.di.mediaModule
 import com.lapoushko.android_app_audioguide.di.repositoryModule
@@ -27,7 +29,9 @@ class App : Application() {
                 repositoryModule,
                 mapperModule,
                 serviceModule,
-                mediaModule
+                mediaModule,
+                dataSourceModule,
+                daoModule
             )
         }
     }

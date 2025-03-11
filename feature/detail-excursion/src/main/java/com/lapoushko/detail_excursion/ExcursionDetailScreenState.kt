@@ -8,4 +8,6 @@ import com.lapoushko.feature.model.ExcursionItem
 interface ExcursionDetailScreenState {
     val curExcursion: ExcursionItem
     val interestingExcursion: List<ExcursionItem>
+    val isSaved: Boolean
+    val isFavourite: Boolean
 }
