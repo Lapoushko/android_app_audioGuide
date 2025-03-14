@@ -28,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
@@ -45,12 +44,12 @@ fun ExcursionCard(
     modifier: Modifier = Modifier
 ) {
 
-    var name =  excursion.name
+    val name = excursion.name
     val category = excursion.categories.joinToString(separator = ", ") { it }
     val price = excursion.price
     val distance = excursion.distance
 
-    var info = "$category • $price • $distance"
+    val info = "$category • $price • $distance"
 
     val description = excursion.description
     val rating = excursion.rating
