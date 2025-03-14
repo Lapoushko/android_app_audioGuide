@@ -26,6 +26,7 @@ import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.session.MediaSession
 import androidx.media3.ui.PlayerNotificationManager
 import com.lapoushko.audio.manager.MediaNotificationManager
+import com.lapoushko.feature.model.ExcursionItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -54,6 +55,10 @@ class AudioScreenViewModel(
                 delay(500)
             }
         }
+    }
+
+    fun setExcursion(excursion: ExcursionItem){
+        _state.excursion = excursion
     }
 
     fun preparePlayer(context: Context, playlist: List<PlaylistItem>) {
@@ -111,9 +116,6 @@ class AudioScreenViewModel(
         }
     }
 
-    fun getPlayerPosition(): Long{
-        return player.currentPosition
-    }
 
     fun updatePlayerPosition(position: Long) {
         player.seekTo(position)
@@ -235,6 +237,7 @@ class AudioScreenViewModel(
     }
 
     private class MutableAudioScreenState() : AudioScreenState {
+        override var excursion: ExcursionItem by mutableStateOf(ExcursionItem())
         override var isPlaying: Boolean by mutableStateOf(false)
         override var totalDurationInMS: Long by mutableLongStateOf(0L)
         override var currentIndex: Int by mutableIntStateOf(0)

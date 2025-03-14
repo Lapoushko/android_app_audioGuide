@@ -38,7 +38,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -60,7 +59,6 @@ import com.lapoushko.ui.theme.Typography
 import com.lapoushko.ui.theme.onPrimaryLight
 import com.lapoushko.ui.theme.primaryLight
 import com.lapoushko.ui.theme.secondaryContainerLight
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -71,7 +69,9 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AudioScreen(
     excursion: ExcursionItem,
-    viewModel: AudioScreenViewModel = koinViewModel()
+    viewModel: AudioScreenViewModel = koinViewModel(),
+    onNext: (Int) -> Unit,
+    onBack: (Int) -> Unit
 ) {
     val state = viewModel.state
     val pagerState = rememberPagerState { excursion.points.size }
@@ -82,8 +82,11 @@ fun AudioScreen(
     val currentPosition = state.currentPosition
 
     LaunchedEffect(Unit) {
-        val playlist = excursion.points.map { PlaylistItem(it.text, it.audio) }
-        viewModel.preparePlayer(context = context, playlist)
+        if (state.excursion != excursion){
+            viewModel.setExcursion(excursion)
+            val playlist = excursion.points.map { PlaylistItem(it.text, it.audio) }
+            viewModel.preparePlayer(context = context, playlist)
+        }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -98,6 +101,7 @@ fun AudioScreen(
         ) {
             HorizontalPager(
                 state = pagerState,
+                userScrollEnabled = false
             ) { page ->
                 Column(
                     verticalArrangement = Arrangement.Center
@@ -120,13 +124,14 @@ fun AudioScreen(
 
             AudioPlayerControl(
                 currentPosition = currentPosition,
-                totalDurationInMS = viewModel.state.totalDurationInMS,
-                isPlaying = viewModel.state.isPlaying,
+                totalDurationInMS = state.totalDurationInMS,
+                isPlaying = state.isPlaying,
                 onPlayPause = { viewModel.updatePlaylist(ControlButtons.PLAY) },
                 onNext = {
-                    if (viewModel.state.currentIndex != excursion.points.size - 1) viewModel.updatePlaylist(
-                        ControlButtons.NEXT
-                    )
+                    if (state.currentIndex != excursion.points.size - 1){
+                        viewModel.updatePlaylist(ControlButtons.NEXT)
+                        onNext(state.currentIndex)
+                    }
                     scope.launch {
                         pagerState.animateScrollToPage(
                             (pagerState.currentPage + 1).coerceAtMost(
@@ -136,7 +141,10 @@ fun AudioScreen(
                     }
                 },
                 onPrevious = {
-                    if (viewModel.state.currentIndex != 0) viewModel.updatePlaylist(ControlButtons.PREVIOUS)
+                    if (state.currentIndex != 0) {
+                        viewModel.updatePlaylist(ControlButtons.PREVIOUS)
+                        onBack(state.currentIndex)
+                    }
                     scope.launch {
                         pagerState.animateScrollToPage((pagerState.currentPage - 1).coerceAtLeast(0))
                     }
@@ -218,7 +226,11 @@ private fun AudioPlayerControl(
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = formatTime(currentPosition), style = Typography.bodyMedium, color = Color.White)
+            Text(
+                text = formatTime(currentPosition),
+                style = Typography.bodyMedium,
+                color = Color.White
+            )
 
             PlayerButton(imageVector = Icons.Filled.SkipPrevious, onClick = {
                 onPrevious()
@@ -274,7 +286,9 @@ private fun AudioScreenPreview() {
             "1.2км",
             2.5,
             1,
-        )
+        ),
+        onNext = {},
+        onBack = {}
     )
 }
 
