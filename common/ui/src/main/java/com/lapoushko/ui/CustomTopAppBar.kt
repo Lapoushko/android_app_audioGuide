@@ -119,6 +119,11 @@ fun CustomTopAppBar(
     }
 }
 
+class NavigationIcon(
+    val onActivate: () -> Unit,
+    val onDeactivate: () -> Unit,
+    val isActive: Boolean
+)
 
 @Preview(showBackground = true)
 @Composable
@@ -131,9 +136,3 @@ private fun CustomTopAppBarPreview() {
         favouriteState = NavigationIcon({}, {}, false)
     )
 }
-
-class NavigationIcon(
-    val onActivate: () -> Unit,
-    val onDeactivate: () -> Unit,
-    val isActive: Boolean
-)

@@ -17,15 +17,11 @@ class ExcursionDataSourceImpl(
     private val mapper: ExcursionDbMapper
 ) : ExcursionDataSource {
     override suspend fun deleteExcursion(excursion: Excursion) {
-        withContext(Dispatchers.IO){
-            dao.deleteVacancy(excursion.id)
-        }
+        dao.deleteVacancy(excursion.id)
     }
 
     override suspend fun saveExcursion(excursion: Excursion) {
-        withContext(Dispatchers.IO){
-            dao.saveExcursion(mapper.toDb(excursion))
-        }
+        dao.saveExcursion(mapper.toDb(excursion))
     }
 
     override fun getSavedExcursions(): Flow<List<Excursion>> =
