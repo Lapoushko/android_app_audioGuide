@@ -30,14 +30,18 @@ import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.map.MapScreen
 import com.lapoushko.ui.CustomOutlinedButton
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun GuideScreen(
     excursion: ExcursionItem,
-    handler: GuideScreenHandler
+    handler: GuideScreenHandler,
+    viewModel: GuideScreenViewModel = koinViewModel()
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val scope = rememberCoroutineScope()
+
+    val state = viewModel.state
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopMenu(
@@ -56,8 +60,17 @@ fun GuideScreen(
             userScrollEnabled = false
         ) { page ->
             when (page) {
-                0 -> AudioScreen(excursion)
-                1 -> MapScreen()
+                0 -> AudioScreen(
+                    excursion,
+                    onNext = { viewModel.updateIndex(state.indexCurrentScreen + 1) },
+                    onBack = { viewModel.updateIndex(state.indexCurrentScreen - 1) })
+
+                1 -> viewModel.state.apply {
+                    MapScreen(
+                        previousPoint = excursion.points[indexCurrentScreen],
+                        nextPoint = if (indexCurrentScreen == excursion.points.size - 1) null
+                        else excursion.points[indexCurrentScreen + 1])
+                }
             }
         }
     }

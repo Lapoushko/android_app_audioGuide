@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -24,8 +25,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
@@ -41,9 +44,14 @@ fun ExcursionCard(
     excursion: ExcursionItem,
     modifier: Modifier = Modifier
 ) {
-    val category = excursion.category
+
+    var name =  excursion.name
+    val category = excursion.categories.joinToString(separator = ", ") { it }
     val price = excursion.price
     val distance = excursion.distance
+
+    var info = "$category • $price • $distance"
+
     val description = excursion.description
     val rating = excursion.rating
     val countRating = excursion.countRating
@@ -94,10 +102,13 @@ fun ExcursionCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = excursion.name,
+                        modifier = Modifier.width(200.dp),
+                        text = name,
                         style = Typography.bodyLarge,
                         color = Color.Black,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Row {
                         Icon(
@@ -116,9 +127,7 @@ fun ExcursionCard(
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Text(
-                        text = "${
-                            category.joinToString(separator = ", ") { it }
-                        } • $price • $distance", style = Typography.bodyMedium
+                        text = info, style = Typography.bodyMedium
                     )
                     Text(
                         text = description,

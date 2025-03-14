@@ -1,5 +1,7 @@
 package com.lapoushko.detail_excursion
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -34,29 +36,26 @@ class ExcursionDetailScreenViewModel(
     }
 
     private fun checkIsSaved(){
-        viewModelScope.launch {
-            repository.getSavedExcursions().collect{ excursions ->
-                _state.isSaved = excursions.any { it.id == state.curExcursion.id }
+        repository.getSavedExcursions()
+            .map { excursions ->
+                excursions.any { it.id == _state.curExcursion.id }
             }
-        }
-//        repository.getSavedExcursions()
-//            .map { excursions ->
-//                excursions.any { it.id == _state.curExcursion.id }
-//            }
-//            .onEach { isSaved ->
-//                _state.isSaved = isSaved
-//            }
-//            .launchIn(viewModelScope)
+            .onEach { isSaved ->
+                _state.isSaved = isSaved
+            }
+            .launchIn(viewModelScope)
     }
 
-    fun saveExcursion(excursion: ExcursionItem){
+    fun saveExcursion(excursion: ExcursionItem, context: Context){
         viewModelScope.launch {
+            Toast.makeText(context, "Save excursion", Toast.LENGTH_LONG).show()
             repository.saveExcursion(mapper.toDomain(excursion))
         }
     }
 
-    fun deleteExcursion(excursion: ExcursionItem){
+    fun deleteExcursion(excursion: ExcursionItem, context: Context){
         viewModelScope.launch {
+            Toast.makeText(context, "Delete excursion", Toast.LENGTH_LONG).show()
             repository.deleteExcursion(mapper.toDomain(excursion))
         }
     }

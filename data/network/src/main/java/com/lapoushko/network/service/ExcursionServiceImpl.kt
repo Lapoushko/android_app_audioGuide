@@ -28,7 +28,8 @@ class ExcursionServiceImpl(
             .addOnSuccessListener { querySnapshot ->
                 val excursions = mutableListOf<Excursion>()
                 querySnapshot.forEach { document ->
-                    val excursion = document.toObject(ExcursionNetwork::class.java).copy(id = document.id)
+                    val excursion =
+                        document.toObject(ExcursionNetwork::class.java).copy(id = document.id)
 
                     document.reference.collection("points").orderBy("id").get()
                         .addOnSuccessListener { pointsSnapshot ->

@@ -43,7 +43,7 @@ fun SaveExcursionScreen(
     val state = viewModel.state
     val excursions = state.excursions
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(excursions) {
         viewModel.loadExcursions()
     }
 

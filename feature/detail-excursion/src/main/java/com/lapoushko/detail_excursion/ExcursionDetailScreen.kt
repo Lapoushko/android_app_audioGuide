@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -47,22 +48,15 @@ fun ExcursionDetailScreen(
     viewModel: ExcursionDetailScreenViewModel = koinViewModel(),
     handler: ExcursionDetailScreenHandler
 ) {
-    var forceUpdate by remember { mutableStateOf(false) }
-
-    LaunchedEffect(excursion.id, forceUpdate) {
-        viewModel.setCurrentExcursion(excursion)
-        println("Экран загружен")
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            forceUpdate = !forceUpdate
-            println("Экран уничтожен")
-        }
-    }
-
     val state = viewModel.state
     val excursions = state.interestingExcursion
+
+    val context = LocalContext.current
+
+    LaunchedEffect(excursion.id) {
+        viewModel.setCurrentExcursion(excursion)
+    }
+
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
@@ -72,9 +66,9 @@ fun ExcursionDetailScreen(
             onClickBack = { handler.onBack() },
             text = excursion.name,
             saveState = NavigationIcon(
-                onActivate = { viewModel.saveExcursion(excursion) },
+                onActivate = { viewModel.saveExcursion(excursion, context) },
                 onDeactivate = {
-                    viewModel.deleteExcursion(excursion)
+                    viewModel.deleteExcursion(excursion, context)
                 },
                 isActive = state.isSaved
             ),
