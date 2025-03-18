@@ -33,8 +33,10 @@ import com.lapoushko.feature.model.PointItem
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.geometry.Polyline
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.MapWindow
+import com.yandex.mapkit.map.TextStyle
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import org.koin.androidx.compose.koinViewModel
@@ -86,7 +88,7 @@ fun MapScreen(
         zoom(startZooming)
     }
 
-    val addMark = { point: Point? ->
+    val addMark = { point: Point?, name: String ->
         point?.let {
             mapView.value?.mapWindow?.let { mapWindow: MapWindow ->
                 mapWindow.map.mapObjects.addPlacemark().apply {
@@ -99,7 +101,23 @@ fun MapScreen(
                             )
                         )
                     )
+                    setText(
+                        name,
+                        TextStyle().apply {
+                            size = 10f
+                            placement = TextStyle.Placement.RIGHT
+                            offset = 30f
+                        },
+                    )
                 }
+            }
+        }
+    }
+
+    val addPolyline = { points: Pair<Point, Point?> ->
+        points.let {
+            mapView.value?.mapWindow?.let { mapWindow: MapWindow ->
+                mapWindow.map.mapObjects.addPolyline(Polyline(listOf(points.first, points.second)))
             }
         }
     }
@@ -118,17 +136,14 @@ fun MapScreen(
 
     LaunchedEffect(previousPoint, nextPoint) {
         setPosition()
-        addMark(previousPosition)
+        mapView.value?.mapWindow?.map?.mapObjects?.clear()
+        addMark(previousPosition, previousPoint.name)
+        addMark(nextPosition, nextPoint?.name ?: "")
+        addPolyline(Pair(previousPosition!!, nextPosition))
     }
 
     LaunchedEffect(state.currentZoom) {
         zoom(currentZoom)
-    }
-
-    LaunchedEffect(state.previousPosition, state.nextPosition) {
-        mapView.value?.mapWindow?.map?.mapObjects?.clear()
-        addMark(state.previousPosition)
-        addMark(state.nextPosition)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
