@@ -1,5 +1,11 @@
 package com.lapoushko.map
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
+import androidx.annotation.DrawableRes
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,9 +34,11 @@ import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.MapWindow
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.runtime.image.ImageProvider
 import org.koin.androidx.compose.koinViewModel
+
 
 /**
  * @author Lapoushko
@@ -41,8 +49,6 @@ fun MapScreen(
     nextPoint: PointItem?,
     viewModel: MapScreenViewModel = koinViewModel()
 ) {
-    var isNewPositions = remember { mutableStateOf(false) }.value
-
     val state = viewModel.state
 
     val startDuration = state.startDuration
@@ -78,7 +84,24 @@ fun MapScreen(
         nextPosition = viewModel.state.nextPosition
 
         zoom(startZooming)
-        isNewPositions = true
+    }
+
+    val addMark = { point: Point? ->
+        point?.let {
+            mapView.value?.mapWindow?.let { mapWindow: MapWindow ->
+                mapWindow.map.mapObjects.addPlacemark().apply {
+                    geometry = point
+                    setIcon(
+                        ImageProvider.fromBitmap(
+                            getBitmap(
+                                drawableRes = R.drawable.place,
+                                context = context
+                            )
+                        )
+                    )
+                }
+            }
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -95,20 +118,17 @@ fun MapScreen(
 
     LaunchedEffect(previousPoint, nextPoint) {
         setPosition()
+        addMark(previousPosition)
     }
 
     LaunchedEffect(state.currentZoom) {
         zoom(currentZoom)
     }
 
-    if (isNewPositions) {
-        isNewPositions = false
-        mapView.value.let {
-            it!!.mapWindow.map.mapObjects.addPlacemark().apply {
-                geometry = Point(50.0, 50.0)
-                setIcon(ImageProvider.fromResource(context, R.drawable.place))
-            }
-        }
+    LaunchedEffect(state.previousPosition, state.nextPosition) {
+        mapView.value?.mapWindow?.map?.mapObjects?.clear()
+        addMark(state.previousPosition)
+        addMark(state.nextPosition)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -178,4 +198,21 @@ private fun ZoomingButtonPreview() {
 private enum class TypeZooming() {
     PLUS,
     MINUS
+}
+
+private fun getBitmap(context: Context, @DrawableRes drawableRes: Int): Bitmap? {
+    return getDrawable(context, drawableRes)?.let {
+        val drawable: Drawable = it
+        val canvas = Canvas()
+        val bitmap = Bitmap.createBitmap(
+            drawable.intrinsicWidth,
+            drawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
+        canvas.setBitmap(bitmap)
+        drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+        drawable.draw(canvas)
+
+        bitmap
+    }
 }
