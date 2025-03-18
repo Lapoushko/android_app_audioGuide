@@ -27,18 +27,22 @@ class MapScreenViewModel : ViewModel() {
     }
 
     private class MutableMapScreenState : MapScreenState{
+        override val startDuration: Float by mutableFloatStateOf(0.5f)
         override var currentZoom: Float by mutableFloatStateOf(0f)
         override var previousPosition: Point by mutableStateOf(Point(0.0,0.0))
         override var nextPosition: Point? by mutableStateOf(null)
         override var cameraPosition: Point by mutableStateOf(Point(0.0,0.0))
+        override val startZooming: Float by mutableFloatStateOf(15f)
     }
 }
 
 interface MapScreenState{
+    val startDuration: Float
     val currentZoom: Float
     val previousPosition: Point
     val nextPosition: Point?
     val cameraPosition: Point
+    val startZooming: Float
 }
 
 enum class TypePosition {
