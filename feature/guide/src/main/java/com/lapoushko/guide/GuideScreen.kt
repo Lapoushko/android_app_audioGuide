@@ -19,6 +19,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,12 +38,22 @@ import org.koin.androidx.compose.koinViewModel
 fun GuideScreen(
     excursion: ExcursionItem,
     handler: GuideScreenHandler,
-    viewModel: GuideScreenViewModel = koinViewModel()
+    guideViewModel: GuideScreenViewModel = koinViewModel()
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val scope = rememberCoroutineScope()
 
-    val state = viewModel.state
+    val state = guideViewModel.state
+
+    LaunchedEffect(Unit) {
+        guideViewModel.updateIsDestroy(false)
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            guideViewModel.updateIsDestroy(true)
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopMenu(
@@ -62,14 +74,16 @@ fun GuideScreen(
             when (page) {
                 0 -> AudioScreen(
                     excursion,
-                    onNext = { viewModel.updateIndex(state.indexCurrentScreen + 1) },
-                    onBack = { viewModel.updateIndex(state.indexCurrentScreen - 1) })
+                    onNext = { guideViewModel.updateIndex(state.indexCurrentScreen + 1) },
+                    onBack = { guideViewModel.updateIndex(state.indexCurrentScreen - 1) },
+                )
 
-                1 -> viewModel.state.apply {
+                1 -> guideViewModel.state.apply {
                     MapScreen(
                         previousPoint = excursion.points[indexCurrentScreen],
                         nextPoint = if (indexCurrentScreen == excursion.points.size - 1) null
-                        else excursion.points[indexCurrentScreen + 1])
+                        else excursion.points[indexCurrentScreen + 1],
+                    )
                 }
             }
         }

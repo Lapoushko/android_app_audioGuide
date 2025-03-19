@@ -1,6 +1,7 @@
 package com.lapoushko.android_app_audioguide.di
 
 import androidx.media3.exoplayer.ExoPlayer
+import com.lapoushko.audio.screen.ObserverAudio
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
@@ -11,4 +12,5 @@ val mediaModule = module {
     single<ExoPlayer> {
         ExoPlayer.Builder(androidApplication()).build()
     }
+    single<ObserverAudio>{ObserverAudio()}
 }

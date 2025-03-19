@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
 import coil3.compose.AsyncImage
 import com.lapoushko.feature.model.ExcursionItem
+import com.lapoushko.ui.PermissionCheck
 import com.lapoushko.ui.R
 import com.lapoushko.ui.theme.Typography
 import com.lapoushko.ui.theme.onPrimaryLight
@@ -71,7 +72,7 @@ fun AudioScreen(
     excursion: ExcursionItem,
     viewModel: AudioScreenViewModel = koinViewModel(),
     onNext: (Int) -> Unit,
-    onBack: (Int) -> Unit
+    onBack: (Int) -> Unit,
 ) {
     val state = viewModel.state
     val pagerState = rememberPagerState { excursion.points.size }
@@ -80,6 +81,8 @@ fun AudioScreen(
     val context = LocalContext.current
 
     val currentPosition = state.currentPosition
+
+    PermissionCheck(Manifest.permission.POST_NOTIFICATIONS)
 
     LaunchedEffect(Unit) {
         if (state.excursion != excursion){
@@ -288,7 +291,7 @@ private fun AudioScreenPreview() {
             1,
         ),
         onNext = {},
-        onBack = {}
+        onBack = {},
     )
 }
 

@@ -30,6 +30,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import com.lapoushko.extension.setPoint
 import com.lapoushko.feature.model.PointItem
+import com.lapoushko.ui.PermissionCheck
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -55,7 +56,7 @@ fun MapScreen(
 
     val startDuration = state.startDuration
     val startZooming = state.startZooming
-    val cameraPosition = state.cameraPosition
+    var cameraPosition = state.cameraPosition
     var previousPosition: Point? = null
     var nextPosition: Point? = null
     val currentZoom = state.currentZoom
@@ -65,9 +66,17 @@ fun MapScreen(
         mutableStateOf<MapView?>(null)
     }
 
+    state.permissions.forEach { permission ->
+        PermissionCheck(permission)
+    }
+
+    viewModel.getUserLocation(context) { location ->
+        cameraPosition = state.cameraPosition
+    }
+
     val zoom = { value: Float ->
         mapView.value?.mapWindow?.map?.move(
-            CameraPosition(viewModel.state.previousPosition, value, 0f, 0f),
+            CameraPosition(viewModel.state.cameraPosition ?: viewModel.state.previousPosition, value, 0f, 0f),
             Animation(Animation.Type.SMOOTH, startDuration),
             null
         )
@@ -88,7 +97,7 @@ fun MapScreen(
         zoom(startZooming)
     }
 
-    val addMark = { point: Point?, name: String ->
+    val addMark = { point: Point?, name: String? ->
         point?.let {
             mapView.value?.mapWindow?.let { mapWindow: MapWindow ->
                 mapWindow.map.mapObjects.addPlacemark().apply {
@@ -101,14 +110,16 @@ fun MapScreen(
                             )
                         )
                     )
-                    setText(
-                        name,
-                        TextStyle().apply {
-                            size = 10f
-                            placement = TextStyle.Placement.RIGHT
-                            offset = 30f
-                        },
-                    )
+                    name?.let {
+                        setText(
+                            name,
+                            TextStyle().apply {
+                                size = 10f
+                                placement = TextStyle.Placement.RIGHT
+                                offset = 30f
+                            },
+                        )
+                    }
                 }
             }
         }
@@ -144,6 +155,10 @@ fun MapScreen(
 
     LaunchedEffect(state.currentZoom) {
         zoom(currentZoom)
+    }
+
+    LaunchedEffect(cameraPosition) {
+        addMark(cameraPosition, null)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {

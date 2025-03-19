@@ -29,6 +29,7 @@ import com.lapoushko.audio.manager.MediaNotificationManager
 import com.lapoushko.feature.model.ExcursionItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
@@ -37,7 +38,8 @@ import kotlinx.coroutines.launch
  */
 @UnstableApi
 class AudioScreenViewModel(
-    private val player: ExoPlayer
+    private val player: ExoPlayer,
+    private val observerAudio: ObserverAudio
 ) : ViewModel() {
     private var _state = MutableAudioScreenState()
     val state = _state as AudioScreenState
@@ -50,6 +52,11 @@ class AudioScreenViewModel(
 
     init {
         viewModelScope.launch {
+            observerAudio.isDestroyFlow.collectLatest { isDestroy ->
+                if (isDestroy) {
+                    onDestroy()
+                }
+            }
             while (true) {
                 _state.currentPosition = player.currentPosition
                 delay(500)
@@ -57,7 +64,7 @@ class AudioScreenViewModel(
         }
     }
 
-    fun setExcursion(excursion: ExcursionItem){
+    fun setExcursion(excursion: ExcursionItem) {
         _state.excursion = excursion
     }
 
@@ -135,28 +142,28 @@ class AudioScreenViewModel(
                     )
                 }
 
-        // Create a new MediaSession.
-        mediaSession = MediaSession.Builder(context, player)
-            .setSessionActivity(sessionActivityPendingIntent!!).build()
+        sessionActivityPendingIntent?.let {
+            mediaSession = MediaSession.Builder(context, player).setSessionActivity(it).build()
 
-        notificationManager =
-            MediaNotificationManager(
-                context,
-                mediaSession.token,
-                player,
-                PlayerNotificationListener()
-            )
+            notificationManager =
+                MediaNotificationManager(
+                    context,
+                    mediaSession.token,
+                    player,
+                    PlayerNotificationListener()
+                )
 
 
-        notificationManager.showNotificationForPlayer(player)
+            notificationManager.showNotificationForPlayer(player)
+        }
     }
 
     /**
      * Destroy audio notification
      */
-    fun onDestroy() {
+    private fun onDestroy() {
         onClose()
-        player.release()
+        player.stop()
     }
 
     /**

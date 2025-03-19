@@ -27,7 +27,7 @@ val viewModelModule = module {
     viewModel { SaveExcursionScreenViewModel(get(), get()) }
     viewModel { SettingProfileScreenViewModel(get()) }
     //guide
-    viewModel { AudioScreenViewModel(get()) }
+    viewModel { AudioScreenViewModel(get(),get()) }
     viewModel { MapScreenViewModel() }
-    viewModel { GuideScreenViewModel() }
+    viewModel { GuideScreenViewModel(get()) }
 }
