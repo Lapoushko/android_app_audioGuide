@@ -15,7 +15,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lapoushko.feature.model.CategoryItem
 import com.lapoushko.feature.model.ExcursionItem
@@ -24,6 +26,10 @@ import com.lapoushko.ui.CustomCarousel
 import com.lapoushko.ui.CustomSearchBar
 import com.lapoushko.ui.ExcursionCard
 import com.lapoushko.ui.theme.Typography
+import com.lapoushko.ui.theme.carouselSizeCategory
+import com.lapoushko.ui.theme.carouselSizeExcursion
+import com.lapoushko.ui.theme.smallCarouselSizeCategory
+import com.lapoushko.ui.theme.smallCarouselSizeExcursion
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -34,14 +40,22 @@ fun SearchScreen(
     handler: SearchScreenHandler,
     viewModel: SearchScreenViewModel = koinViewModel()
 ) {
+    val configuration = LocalConfiguration.current
+
+    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
+
+    val sizeCardExcursion = if (screenWidth < 400.dp) smallCarouselSizeExcursion else carouselSizeExcursion
+    val sizeCardCategory = if (screenWidth < 400.dp) smallCarouselSizeCategory else carouselSizeCategory
+
     val isNew = remember { mutableStateOf(false) }
-
     val state = viewModel.state
-
     val interesting = state.interesting
     val categories = state.categories
 
     val isCategoriesLoaded = categories.isNotEmpty()
+
+
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -78,10 +92,20 @@ fun SearchScreen(
                 )
             }
             //Нужно вызывать разные, поскольку динамически карусель не меняет размер
-            if (isNew.value){
-                Carousel(onClick = {handler.onToDetail(viewModel.state.news[it])}, items = viewModel.state.news)
-            } else{
-                Carousel(onClick = {handler.onToDetail(viewModel.state.populars[it])}, items = viewModel.state.populars)
+            if (isNew.value) {
+                Carousel(
+                    onClick = { handler.onToDetail(viewModel.state.news[it]) },
+                    items = viewModel.state.news,
+                    width = sizeCardExcursion.first.dp,
+                    height = sizeCardExcursion.second.dp
+                )
+            } else {
+                Carousel(
+                    onClick = { handler.onToDetail(viewModel.state.populars[it]) },
+                    items = viewModel.state.populars,
+                    width = sizeCardExcursion.first.dp,
+                    height = sizeCardExcursion.second.dp
+                )
             }
         }
 
@@ -109,8 +133,8 @@ fun SearchScreen(
                             )
                         )
                     },
-                    width = 348.dp,
-                    height = 214.dp,
+                    width = sizeCardCategory.first.dp,
+                    height = sizeCardCategory.second.dp,
                     items = categories
                 )
             } else {
@@ -123,14 +147,16 @@ fun SearchScreen(
 @Composable
 private fun Carousel(
     onClick: (Int) -> Unit,
-    items: List<ExcursionItem>
-){
+    items: List<ExcursionItem>,
+    width: Dp,
+    height: Dp
+) {
     CustomCarousel(
         onClick = { index ->
             onClick(index)
         },
-        width = 162.dp,
-        height = 238.dp,
+        width = width,
+        height = height,
         items = items.map {
             CarouselItem.TitleDescription(
                 title = it.name,

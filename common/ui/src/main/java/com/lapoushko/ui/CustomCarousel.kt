@@ -113,7 +113,7 @@ fun CustomCard(
             )
             Column(
                 modifier = Modifier
-                    .padding(start = 20.dp, bottom = 16.dp)
+                    .padding(start = 20.dp, bottom = 16.dp, end = 20.dp)
                     .align(Alignment.BottomStart),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {

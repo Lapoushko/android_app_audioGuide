@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,8 +31,10 @@ import com.lapoushko.ui.CustomCarousel
 import com.lapoushko.ui.CustomTopAppBar
 import com.lapoushko.ui.NavigationIcon
 import com.lapoushko.ui.theme.Typography
+import com.lapoushko.ui.theme.carouselSizeExcursion
 import com.lapoushko.ui.theme.onSecondaryContainerLight
 import com.lapoushko.ui.theme.primaryLight
+import com.lapoushko.ui.theme.smallCarouselSizeExcursion
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -47,6 +50,10 @@ fun ExcursionDetailScreen(
     val excursions = state.interestingExcursion
 
     val context = LocalContext.current
+
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val sizeCardExcursion = if (screenWidth < 400.dp) smallCarouselSizeExcursion else carouselSizeExcursion
 
     LaunchedEffect(excursion.id) {
         viewModel.setCurrentExcursion(excursion)
@@ -115,8 +122,8 @@ fun ExcursionDetailScreen(
             )
             CustomCarousel(
                 onClick = { handler.onToDetail(excursions[it]) },
-                width = 162.dp,
-                height = 238.dp,
+                width = sizeCardExcursion.first.dp,
+                height = sizeCardExcursion.second.dp,
                 items = excursions.map {
                     CarouselItem.TitleDescription(
                         it.name,

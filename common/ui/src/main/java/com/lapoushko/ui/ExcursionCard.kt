@@ -100,7 +100,7 @@ fun ExcursionCard(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        modifier = Modifier.width(200.dp),
+                        modifier = Modifier.width(150.dp),
                         text = name,
                         style = Typography.bodyLarge,
                         color = Color.Black,
