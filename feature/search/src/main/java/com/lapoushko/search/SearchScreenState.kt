@@ -7,7 +7,8 @@ import com.lapoushko.ui.CarouselItem
  * @author Lapoushko
  */
 interface SearchScreenState {
+    val specialExcursions: List<ExcursionItem>
+    val isNew: Boolean
     val interesting: List<ExcursionItem>
-    val popular: List<ExcursionItem>
     val categories: List<CarouselItem.Category>
 }

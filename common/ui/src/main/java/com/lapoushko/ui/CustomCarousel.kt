@@ -39,19 +39,18 @@ fun CustomCarousel(
     height: Dp,
     items: List<CarouselItem>
 ) {
+    if (items.isEmpty()) return
+
     HorizontalUncontainedCarousel(
-        state = rememberCarouselState {
-            items.count()
-        },
+        state = rememberCarouselState { items.size },
         itemWidth = width,
         itemSpacing = 12.dp,
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
     ) { index ->
-        val item = items[index]
         CustomCard(
-            item = item,
+            item = items[index],
             onClick = { onClick(index) },
             modifier = Modifier
                 .height(height)

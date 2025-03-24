@@ -17,7 +17,7 @@ class CategoryServiceImpl : CategoryService {
         fireStore.collection("categories").get()
             .addOnSuccessListener { value ->
                 val categories =
-                    value?.documents?.map { it.getString("naming") ?: "" } ?: emptyList()
+                    value?.documents?.map { it.getString("name") ?: "" } ?: emptyList()
                 trySend(categories)
             }
             .addOnFailureListener { error ->

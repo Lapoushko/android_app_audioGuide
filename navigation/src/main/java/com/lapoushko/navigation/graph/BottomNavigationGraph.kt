@@ -73,10 +73,6 @@ fun BottomNavigationGraph(navController: NavHostController) {
                     onBack = onBack,
                     onToDetail = { navController.navigate(Screen.ExcursionDetail(it)) }
                 )
-//                handler = SelectionScreenHandler(
-//                    onToDetail = { navController.navigate(Screen.ExcursionDetail(it)) },
-//                    onToBack = { navController.popBackStack() }
-//                ),
             )
         }
         composable<Screen.ExcursionDetail>(

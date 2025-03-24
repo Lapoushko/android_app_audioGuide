@@ -52,14 +52,19 @@ class AudioScreenViewModel(
 
     init {
         viewModelScope.launch {
-            observerAudio.isDestroyFlow.collectLatest { isDestroy ->
-                if (isDestroy) {
-                    onDestroy()
+            launch {
+                observerAudio.isDestroyFlow.collectLatest { isDestroy ->
+                    if (isDestroy) {
+                        onDestroy()
+                    }
                 }
             }
-            while (true) {
-                _state.currentPosition = player.currentPosition
-                delay(500)
+
+            launch {
+                while (true) {
+                    _state.currentPosition = player.currentPosition
+                    delay(500)
+                }
             }
         }
     }

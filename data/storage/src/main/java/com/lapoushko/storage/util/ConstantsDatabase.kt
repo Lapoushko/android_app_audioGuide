@@ -6,5 +6,5 @@ package com.lapoushko.storage.util
 object ConstantsDatabase {
     const val EXCURSION_DATABASE_NAME = "excursion.db"
     const val EXCURSION_TABLE_NAME = "excursions"
-    const val EXCURSION_TABLE_VERSION = 1
+    const val EXCURSION_TABLE_VERSION = 3
 }

@@ -22,10 +22,10 @@ class ExcursionNetworkMapperImpl() : ExcursionNetworkMapper {
                 name = name ?: "",
                 description = description ?: "",
                 categories = categories?.map { it } ?: emptyList(),
-                price = price ?: 0.0,
                 distance = distance ?: 0,
                 rating = rating ?: 0.0,
                 countRating = countRating ?: 0,
+                age = age ?: 0,
                 points = points?.map {
                     Point(
                         name = it.name ?: "",
@@ -46,9 +46,9 @@ class ExcursionNetworkMapperImpl() : ExcursionNetworkMapper {
                 name = name,
                 description = description,
                 categories = categories.map { it },
-                price = price,
                 distance = distance,
                 rating = rating,
+                age = age,
                 countRating = countRating,
                 points = points.map {
                     com.lapoushko.network.entity.Point(

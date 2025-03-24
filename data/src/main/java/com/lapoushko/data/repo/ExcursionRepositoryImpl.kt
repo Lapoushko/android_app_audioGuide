@@ -5,7 +5,6 @@ import com.lapoushko.domain.repo.ExcursionRepository
 import com.lapoushko.domain.service.ExcursionService
 import com.lapoushko.domain.source.ExcursionDataSource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 /**
  * @author Lapoushko
@@ -20,11 +19,11 @@ class ExcursionRepositoryImpl(
             name = "Название $index",
             description = "Описание $index",
             categories = listOf("Категория"),
-            price = index * 100.0,
             distance = index * 50L,
             rating = index.toDouble(),
             countRating = index.toLong(),
             points = emptyList(),
+            age = 0
         )
     }
 

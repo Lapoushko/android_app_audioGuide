@@ -46,10 +46,9 @@ fun ExcursionCard(
 
     val name = excursion.name
     val category = excursion.categories.joinToString(separator = ", ") { it }
-    val price = excursion.price
     val distance = excursion.distance
 
-    val info = "$category • $price • $distance"
+    val info = "$category • $distance"
 
     val description = excursion.description
     val rating = excursion.rating
@@ -150,8 +149,8 @@ private fun ExcursionCardPreview() {
             "Название",
             "Описание",
             listOf("Категория"),
-            "Бесплатно",
             "1.2км",
+            age = "0+",
             2.5,
             1,
             emptyList(),

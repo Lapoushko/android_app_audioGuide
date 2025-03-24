@@ -2,7 +2,6 @@ package com.lapoushko.storage.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.lapoushko.storage.util.ConstantsDatabase
 import com.lapoushko.storage.util.CustomTypeConverters
@@ -19,7 +18,7 @@ data class ExcursionDb(
     val distance: Long? = null,
     val categories: List<String>? = null,
     val countRating: Long? = null,
-    val price: Double? = null,
+    val age: Int? = null,
     val rating: Double? = null,
     @TypeConverters(CustomTypeConverters::class)
     val points: List<Point>? = null,

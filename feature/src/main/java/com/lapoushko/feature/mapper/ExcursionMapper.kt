@@ -22,8 +22,8 @@ class ExcursionMapperImpl : ExcursionMapper {
                 name = name,
                 description = description,
                 categories = categories,
-                price = if (price == 0.0) "Бесплатно" else "$price р.",
                 distance = "$distance м.",
+                age = "$age+",
                 rating = rating,
                 countRating = countRating,
                 points = points.map {
@@ -46,10 +46,10 @@ class ExcursionMapperImpl : ExcursionMapper {
                 name = name,
                 description = description,
                 categories = categories,
-                price = if (price == "Бесплатно") 0.0 else price.split(" ")[0].toDouble(),
                 distance = distance.split(" ")[0].toLong(),
                 rating = rating,
                 countRating = countRating,
+                age = age.replace("+","").toInt(),
                 points = points.map {
                     Point(
                         name = it.name,

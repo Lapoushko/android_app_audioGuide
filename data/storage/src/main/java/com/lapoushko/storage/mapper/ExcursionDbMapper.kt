@@ -23,8 +23,8 @@ class ExcursionDbMapperImpl() : ExcursionDbMapper {
                 distance = distance,
                 categories = categories,
                 countRating = countRating,
-                price = price,
                 rating = rating,
+                age = age,
                 points = points.map {
                     Point(
                         name = it.name,
@@ -45,10 +45,10 @@ class ExcursionDbMapperImpl() : ExcursionDbMapper {
                 name = name ?: "",
                 description = description ?: "",
                 categories = categories ?: emptyList(),
-                price = price ?: 0.0,
                 distance = distance ?: 0L,
                 rating = rating ?: 0.0,
                 countRating = countRating ?: 0,
+                age = age ?: 0,
                 points = points?.map {
                     com.lapoushko.domain.entity.Point(
                         name = it.name ?: "",

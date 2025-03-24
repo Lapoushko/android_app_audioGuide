@@ -28,20 +28,26 @@ class SearchScreenViewModel(
 
     init {
         loadCategories()
-        loadInterestingExcursions()
         loadPopularityExcursions()
+        loadInterestingExcursions()
+    }
+
+    private fun loadPopularityExcursions() {
+        viewModelScope.launch {
+            _state.specialExcursions = excursionRepository.getPopularityExcursions().map { mapper.toUi(it) }
+        }
+    }
+
+    private fun loadNewExcursions() {
+        viewModelScope.launch {
+            _state.specialExcursions = emptyList()
+        }
     }
 
     private fun loadInterestingExcursions() {
         excursionRepository.getInterestingExcursions().onEach { excursions ->
             _state.interesting = excursions.map { mapper.toUi(it) }
         }.launchIn(viewModelScope)
-    }
-
-    private fun loadPopularityExcursions() {
-        viewModelScope.launch {
-            _state.popular = excursionRepository.getPopularityExcursions().map { mapper.toUi(it) }
-        }
     }
 
     private fun loadCategories() {
@@ -53,9 +59,17 @@ class SearchScreenViewModel(
             }.launchIn(viewModelScope)
     }
 
-    private class MutableSearchScreenState() : SearchScreenState {
+    fun setIsNewExcursions(value: Boolean){
+        _state.isNew = value
+        if (state.isNew){
+            loadNewExcursions()
+        } else loadPopularityExcursions()
+    }
+
+    private class MutableSearchScreenState : SearchScreenState {
+        override var specialExcursions: List<ExcursionItem> by mutableStateOf(emptyList())
+        override var isNew: Boolean by mutableStateOf(false)
         override var interesting: List<ExcursionItem> by mutableStateOf(emptyList())
-        override var popular: List<ExcursionItem> by mutableStateOf(emptyList())
         override var categories: List<CarouselItem.Category> by mutableStateOf(emptyList())
     }
 }

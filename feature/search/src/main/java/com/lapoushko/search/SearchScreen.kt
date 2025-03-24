@@ -1,7 +1,9 @@
 package com.lapoushko.search
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -10,6 +12,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.lapoushko.ui.CarouselItem
@@ -29,7 +32,7 @@ fun SearchScreen(
 ) {
     val state = viewModel.state
 
-    val popular = state.popular
+    val specialExcursions = state.specialExcursions
     val interesting = state.interesting
     val categories = state.categories
 
@@ -51,12 +54,25 @@ fun SearchScreen(
 
         // Популярное
         item {
-            TextTitle("Популярное")
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                TextTitle(
+                    text = "Популярное",
+                    onClick = { viewModel.setIsNewExcursions(false) },
+                    isActive = !state.isNew
+                )
+                TextTitle(
+                    text = "Новое",
+                    onClick = { viewModel.setIsNewExcursions(true) },
+                    isActive = state.isNew
+                )
+            }
             CustomCarousel(
-                onClick = { handler.onToDetail(popular[it]) },
+                onClick = { handler.onToDetail(specialExcursions[it]) },
                 width = 162.dp,
                 height = 238.dp,
-                items = popular.map {
+                items = specialExcursions.map {
                     CarouselItem.TitleDescription(
                         title = it.name,
                         description = it.description,
@@ -96,11 +112,14 @@ fun SearchScreen(
 
 
 @Composable
-private fun TextTitle(text: String) {
+private fun TextTitle(text: String, onClick: () -> Unit = {}, isActive: Boolean = true) {
     Text(
+        modifier = Modifier
+            .padding(bottom = 20.dp)
+            .clickable { onClick() },
         text = text,
-        style = Typography.headlineSmall,
-        modifier = Modifier.padding(bottom = 20.dp)
+        color = if (isActive) Color.Black else Color.Gray,
+        style = Typography.headlineSmall
     )
 }
 

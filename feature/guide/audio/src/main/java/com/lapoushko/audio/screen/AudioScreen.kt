@@ -22,6 +22,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
@@ -44,6 +45,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -109,6 +111,16 @@ fun AudioScreen(
                 Column(
                     verticalArrangement = Arrangement.Center
                 ) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = excursion.points[page].name,
+                        style = Typography.titleLarge,
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
                     AsyncImage(
                         model = excursion.points.getOrNull(page)?.image
                             ?: R.drawable.example,
@@ -117,6 +129,7 @@ fun AudioScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)
+                            .clip(RoundedCornerShape(12.dp))
                     )
 
                     Spacer(modifier = Modifier.height(10.dp))
@@ -180,7 +193,7 @@ private fun DescriptionText(text: String) {
     Text(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
+            .height(170.dp)
             .verticalScroll(rememberScrollState()),
         text = text,
         style = Typography.titleMedium,
@@ -204,7 +217,6 @@ private fun AudioPlayerControl(
     LaunchedEffect(currentPosition) {
         sliderPosition = currentPosition.toFloat()
     }
-
 
     Column {
         Slider(
@@ -285,8 +297,8 @@ private fun AudioScreenPreview() {
             "Название",
             "Описание",
             listOf("Категория"),
-            "Бесплатно",
             "1.2км",
+            age = "0+",
             2.5,
             1,
         ),
