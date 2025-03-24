@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.lapoushko.feature.model.CategoryItem
 import com.lapoushko.ui.CustomTopAppBar
 import com.lapoushko.ui.ExcursionCard
 import org.koin.androidx.compose.koinViewModel
@@ -23,14 +24,14 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun CategoryScreen(
     handler: CategoryScreenHandler,
-    category: String,
+    category: CategoryItem,
     viewModel: CategoryScreenViewModel = koinViewModel()
 ) {
     val state = viewModel.state
     val excursions = state.excursions
 
     LaunchedEffect(Unit) {
-        viewModel.loadExcursions(category)
+        viewModel.loadExcursions(category.name)
     }
 
     LazyColumn(
@@ -38,9 +39,9 @@ fun CategoryScreen(
     ) {
         item {
             CustomTopAppBar(
-                image = null,
+                image = category.image,
                 onClickBack = { handler.onBack() },
-                text = category,
+                text = category.name,
             )
             Spacer(
                 modifier = Modifier
@@ -62,7 +63,7 @@ fun CategoryScreen(
 @Composable
 private fun CategoryScreenPreview() {
     CategoryScreen(
-        category = "Категория",
+        category = CategoryItem(),
         handler = CategoryScreenHandler(onToDetail = {}, onBack = {})
     )
 }

@@ -7,13 +7,17 @@ import kotlinx.coroutines.flow.Flow
  * @author Lapoushko
  */
 interface ExcursionService {
-    suspend fun getSavedExcursions(): List<Excursion>
-
     fun getInterestingExcursions(): Flow<List<Excursion>>
 
-    suspend fun getPopularityExcursions(): List<Excursion>
+    fun getPopularityExcursions(): Flow<List<Excursion>>
 
-    suspend fun getExcursionsByCategory(category: String): List<Excursion>
+    fun getExcursionsByCategory(category: String): Flow<List<Excursion>>
+
+    fun getNewExcursions(): Flow<List<Excursion>>
+
+    fun getRecommendation(excursion: Excursion): Flow<List<Excursion>>
+
+    suspend fun getSavedExcursions(): List<Excursion>
 
     suspend fun getExcursionByName(name: String): Excursion?
 }

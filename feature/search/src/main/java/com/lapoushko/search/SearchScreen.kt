@@ -11,10 +11,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.lapoushko.feature.model.CategoryItem
+import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.CarouselItem
 import com.lapoushko.ui.CustomCarousel
 import com.lapoushko.ui.CustomSearchBar
@@ -30,9 +34,10 @@ fun SearchScreen(
     handler: SearchScreenHandler,
     viewModel: SearchScreenViewModel = koinViewModel()
 ) {
+    val isNew = remember { mutableStateOf(false) }
+
     val state = viewModel.state
 
-    val specialExcursions = state.specialExcursions
     val interesting = state.interesting
     val categories = state.categories
 
@@ -59,27 +64,25 @@ fun SearchScreen(
             ) {
                 TextTitle(
                     text = "Популярное",
-                    onClick = { viewModel.setIsNewExcursions(false) },
-                    isActive = !state.isNew
+                    onClick = {
+                        isNew.value = false
+                    },
+                    isActive = !isNew.value
                 )
                 TextTitle(
                     text = "Новое",
-                    onClick = { viewModel.setIsNewExcursions(true) },
-                    isActive = state.isNew
+                    onClick = {
+                        isNew.value = true
+                    },
+                    isActive = isNew.value
                 )
             }
-            CustomCarousel(
-                onClick = { handler.onToDetail(specialExcursions[it]) },
-                width = 162.dp,
-                height = 238.dp,
-                items = specialExcursions.map {
-                    CarouselItem.TitleDescription(
-                        title = it.name,
-                        description = it.description,
-                        image = it.points.firstOrNull()?.image
-                    )
-                }
-            )
+            //Нужно вызывать разные, поскольку динамически карусель не меняет размер
+            if (isNew.value){
+                Carousel(onClick = {handler.onToDetail(viewModel.state.news[it])}, items = viewModel.state.news)
+            } else{
+                Carousel(onClick = {handler.onToDetail(viewModel.state.populars[it])}, items = viewModel.state.populars)
+            }
         }
 
         item {
@@ -98,7 +101,14 @@ fun SearchScreen(
             TextTitle("Категории")
             if (isCategoriesLoaded) {
                 CustomCarousel(
-                    onClick = { handler.onToCategory(categories[it].category) },
+                    onClick = {
+                        handler.onToCategory(
+                            CategoryItem(
+                                name = categories[it].category,
+                                image = categories[it].image
+                            )
+                        )
+                    },
                     width = 348.dp,
                     height = 214.dp,
                     items = categories
@@ -110,6 +120,26 @@ fun SearchScreen(
     }
 }
 
+@Composable
+private fun Carousel(
+    onClick: (Int) -> Unit,
+    items: List<ExcursionItem>
+){
+    CustomCarousel(
+        onClick = { index ->
+            onClick(index)
+        },
+        width = 162.dp,
+        height = 238.dp,
+        items = items.map {
+            CarouselItem.TitleDescription(
+                title = it.name,
+                description = it.description,
+                image = it.points.firstOrNull()?.image
+            )
+        }
+    )
+}
 
 @Composable
 private fun TextTitle(text: String, onClick: () -> Unit = {}, isActive: Boolean = true) {

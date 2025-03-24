@@ -8,7 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.lapoushko.domain.repo.ExcursionRepository
 import com.lapoushko.feature.mapper.ExcursionMapper
 import com.lapoushko.feature.model.ExcursionItem
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 /**
  * @author Lapoushko
@@ -21,10 +22,9 @@ class CategoryScreenViewModel(
     val state = _state as CategoryScreenState
 
     fun loadExcursions(category: String) {
-        viewModelScope.launch {
-            _state.excursions = repository.getExcursionsByCategory(category = category)
-                .map { mapper.toUi(it) }
-        }
+        repository.getExcursionsByCategory(category).onEach { excursions ->
+            _state.excursions = excursions.map { mapper.toUi(it) }
+        }.launchIn(viewModelScope)
     }
 
     private class MutableCategoryScreenState() : CategoryScreenState {

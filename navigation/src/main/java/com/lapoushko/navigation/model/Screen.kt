@@ -1,5 +1,6 @@
 package com.lapoushko.navigation.model
 
+import com.lapoushko.feature.model.CategoryItem
 import com.lapoushko.feature.model.ExcursionItem
 import kotlinx.serialization.Serializable
 
@@ -10,7 +11,7 @@ import kotlinx.serialization.Serializable
 sealed class Screen {
 
     @Serializable
-    data class Category(val category: String) : Screen()
+    data class Category(val category: CategoryItem) : Screen()
 
     @Serializable
     data class ExcursionDetail(val excursion: ExcursionItem) : Screen()

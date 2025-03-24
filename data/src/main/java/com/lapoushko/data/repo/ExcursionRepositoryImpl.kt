@@ -43,12 +43,20 @@ class ExcursionRepositoryImpl(
         return excursionService.getInterestingExcursions()
     }
 
-    override suspend fun getPopularityExcursions(): List<Excursion> {
-        return excursions.take(10)
+    override fun getPopularityExcursions(): Flow<List<Excursion>> {
+        return excursionService.getPopularityExcursions()
     }
 
-    override suspend fun getExcursionsByCategory(category: String): List<Excursion> {
-        return excursions.filter { it.categories.contains(category) }.take(10)
+    override fun getExcursionsByCategory(category: String): Flow<List<Excursion>> {
+        return excursionService.getExcursionsByCategory(category)
+    }
+
+    override fun getNewExcursions(): Flow<List<Excursion>> {
+        return excursionService.getNewExcursions()
+    }
+
+    override fun getRecommendations(excursion: Excursion): Flow<List<Excursion>> {
+        return excursionService.getRecommendation(excursion)
     }
 
     override suspend fun getExcursionByName(name: String): Excursion? {

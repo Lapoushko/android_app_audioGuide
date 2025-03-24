@@ -22,12 +22,10 @@ class ExcursionDetailScreenViewModel(
     private var _state = MutableExcursionDetailScreenState()
     val state = _state as ExcursionDetailScreenState
 
-    init {
-        loadInterestingExcursions()
-    }
-
-    private fun loadInterestingExcursions() {
-        _state.interestingExcursion = List(5) { ExcursionItem() }
+    fun loadInterestingExcursions(excursion: ExcursionItem) {
+        repository.getRecommendations(excursion = mapper.toDomain(excursion)).onEach { excursions ->
+            _state.interestingExcursion = excursions.map { mapper.toUi(it) }.take(5)
+        }.launchIn(viewModelScope)
     }
 
     fun setCurrentExcursion(excursion: ExcursionItem) {

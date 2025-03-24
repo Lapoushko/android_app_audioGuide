@@ -50,6 +50,7 @@ fun ExcursionDetailScreen(
 
     LaunchedEffect(excursion.id) {
         viewModel.setCurrentExcursion(excursion)
+        viewModel.loadInterestingExcursions(excursion)
     }
 
     Column(
@@ -119,7 +120,8 @@ fun ExcursionDetailScreen(
                 items = excursions.map {
                     CarouselItem.TitleDescription(
                         it.name,
-                        it.description
+                        it.description,
+                        it.points.firstOrNull()?.image
                     )
                 }
             )

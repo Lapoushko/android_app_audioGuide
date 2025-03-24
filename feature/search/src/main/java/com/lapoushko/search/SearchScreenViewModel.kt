@@ -12,7 +12,6 @@ import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.CarouselItem
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
 /**
  * @author Lapoushko
@@ -30,23 +29,24 @@ class SearchScreenViewModel(
         loadCategories()
         loadPopularityExcursions()
         loadInterestingExcursions()
+        loadNewExcursions()
     }
 
     private fun loadPopularityExcursions() {
-        viewModelScope.launch {
-            _state.specialExcursions = excursionRepository.getPopularityExcursions().map { mapper.toUi(it) }
-        }
+        excursionRepository.getPopularityExcursions().onEach { excursions ->
+            _state.populars = excursions.map { mapper.toUi(it) }.take(5)
+        }.launchIn(viewModelScope)
     }
 
     private fun loadNewExcursions() {
-        viewModelScope.launch {
-            _state.specialExcursions = emptyList()
-        }
+        excursionRepository.getNewExcursions().onEach { excursions ->
+            _state.news = excursions.map { mapper.toUi(it) }.take(5)
+        }.launchIn(viewModelScope)
     }
 
     private fun loadInterestingExcursions() {
         excursionRepository.getInterestingExcursions().onEach { excursions ->
-            _state.interesting = excursions.map { mapper.toUi(it) }
+            _state.interesting = excursions.map { mapper.toUi(it) }.take(5)
         }.launchIn(viewModelScope)
     }
 
@@ -54,21 +54,14 @@ class SearchScreenViewModel(
         categoryRepository.getCategories()
             .onEach { categories ->
                 _state.categories = categories.map {
-                    CarouselItem.Category(it)
+                    CarouselItem.Category(it.name, it.image)
                 }
             }.launchIn(viewModelScope)
     }
 
-    fun setIsNewExcursions(value: Boolean){
-        _state.isNew = value
-        if (state.isNew){
-            loadNewExcursions()
-        } else loadPopularityExcursions()
-    }
-
     private class MutableSearchScreenState : SearchScreenState {
-        override var specialExcursions: List<ExcursionItem> by mutableStateOf(emptyList())
-        override var isNew: Boolean by mutableStateOf(false)
+        override var populars: List<ExcursionItem> by mutableStateOf(emptyList())
+        override var news: List<ExcursionItem> by mutableStateOf(emptyList())
         override var interesting: List<ExcursionItem> by mutableStateOf(emptyList())
         override var categories: List<CarouselItem.Category> by mutableStateOf(emptyList())
     }
