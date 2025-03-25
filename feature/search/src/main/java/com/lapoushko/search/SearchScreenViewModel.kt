@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lapoushko.domain.repo.CategoryRepository
 import com.lapoushko.domain.repo.ExcursionRepository
+import com.lapoushko.feature.extension.searchByName
 import com.lapoushko.feature.mapper.ExcursionMapper
 import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.CarouselItem
@@ -47,6 +48,8 @@ class SearchScreenViewModel(
     private fun loadInterestingExcursions() {
         excursionRepository.getInterestingExcursions().onEach { excursions ->
             _state.interesting = excursions.map { mapper.toUi(it) }.take(5)
+            _state.allInteresting = excursions.map { mapper.toUi(it) }
+            _state.initialAllInteresting = state.allInteresting
         }.launchIn(viewModelScope)
     }
 
@@ -59,10 +62,22 @@ class SearchScreenViewModel(
             }.launchIn(viewModelScope)
     }
 
+    fun searchByName(text: String) {
+        _state.allInteresting = text.searchByName(state.initialAllInteresting)
+    }
+
+    fun updateIsSearch(value: Boolean) {
+        _state.isSearch = value
+    }
+
     private class MutableSearchScreenState : SearchScreenState {
         override var populars: List<ExcursionItem> by mutableStateOf(emptyList())
         override var news: List<ExcursionItem> by mutableStateOf(emptyList())
         override var interesting: List<ExcursionItem> by mutableStateOf(emptyList())
         override var categories: List<CarouselItem.Category> by mutableStateOf(emptyList())
+
+        override var allInteresting: List<ExcursionItem> by mutableStateOf(emptyList())
+        override var initialAllInteresting: List<ExcursionItem> by mutableStateOf(emptyList())
+        override var isSearch: Boolean by mutableStateOf(false)
     }
 }

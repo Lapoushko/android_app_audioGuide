@@ -57,7 +57,9 @@ fun BottomNavigationGraph(navController: NavHostController) {
             )
         }
         composable(route = ScreenBar.Favourite.route) {
-            FavouriteScreen()
+            FavouriteScreen(
+                onClickDetail = {navController.navigate(Screen.ExcursionDetail(it))}
+            )
         }
 
         composable(route = ScreenBar.Profile.route) { backStackEntry ->

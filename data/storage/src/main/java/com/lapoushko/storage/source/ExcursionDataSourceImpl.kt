@@ -15,7 +15,7 @@ class ExcursionDataSourceImpl(
     private val mapper: ExcursionDbMapper
 ) : ExcursionDataSource {
     override suspend fun deleteExcursion(excursion: Excursion) {
-        dao.deleteVacancy(excursion.id)
+        dao.deleteExcursion(excursion.id)
     }
 
     override suspend fun saveExcursion(excursion: Excursion) {

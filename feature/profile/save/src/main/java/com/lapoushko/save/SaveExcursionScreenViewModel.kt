@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lapoushko.domain.repo.ExcursionRepository
+import com.lapoushko.feature.extension.searchByName
 import com.lapoushko.feature.mapper.ExcursionMapper
 import com.lapoushko.feature.model.ExcursionItem
 import kotlinx.coroutines.flow.launchIn
@@ -21,13 +22,23 @@ class SaveExcursionScreenViewModel(
     private var _state = MutableSaveExcursionScreenState()
     val state = _state as SaveExcursionsScreenState
 
-    fun loadExcursions() {
+    init {
+        loadExcursions()
+    }
+
+    private fun loadExcursions() {
         repository.getSavedExcursions().onEach { excursions ->
             _state.excursions = excursions.map { mapper.toUi(it) }
+            _state.initialExcursions = state.excursions
         }.launchIn(viewModelScope)
     }
 
+    fun searchByName(text: String) {
+        _state.excursions = text.searchByName(state.initialExcursions)
+    }
+
     private class MutableSaveExcursionScreenState : SaveExcursionsScreenState {
+        override var initialExcursions: List<ExcursionItem> by mutableStateOf(emptyList())
         override var excursions: List<ExcursionItem> by mutableStateOf(emptyList())
     }
 }

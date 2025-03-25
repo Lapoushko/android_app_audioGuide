@@ -39,6 +39,14 @@ class ExcursionRepositoryImpl(
         excursionDataSource.saveExcursion(excursion)
     }
 
+    override suspend fun saveFavouriteExcursion(excursion: Excursion) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteFavouriteExcursion(excursion: Excursion) {
+        TODO("Not yet implemented")
+    }
+
     override fun getInterestingExcursions(): Flow<List<Excursion>> {
         return excursionService.getInterestingExcursions()
     }

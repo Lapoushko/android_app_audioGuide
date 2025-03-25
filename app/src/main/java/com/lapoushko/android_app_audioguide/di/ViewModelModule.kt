@@ -20,7 +20,7 @@ val viewModelModule = module {
     viewModel { SearchScreenViewModel(get(), get(), get()) }
     viewModel { ExcursionDetailScreenViewModel(get(), get()) }
     viewModel { CategoryScreenViewModel(get(), get()) }
-    viewModel { FavouriteScreenViewModel() }
+    viewModel { FavouriteScreenViewModel(get(), get()) }
 
     //profile
     viewModel { ProfileScreenViewModel() }

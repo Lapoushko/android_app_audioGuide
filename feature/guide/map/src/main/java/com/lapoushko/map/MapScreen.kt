@@ -28,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
-import com.lapoushko.extension.setPoint
 import com.lapoushko.feature.model.PointItem
 import com.lapoushko.ui.PermissionCheck
 import com.yandex.mapkit.Animation
@@ -245,4 +244,8 @@ private fun getBitmap(context: Context, @DrawableRes drawableRes: Int): Bitmap? 
 
         bitmap
     }
+}
+
+private fun Pair<Double, Double>?.setPoint(): Point? = this?.let {
+    Point(it.first, it.second)
 }

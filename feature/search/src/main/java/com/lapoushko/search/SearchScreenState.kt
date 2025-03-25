@@ -11,4 +11,7 @@ interface SearchScreenState {
     val news: List<ExcursionItem>
     val interesting: List<ExcursionItem>
     val categories: List<CarouselItem.Category>
+    val allInteresting: List<ExcursionItem>
+    val initialAllInteresting: List<ExcursionItem>
+    val isSearch: Boolean
 }

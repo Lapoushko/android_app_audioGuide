@@ -25,6 +25,7 @@ import com.lapoushko.ui.CarouselItem
 import com.lapoushko.ui.CustomCarousel
 import com.lapoushko.ui.CustomSearchBar
 import com.lapoushko.ui.ExcursionCard
+import com.lapoushko.ui.SelectionScreen
 import com.lapoushko.ui.theme.Typography
 import com.lapoushko.ui.theme.carouselSizeCategory
 import com.lapoushko.ui.theme.carouselSizeExcursion
@@ -42,11 +43,12 @@ fun SearchScreen(
 ) {
     val configuration = LocalConfiguration.current
 
-    val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    val sizeCardExcursion = if (screenWidth < 400.dp) smallCarouselSizeExcursion else carouselSizeExcursion
-    val sizeCardCategory = if (screenWidth < 400.dp) smallCarouselSizeCategory else carouselSizeCategory
+    val sizeCardExcursion =
+        if (screenWidth < 400.dp) smallCarouselSizeExcursion else carouselSizeExcursion
+    val sizeCardCategory =
+        if (screenWidth < 400.dp) smallCarouselSizeCategory else carouselSizeCategory
 
     val isNew = remember { mutableStateOf(false) }
     val state = viewModel.state
@@ -55,90 +57,110 @@ fun SearchScreen(
 
     val isCategoriesLoaded = categories.isNotEmpty()
 
+    val query = remember { mutableStateOf("") }
 
-
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
-        item {
-            CustomSearchBar(
-                modifier = Modifier
-                    .padding(vertical = 20.dp)
-                    .heightIn(max = 64.dp)
-            )
-        }
-
-        // Популярное
-        item {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                TextTitle(
-                    text = "Популярное",
+    if (state.isSearch) {
+        SelectionScreen(
+            onClickBack = { viewModel.updateIsSearch(false) },
+            textSearch = query.value,
+            onClickDetail = { handler.onToDetail(it) },
+            onClickSearch = {
+                viewModel.searchByName(it)
+                viewModel.updateIsSearch(true)
+            },
+            excursions = state.allInteresting,
+            nameScreen = "Поиск"
+        )
+    } else {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+        ) {
+            item {
+                CustomSearchBar(
+                    modifier = Modifier
+                        .padding(vertical = 20.dp)
+                        .heightIn(max = 64.dp),
+                    queryReturn = { query.value = it },
+                    onBack = { viewModel.updateIsSearch(false) },
                     onClick = {
-                        isNew.value = false
-                    },
-                    isActive = !isNew.value
-                )
-                TextTitle(
-                    text = "Новое",
-                    onClick = {
-                        isNew.value = true
-                    },
-                    isActive = isNew.value
+                        viewModel.updateIsSearch(true)
+                        viewModel.searchByName(query.value)
+                    }
                 )
             }
-            //Нужно вызывать разные, поскольку динамически карусель не меняет размер
-            if (isNew.value) {
-                Carousel(
-                    onClick = { handler.onToDetail(viewModel.state.news[it]) },
-                    items = viewModel.state.news,
-                    width = sizeCardExcursion.first.dp,
-                    height = sizeCardExcursion.second.dp
-                )
-            } else {
-                Carousel(
-                    onClick = { handler.onToDetail(viewModel.state.populars[it]) },
-                    items = viewModel.state.populars,
-                    width = sizeCardExcursion.first.dp,
-                    height = sizeCardExcursion.second.dp
-                )
-            }
-        }
 
-        item {
-            TextTitle("Интересное")
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                interesting.forEach { excursion ->
-                    ExcursionCard(
-                        onClick = { handler.onToDetail(excursion) },
-                        excursion = excursion
+            // Популярное
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    TextTitle(
+                        text = "Популярное",
+                        onClick = {
+                            isNew.value = false
+                        },
+                        isActive = !isNew.value
+                    )
+                    TextTitle(
+                        text = "Новое",
+                        onClick = {
+                            isNew.value = true
+                        },
+                        isActive = isNew.value
+                    )
+                }
+                //Нужно вызывать разные, поскольку динамически карусель не меняет размер
+                if (isNew.value) {
+                    Carousel(
+                        onClick = { handler.onToDetail(viewModel.state.news[it]) },
+                        items = viewModel.state.news,
+                        width = sizeCardExcursion.first.dp,
+                        height = sizeCardExcursion.second.dp
+                    )
+                } else {
+                    Carousel(
+                        onClick = { handler.onToDetail(viewModel.state.populars[it]) },
+                        items = viewModel.state.populars,
+                        width = sizeCardExcursion.first.dp,
+                        height = sizeCardExcursion.second.dp
                     )
                 }
             }
-        }
 
-        item {
-            TextTitle("Категории")
-            if (isCategoriesLoaded) {
-                CustomCarousel(
-                    onClick = {
-                        handler.onToCategory(
-                            CategoryItem(
-                                name = categories[it].category,
-                                image = categories[it].image
-                            )
+            item {
+                TextTitle("Интересное")
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    interesting.forEach { excursion ->
+                        ExcursionCard(
+                            onClick = { handler.onToDetail(excursion) },
+                            excursion = excursion
                         )
-                    },
-                    width = sizeCardCategory.first.dp,
-                    height = sizeCardCategory.second.dp,
-                    items = categories
-                )
-            } else {
-                CircularProgressIndicator()
+                    }
+                }
+            }
+
+            item {
+                TextTitle("Категории")
+                if (isCategoriesLoaded) {
+                    CustomCarousel(
+                        onClick = {
+                            handler.onToCategory(
+                                CategoryItem(
+                                    name = categories[it].category,
+                                    image = categories[it].image
+                                )
+                            )
+                        },
+                        width = sizeCardCategory.first.dp,
+                        height = sizeCardCategory.second.dp,
+                        items = categories
+                    )
+                } else {
+                    CircularProgressIndicator()
+                }
             }
         }
     }
