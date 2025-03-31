@@ -87,9 +87,9 @@ fun CustomTopAppBar(
                 saveState?.let {
                     IconButton(onClick = {
                         if (saveState.isActive) {
-                            saveState.onDeactivate()
+                            saveState.onDeactive()
                         } else {
-                            saveState.onActivate()
+                            saveState.onActive()
                         }
                     }) {
                         Icon(
@@ -102,9 +102,9 @@ fun CustomTopAppBar(
                 favouriteState?.let {
                     IconButton(onClick = {
                         if (favouriteState.isActive) {
-                            favouriteState.onDeactivate()
+                            favouriteState.onDeactive()
                         } else {
-                            favouriteState.onActivate()
+                            favouriteState.onActive()
                         }
                     }) {
                         Icon(
@@ -120,8 +120,8 @@ fun CustomTopAppBar(
 }
 
 class NavigationIcon(
-    val onActivate: () -> Unit,
-    val onDeactivate: () -> Unit,
+    val onActive: () -> Unit,
+    val onDeactive: () -> Unit,
     val isActive: Boolean
 )
 

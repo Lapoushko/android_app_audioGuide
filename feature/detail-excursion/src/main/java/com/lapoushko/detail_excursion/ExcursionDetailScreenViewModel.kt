@@ -33,6 +33,10 @@ class ExcursionDetailScreenViewModel(
         checkIsSaved()
     }
 
+    fun setIsSavedButtonActive(value: Boolean){
+        _state.isSaveButtonActive = value
+    }
+
     private fun checkIsSaved(){
         repository.getSavedExcursions()
             .map { excursions ->
@@ -63,5 +67,6 @@ class ExcursionDetailScreenViewModel(
         override var interestingExcursion: List<ExcursionItem> by mutableStateOf(emptyList())
         override var isSaved: Boolean by mutableStateOf(false)
         override var isFavourite: Boolean by mutableStateOf(false)
+        override var isSaveButtonActive: Boolean by mutableStateOf(false)
     }
 }

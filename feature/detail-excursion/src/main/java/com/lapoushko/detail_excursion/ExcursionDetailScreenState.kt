@@ -10,4 +10,5 @@ interface ExcursionDetailScreenState {
     val interestingExcursion: List<ExcursionItem>
     val isSaved: Boolean
     val isFavourite: Boolean
+    val isSaveButtonActive: Boolean
 }

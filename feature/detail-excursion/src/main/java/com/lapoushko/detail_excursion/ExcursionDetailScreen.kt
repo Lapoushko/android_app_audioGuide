@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.CarouselItem
+import com.lapoushko.ui.CustomAlertDialog
 import com.lapoushko.ui.CustomCarousel
 import com.lapoushko.ui.CustomTopAppBar
 import com.lapoushko.ui.NavigationIcon
@@ -53,7 +54,10 @@ fun ExcursionDetailScreen(
 
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
-    val sizeCardExcursion = if (screenWidth < 400.dp) smallCarouselSizeExcursion else carouselSizeExcursion
+    val sizeCardExcursion =
+        if (screenWidth < 400.dp) smallCarouselSizeExcursion else carouselSizeExcursion
+
+    val isSaveButtonActive = state.isSaveButtonActive
 
     LaunchedEffect(excursion.id) {
         viewModel.setCurrentExcursion(excursion)
@@ -69,10 +73,8 @@ fun ExcursionDetailScreen(
             onClickBack = { handler.onBack() },
             text = excursion.name,
             saveState = NavigationIcon(
-                onActivate = { viewModel.saveExcursion(excursion, context) },
-                onDeactivate = {
-                    viewModel.deleteExcursion(excursion, context)
-                },
+                onActive = { viewModel.setIsSavedButtonActive(true) },
+                onDeactive = { viewModel.setIsSavedButtonActive(true) },
                 isActive = state.isSaved
             ),
             favouriteState = NavigationIcon({}, {}, false)
@@ -132,6 +134,26 @@ fun ExcursionDetailScreen(
                     )
                 }
             )
+        }
+        if (isSaveButtonActive) {
+            when (state.isSaved) {
+                true -> CustomAlertDialog(
+                    text = "Вы точно хотите удалить экскурсию?",
+                    onAgree = {
+                        viewModel.deleteExcursion(excursion, context)
+                        viewModel.setIsSavedButtonActive(false)
+                    },
+                    onDisagree = { viewModel.setIsSavedButtonActive(false) }
+                )
+                false -> CustomAlertDialog(
+                    text = "Вы точно хотите скачать экскурсию?",
+                    onAgree = {
+                        viewModel.saveExcursion(excursion, context)
+                        viewModel.setIsSavedButtonActive(false)
+                    },
+                    onDisagree = { viewModel.setIsSavedButtonActive(false) }
+                )
+            }
         }
     }
 }
