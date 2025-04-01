@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.lapoushko.domain.repo.ExcursionRepository
 import com.lapoushko.feature.mapper.ExcursionMapper
 import com.lapoushko.feature.model.ExcursionItem
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -33,29 +34,52 @@ class ExcursionDetailScreenViewModel(
         checkIsSaved()
     }
 
-    fun setIsSavedButtonActive(value: Boolean){
+    fun setIsSavedButtonActive(value: Boolean) {
         _state.isSaveButtonActive = value
     }
 
-    private fun checkIsSaved(){
+    fun setDownloadAlertState(value: DownloadAlertState) {
+        _state.downloadAlertState = value
+        clearTimer()
+        downloading()
+    }
+
+    fun clearTimer(){
+        _state.apply {
+            downloadValues = downloadValues.copy(curValue = downloadValues.startValue)
+        }
+    }
+
+    private fun downloading(){
+        viewModelScope.launch {
+            while (state.downloadValues.curValue < state.downloadValues.endValue) {
+                delay(500)
+                _state.downloadValues = state.downloadValues.copy(curValue = state.downloadValues.curValue + 0.5f)
+            }
+        }
+    }
+
+    private fun checkIsSaved() {
         repository.getSavedExcursions()
             .map { excursions ->
                 excursions.any { it.id == _state.curExcursion.id }
             }
             .onEach { isSaved ->
                 _state.isSaved = isSaved
+                _state.downloadAlertState =
+                    if (isSaved) DownloadAlertState.DELETING else DownloadAlertState.SAVING
             }
             .launchIn(viewModelScope)
     }
 
-    fun saveExcursion(excursion: ExcursionItem, context: Context){
+    fun saveExcursion(excursion: ExcursionItem, context: Context) {
         viewModelScope.launch {
             Toast.makeText(context, "Save excursion", Toast.LENGTH_LONG).show()
             repository.saveExcursion(mapper.toDomain(excursion))
         }
     }
 
-    fun deleteExcursion(excursion: ExcursionItem, context: Context){
+    fun deleteExcursion(excursion: ExcursionItem, context: Context) {
         viewModelScope.launch {
             Toast.makeText(context, "Delete excursion", Toast.LENGTH_LONG).show()
             repository.deleteExcursion(mapper.toDomain(excursion))
@@ -66,7 +90,9 @@ class ExcursionDetailScreenViewModel(
         override var curExcursion: ExcursionItem by mutableStateOf(ExcursionItem())
         override var interestingExcursion: List<ExcursionItem> by mutableStateOf(emptyList())
         override var isSaved: Boolean by mutableStateOf(false)
+        override var downloadAlertState: DownloadAlertState by mutableStateOf(DownloadAlertState.EMPTY)
         override var isFavourite: Boolean by mutableStateOf(false)
         override var isSaveButtonActive: Boolean by mutableStateOf(false)
+        override var downloadValues: DownloadValues by mutableStateOf(DownloadValues(0f, 2f, 0f))
     }
 }
