@@ -1,5 +1,6 @@
 package com.lapoushko.network.service
 
+import android.content.Context
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -9,15 +10,19 @@ import com.lapoushko.domain.service.ExcursionService
 import com.lapoushko.network.entity.ExcursionNetwork
 import com.lapoushko.network.entity.Point
 import com.lapoushko.network.mapper.ExcursionNetworkMapper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.withContext
 
 /**
  * @author Lapoushko
  */
 class ExcursionServiceImpl(
+    private val context: Context,
     private val mapper: ExcursionNetworkMapper,
+    private val downloadService: DownloadService
 ) : ExcursionService {
     private val fireStore: FirebaseFirestore = Firebase.firestore
 
@@ -43,11 +48,11 @@ class ExcursionServiceImpl(
             query.get()
                 .addOnSuccessListener { querySnapshot ->
                     val excursions = mutableListOf<Excursion>()
-                    for (document in querySnapshot){
+                    for (document in querySnapshot) {
                         val excursion =
                             document.toObject(ExcursionNetwork::class.java).copy(id = document.id)
-                        if (typeSearch is TypeSearch.Recommendation){
-                            if (typeSearch.excursion.id == document.id){
+                        if (typeSearch is TypeSearch.Recommendation) {
+                            if (typeSearch.excursion.id == document.id) {
                                 continue
                             }
                         }
@@ -72,14 +77,9 @@ class ExcursionServiceImpl(
             awaitClose {}
         }
 
-    override suspend fun getSavedExcursions(): List<Excursion> {
-        return emptyList()
-    }
-
     override fun getInterestingExcursions(): Flow<List<Excursion>> {
         return getExcursions()
     }
-
 
     override fun getPopularityExcursions(): Flow<List<Excursion>> {
         return getExcursions(TypeSearch.Popular)
@@ -97,10 +97,70 @@ class ExcursionServiceImpl(
         return getExcursions(TypeSearch.Recommendation(excursion))
     }
 
+    override suspend fun getSize(excursion: Excursion): Double {
+        var totalSize = 0.0
+        excursion.points.forEach { point ->
+            totalSize += getFileSize(point.image)
+            totalSize += getFileSize(point.audio)
+        }
+        return totalSize
+    }
+
+    private suspend fun getFileSize(url: String): Double {
+        return withContext(Dispatchers.IO) {
+            val response = downloadService.getHeadFile(url)
+            if (response.isSuccessful) {
+                val contentLength = response.headers()["Content-Length"]?.toLongOrNull()
+                contentLength?.let {
+                    contentLength.toMByte()
+                } ?: 0.0
+            } else 0.0
+        }
+    }
+
+//        return withContext(Dispatchers.IO){
+//            val response = downloadService.downloadFile(url)
+//            val randomId = UUID.randomUUID().toString()
+//            if (response.isSuccessful) {
+//                // Получаем поток данных
+//                val inputStream = response.body()?.byteStream()
+//
+//                val text = typeFile.naming
+//                // Создаём файл в internal storage
+//                val file = File(context.filesDir, "excursion_${text}_$randomId")
+//
+//                try {
+//                    // Сохраняем данные в файл
+//                    inputStream?.use { input ->
+//                        FileOutputStream(file).use { output ->
+//                            val buffer = ByteArray(4096)
+//                            var bytesRead: Int
+//                            while (input.read(buffer).also { bytesRead = it } != -1) {
+//                                output.write(buffer, 0, bytesRead)
+//                            }
+//                        }
+//                    }
+//                    // Файл успешно скачан
+//                    Log.d("Download", "Файл скачан в ${file.absolutePath}")
+//                    file.absolutePath
+//                } catch (e: Exception) {
+//                    // Обработка ошибки при скачивании
+//                    Log.e("Download", "Ошибка при сохранении файла", e)
+//                    null
+//                }
+//            } else {
+//                // Обработка ошибки ответа
+//                Log.e("Download", "Ошибка загрузки: ${response.code()}")
+//                null
+//            }
+//        }
+
     override suspend fun getExcursionByName(name: String): Excursion? {
         TODO("Not yet implemented")
     }
 }
+
+private fun Long.toMByte() : Double = this.toDouble() / (1024 * 1024)
 
 private sealed class TypeSearch {
     data class Category(val category: String) : TypeSearch()

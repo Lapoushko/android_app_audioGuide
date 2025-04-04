@@ -21,7 +21,11 @@ interface ExcursionRepository {
 
     suspend fun deleteExcursion(excursion: Excursion)
 
-    suspend fun saveExcursion(excursion: Excursion)
+    suspend fun saveExcursion(
+        excursion: Excursion
+    )
+
+    suspend fun getSizeExcursion(excursion: Excursion): Double
 
     suspend fun saveFavouriteExcursion(excursion: Excursion)
 

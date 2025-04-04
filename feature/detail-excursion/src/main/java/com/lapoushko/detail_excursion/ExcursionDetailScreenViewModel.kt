@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.lapoushko.domain.repo.ExcursionRepository
 import com.lapoushko.feature.mapper.ExcursionMapper
 import com.lapoushko.feature.model.ExcursionItem
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -40,23 +39,10 @@ class ExcursionDetailScreenViewModel(
 
     fun setDownloadAlertState(value: DownloadAlertState) {
         _state.downloadAlertState = value
-        clearTimer()
-        downloading()
     }
 
     fun clearTimer(){
-        _state.apply {
-            downloadValues = downloadValues.copy(curValue = downloadValues.startValue)
-        }
-    }
-
-    private fun downloading(){
-        viewModelScope.launch {
-            while (state.downloadValues.curValue < state.downloadValues.endValue) {
-                delay(500)
-                _state.downloadValues = state.downloadValues.copy(curValue = state.downloadValues.curValue + 0.5f)
-            }
-        }
+        _state.downloadValues = state.downloadValues.copy(curValue = state.downloadValues.startValue)
     }
 
     private fun checkIsSaved() {
@@ -74,8 +60,11 @@ class ExcursionDetailScreenViewModel(
 
     fun saveExcursion(excursion: ExcursionItem, context: Context) {
         viewModelScope.launch {
-            Toast.makeText(context, "Save excursion", Toast.LENGTH_LONG).show()
-            repository.saveExcursion(mapper.toDomain(excursion))
+            val excursionDomain = mapper.toDomain(excursion)
+            val size = repository.getSizeExcursion(excursionDomain)
+            _state.downloadValues = state.downloadValues.copy(endValue = size)
+            Toast.makeText(context, "Save excursion $size", Toast.LENGTH_LONG).show()
+            repository.saveExcursion(excursionDomain)
         }
     }
 
@@ -93,6 +82,6 @@ class ExcursionDetailScreenViewModel(
         override var downloadAlertState: DownloadAlertState by mutableStateOf(DownloadAlertState.EMPTY)
         override var isFavourite: Boolean by mutableStateOf(false)
         override var isSaveButtonActive: Boolean by mutableStateOf(false)
-        override var downloadValues: DownloadValues by mutableStateOf(DownloadValues(0f, 2f, 0f))
+        override var downloadValues: DownloadValues by mutableStateOf(DownloadValues(0.0, 100000.0, 0.0))
     }
 }

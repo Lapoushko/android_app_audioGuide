@@ -64,9 +64,6 @@ fun ExcursionDetailScreen(
     val sizeCardExcursion =
         if (screenWidth < 400.dp) smallCarouselSizeExcursion else carouselSizeExcursion
 
-    val isSaveButtonActive = state.isSaveButtonActive
-    val isSaved = state.isSaved
-    val downloadAlertState = state.downloadAlertState
 
     val curValue = state.downloadValues.curValue
     val endValue = state.downloadValues.endValue
@@ -87,7 +84,7 @@ fun ExcursionDetailScreen(
             saveState = NavigationIcon(
                 onActive = { viewModel.setIsSavedButtonActive(true) },
                 onDeactive = { viewModel.setIsSavedButtonActive(true) },
-                isActive = isSaved
+                isActive = state.isSaved
             ),
             favouriteState = NavigationIcon({}, {}, false)
         )
@@ -147,14 +144,15 @@ fun ExcursionDetailScreen(
                 }
             )
         }
-        if (isSaveButtonActive) {
-            when (downloadAlertState) {
+        if (state.isSaveButtonActive) {
+            when (state.downloadAlertState) {
                 DownloadAlertState.DELETING ->
                     SaveAlertDialog(
                         content = { ContentText("Вы хотите удалить экскурсию?") },
                         onAgree = {
                             viewModel.deleteExcursion(excursion, context)
                             viewModel.setIsSavedButtonActive(false)
+                            viewModel.setDownloadAlertState(DownloadAlertState.SAVING)
                         },
                         onDisagree = { viewModel.setIsSavedButtonActive(false) }
                     )
@@ -163,6 +161,7 @@ fun ExcursionDetailScreen(
                     SaveAlertDialog(
                         content = { ContentText("Вы хотите скачать экскурсию?") },
                         onAgree = {
+                            viewModel.saveExcursion(excursion, context)
                             viewModel.setDownloadAlertState(DownloadAlertState.DOWNLOADING)
                         },
                         onDisagree = { viewModel.setIsSavedButtonActive(false) }
@@ -170,20 +169,20 @@ fun ExcursionDetailScreen(
 
                 DownloadAlertState.DOWNLOADING -> {
                     DownloadAlertDialog(
-                        content = { ContentDownload(curValue = curValue, endValue = endValue) },
+                        content = { ContentDownload(curValue = state.downloadValues.curValue.toFloat(), endValue = state.downloadValues.endValue.toFloat()) },
                         onAgree = {
-                            viewModel.saveExcursion(excursion, context)
                             viewModel.setIsSavedButtonActive(false)
                             viewModel.clearTimer()
+                            viewModel.setDownloadAlertState(DownloadAlertState.DELETING)
                         },
                         onDisagree = {
-                            viewModel.setDownloadAlertState(DownloadAlertState.SAVING)
                             viewModel.setIsSavedButtonActive(false)
                             viewModel.clearTimer()
+                            viewModel.setDownloadAlertState(DownloadAlertState.SAVING)
                         },
                         title = "Скачивание",
                         textDownloaded = "Готово",
-                        textNotDownloaded = "Отмен а",
+                        textNotDownloaded = "Отмена",
                         isDownloaded = curValue >= endValue
                     )
                 }

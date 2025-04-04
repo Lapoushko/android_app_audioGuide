@@ -102,4 +102,8 @@ dependencies {
 
     //MAP
     implementation(libs.maps.mobile)
+
+    //Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.okhttp)
 }

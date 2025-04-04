@@ -13,20 +13,6 @@ class ExcursionRepositoryImpl(
     private val excursionService: ExcursionService,
     private val excursionDataSource: ExcursionDataSource
 ) : ExcursionRepository {
-    private val excursions = List(100) { index ->
-        Excursion(
-            id = "",
-            name = "Название $index",
-            description = "Описание $index",
-            categories = listOf("Категория"),
-            distance = index * 50L,
-            rating = index.toDouble(),
-            countRating = index.toLong(),
-            points = emptyList(),
-            age = 0
-        )
-    }
-
     override fun getSavedExcursions(): Flow<List<Excursion>> {
         return excursionDataSource.getSavedExcursions()
     }
@@ -36,8 +22,24 @@ class ExcursionRepositoryImpl(
     }
 
     override suspend fun saveExcursion(excursion: Excursion) {
+
         excursionDataSource.saveExcursion(excursion)
     }
+
+    override suspend fun getSizeExcursion(excursion: Excursion): Double {
+        return excursionService.getSize(excursion)
+    }
+
+//    override suspend fun saveExcursionAndGetSize(excursion: Excursion): Double? {
+//        val points = mutableListOf<Point>()
+//        excursion.points.forEach {
+//            val image = excursionService.getFiles(url = it.image, typeFile = TypeFile.IMAGE)
+//            val audio = excursionService.getFiles(url = it.audio, typeFile = TypeFile.AUDIO)
+//            points.add(it.copy(audio = audio ?: it.audio, image = image ?: it.image))
+//        }
+//        val newExcursion = excursion.copy(points = points)
+//        excursionDataSource.saveExcursion(newExcursion)
+//    }
 
     override suspend fun saveFavouriteExcursion(excursion: Excursion) {
         TODO("Not yet implemented")
@@ -68,6 +70,6 @@ class ExcursionRepositoryImpl(
     }
 
     override suspend fun getExcursionByName(name: String): Excursion? {
-        return excursions.find { it.name == name }
+        TODO("Not yet implemented")
     }
 }

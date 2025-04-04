@@ -17,7 +17,12 @@ interface ExcursionService {
 
     fun getRecommendation(excursion: Excursion): Flow<List<Excursion>>
 
-    suspend fun getSavedExcursions(): List<Excursion>
+    suspend fun getSize(excursion: Excursion): Double
 
     suspend fun getExcursionByName(name: String): Excursion?
+}
+
+enum class TypeFile(val naming: String) {
+    IMAGE("image"),
+    AUDIO("audio")
 }

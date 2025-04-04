@@ -25,7 +25,7 @@ enum class DownloadAlertState(){
 }
 
 data class DownloadValues(
-    val startValue: Float,
-    val endValue: Float,
-    val curValue: Float
+    val startValue: Double,
+    val endValue: Double,
+    val curValue: Double
 )
