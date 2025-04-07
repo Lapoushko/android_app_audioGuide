@@ -9,10 +9,10 @@ data class ExcursionNetwork(
     val id: String? = "",
     val name: String? = "",
     val description: String? = "",
+    val age: Int? = null,
     val distance: Long? = null,
     val categories: List<String>? = null,
     val countRating: Long? = null,
-    val price: Double? = null,
     val rating: Double? = null,
     val points: List<Point>? = null
 )

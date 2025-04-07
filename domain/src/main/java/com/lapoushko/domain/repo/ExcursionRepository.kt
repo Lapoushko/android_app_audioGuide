@@ -7,13 +7,32 @@ import kotlinx.coroutines.flow.Flow
  * @author Lapoushko
  */
 interface ExcursionRepository {
-    suspend fun getSavedExcursions(): List<Excursion>
+    fun getSavedExcursions(): Flow<List<Excursion>>
 
     fun getInterestingExcursions(): Flow<List<Excursion>>
 
-    suspend fun getPopularityExcursions(): List<Excursion>
+    fun getPopularityExcursions(): Flow<List<Excursion>>
 
-    suspend fun getExcursionsByCategory(category: String): List<Excursion>
+    fun getExcursionsByCategory(category: String): Flow<List<Excursion>>
+
+    fun getNewExcursions(): Flow<List<Excursion>>
+
+    fun getRecommendations(excursion: Excursion): Flow<List<Excursion>>
+
+    suspend fun getSavedExcursion(id: String): Excursion
+
+    suspend fun deleteExcursion(excursion: Excursion)
+
+    suspend fun saveExcursion(
+        excursion: Excursion,
+        callBackFileDownloaded: (Double) -> Unit
+    ): Excursion?
+
+    suspend fun getSizeExcursion(excursion: Excursion): Double
+
+    suspend fun saveFavouriteExcursion(excursion: Excursion)
+
+    suspend fun deleteFavouriteExcursion(excursion: Excursion)
 
     suspend fun getExcursionByName(name: String): Excursion?
 }

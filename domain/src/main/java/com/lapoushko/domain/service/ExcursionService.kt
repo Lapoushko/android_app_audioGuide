@@ -7,13 +7,24 @@ import kotlinx.coroutines.flow.Flow
  * @author Lapoushko
  */
 interface ExcursionService {
-    suspend fun getSavedExcursions(): List<Excursion>
-
     fun getInterestingExcursions(): Flow<List<Excursion>>
 
-    suspend fun getPopularityExcursions(): List<Excursion>
+    fun getPopularityExcursions(): Flow<List<Excursion>>
 
-    suspend fun getExcursionsByCategory(category: String): List<Excursion>
+    fun getExcursionsByCategory(category: String): Flow<List<Excursion>>
+
+    fun getNewExcursions(): Flow<List<Excursion>>
+
+    fun getRecommendation(excursion: Excursion): Flow<List<Excursion>>
+
+    suspend fun getSize(excursion: Excursion): Double
+
+    suspend fun saveExcursion(excursion: Excursion, callBackFileDownloaded: (Double) -> Unit): Excursion?
 
     suspend fun getExcursionByName(name: String): Excursion?
+}
+
+enum class TypeFile(val naming: String) {
+    IMAGE("image"),
+    AUDIO("audio")
 }

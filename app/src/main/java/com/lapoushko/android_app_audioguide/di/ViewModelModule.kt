@@ -10,23 +10,24 @@ import com.lapoushko.save.SaveExcursionScreenViewModel
 import com.lapoushko.search.SearchScreenViewModel
 import com.lapoushko.selection.CategoryScreenViewModel
 import com.lapoushko.setting.SettingProfileScreenViewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 /**
  * @author Lapoushko
  */
 val viewModelModule = module {
-    single<SearchScreenViewModel> { SearchScreenViewModel(get(), get(), get()) }
-    single<ExcursionDetailScreenViewModel> { ExcursionDetailScreenViewModel() }
-    single<CategoryScreenViewModel> { CategoryScreenViewModel(get(), get()) }
-    single<FavouriteScreenViewModel> { FavouriteScreenViewModel() }
+    viewModel { SearchScreenViewModel(get(), get(), get(), get()) }
+    viewModel { ExcursionDetailScreenViewModel(get(), get(), get()) }
+    viewModel { CategoryScreenViewModel(get(), get()) }
+    viewModel { FavouriteScreenViewModel(get(), get(), get()) }
 
     //profile
-    single<ProfileScreenViewModel> { ProfileScreenViewModel() }
-    single<SaveExcursionScreenViewModel> { SaveExcursionScreenViewModel(get(), get()) }
-    single<SettingProfileScreenViewModel> { SettingProfileScreenViewModel(get()) }
+    viewModel { ProfileScreenViewModel() }
+    viewModel { SaveExcursionScreenViewModel(get(), get()) }
+    viewModel { SettingProfileScreenViewModel(get()) }
     //guide
-    single<AudioScreenViewModel> { AudioScreenViewModel(get()) }
-    single<MapScreenViewModel> { MapScreenViewModel() }
-    single<GuideScreenViewModel> { GuideScreenViewModel() }
+    viewModel { AudioScreenViewModel(get(),get()) }
+    viewModel { MapScreenViewModel() }
+    viewModel { GuideScreenViewModel(get()) }
 }

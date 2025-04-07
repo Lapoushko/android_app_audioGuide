@@ -26,8 +26,10 @@ import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.session.MediaSession
 import androidx.media3.ui.PlayerNotificationManager
 import com.lapoushko.audio.manager.MediaNotificationManager
+import com.lapoushko.feature.model.ExcursionItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
@@ -36,7 +38,8 @@ import kotlinx.coroutines.launch
  */
 @UnstableApi
 class AudioScreenViewModel(
-    private val player: ExoPlayer
+    private val player: ExoPlayer,
+    private val observerAudio: ObserverAudio
 ) : ViewModel() {
     private var _state = MutableAudioScreenState()
     val state = _state as AudioScreenState
@@ -49,11 +52,25 @@ class AudioScreenViewModel(
 
     init {
         viewModelScope.launch {
-            while (true) {
-                _state.currentPosition = player.currentPosition
-                delay(500)
+            launch {
+                observerAudio.isDestroyFlow.collectLatest { isDestroy ->
+                    if (isDestroy) {
+                        onDestroy()
+                    }
+                }
+            }
+
+            launch {
+                while (true) {
+                    _state.currentPosition = player.currentPosition
+                    delay(500)
+                }
             }
         }
+    }
+
+    fun setExcursion(excursion: ExcursionItem) {
+        _state.excursion = excursion
     }
 
     fun preparePlayer(context: Context, playlist: List<PlaylistItem>) {
@@ -111,9 +128,6 @@ class AudioScreenViewModel(
         }
     }
 
-    fun getPlayerPosition(): Long{
-        return player.currentPosition
-    }
 
     fun updatePlayerPosition(position: Long) {
         player.seekTo(position)
@@ -133,28 +147,28 @@ class AudioScreenViewModel(
                     )
                 }
 
-        // Create a new MediaSession.
-        mediaSession = MediaSession.Builder(context, player)
-            .setSessionActivity(sessionActivityPendingIntent!!).build()
+        sessionActivityPendingIntent?.let {
+            mediaSession = MediaSession.Builder(context, player).setSessionActivity(it).build()
 
-        notificationManager =
-            MediaNotificationManager(
-                context,
-                mediaSession.token,
-                player,
-                PlayerNotificationListener()
-            )
+            notificationManager =
+                MediaNotificationManager(
+                    context,
+                    mediaSession.token,
+                    player,
+                    PlayerNotificationListener()
+                )
 
 
-        notificationManager.showNotificationForPlayer(player)
+            notificationManager.showNotificationForPlayer(player)
+        }
     }
 
     /**
      * Destroy audio notification
      */
-    fun onDestroy() {
+    private fun onDestroy() {
         onClose()
-        player.release()
+        player.stop()
     }
 
     /**
@@ -235,6 +249,7 @@ class AudioScreenViewModel(
     }
 
     private class MutableAudioScreenState() : AudioScreenState {
+        override var excursion: ExcursionItem by mutableStateOf(ExcursionItem())
         override var isPlaying: Boolean by mutableStateOf(false)
         override var totalDurationInMS: Long by mutableLongStateOf(0L)
         override var currentIndex: Int by mutableIntStateOf(0)

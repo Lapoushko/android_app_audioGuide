@@ -8,6 +8,7 @@ import androidx.navigation.toRoute
 import com.lapoushko.detail_excursion.ExcursionDetailScreen
 import com.lapoushko.detail_excursion.ExcursionDetailScreenHandler
 import com.lapoushko.favourite.FavouriteScreen
+import com.lapoushko.feature.model.CategoryItem
 import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.guide.GuideScreen
 import com.lapoushko.guide.GuideScreenHandler
@@ -21,6 +22,7 @@ import com.lapoushko.search.SearchScreenHandler
 import com.lapoushko.selection.CategoryScreen
 import com.lapoushko.selection.CategoryScreenHandler
 import com.lapoushko.setting.SettingProfileScreen
+import com.lapoushko.util.CategoryNavType
 import com.lapoushko.util.ExcursionNavType
 import kotlin.reflect.typeOf
 
@@ -55,7 +57,9 @@ fun BottomNavigationGraph(navController: NavHostController) {
             )
         }
         composable(route = ScreenBar.Favourite.route) {
-            FavouriteScreen()
+            FavouriteScreen(
+                onClickDetail = {navController.navigate(Screen.ExcursionDetail(it))}
+            )
         }
 
         composable(route = ScreenBar.Profile.route) { backStackEntry ->
@@ -66,17 +70,16 @@ fun BottomNavigationGraph(navController: NavHostController) {
                 )
             )
         }
-        composable<Screen.Category> {
+        composable<Screen.Category>(
+            typeMap = mapOf(typeOf<CategoryItem>() to CategoryNavType)
+        ) { backStackEntry ->
+            val category = backStackEntry.toRoute<Screen.Category>()
             CategoryScreen(
-                category = "Категория",
+                category = category.category,
                 handler = CategoryScreenHandler(
                     onBack = onBack,
                     onToDetail = { navController.navigate(Screen.ExcursionDetail(it)) }
                 )
-//                handler = SelectionScreenHandler(
-//                    onToDetail = { navController.navigate(Screen.ExcursionDetail(it)) },
-//                    onToBack = { navController.popBackStack() }
-//                ),
             )
         }
         composable<Screen.ExcursionDetail>(

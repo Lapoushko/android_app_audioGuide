@@ -3,11 +3,13 @@ package com.lapoushko.android_app_audioguide
 import android.app.Application
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
+import com.lapoushko.android_app_audioguide.di.daoModule
+import com.lapoushko.android_app_audioguide.di.dataSourceModule
 import com.lapoushko.android_app_audioguide.di.mapperModule
 import com.lapoushko.android_app_audioguide.di.mediaModule
 import com.lapoushko.android_app_audioguide.di.repositoryModule
 import com.lapoushko.android_app_audioguide.di.serviceModule
-import com.lapoushko.android_app_audioguide.di.useCaseModule
+import com.lapoushko.android_app_audioguide.di.utilModule
 import com.lapoushko.android_app_audioguide.di.viewModelModule
 import com.lapoushko.navigation.screen.BottomBarScreen
 import org.koin.android.ext.koin.androidContext
@@ -25,11 +27,13 @@ class App : Application() {
             androidContext(this@App)
             modules(
                 viewModelModule,
-                useCaseModule,
                 repositoryModule,
                 mapperModule,
                 serviceModule,
-                mediaModule
+                mediaModule,
+                dataSourceModule,
+                daoModule,
+                utilModule
             )
         }
     }

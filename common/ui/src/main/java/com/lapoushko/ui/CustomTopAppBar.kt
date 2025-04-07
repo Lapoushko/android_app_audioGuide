@@ -1,7 +1,9 @@
 package com.lapoushko.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -9,6 +11,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.BookmarkAdd
+import androidx.compose.material.icons.outlined.BookmarkRemove
+import androidx.compose.material.icons.outlined.FileDownload
+import androidx.compose.material.icons.outlined.FileDownloadOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -31,6 +37,8 @@ import com.lapoushko.ui.theme.Typography
 fun CustomTopAppBar(
     image: String?,
     onClickBack: () -> Unit,
+    saveState: NavigationIcon? = null,
+    favouriteState: NavigationIcon? = null,
     text: String,
     modifier: Modifier = Modifier
 ) {
@@ -64,15 +72,58 @@ fun CustomTopAppBar(
             style = Typography.headlineSmall,
             color = Color.White
         )
-        IconButton(onClick = { onClickBack() }) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Localized description",
-            )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconButton(onClick = { onClickBack() }) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Localized description",
+                )
+            }
+            Row {
+                saveState?.let {
+                    IconButton(onClick = {
+                        if (saveState.isActive) {
+                            saveState.onDeactive()
+                        } else {
+                            saveState.onActive()
+                        }
+                    }) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            imageVector = if (saveState.isActive) Icons.Outlined.FileDownloadOff else Icons.Outlined.FileDownload,
+                            contentDescription = "Сохранить",
+                        )
+                    }
+                }
+                favouriteState?.let {
+                    IconButton(onClick = {
+                        if (favouriteState.isActive) {
+                            favouriteState.onDeactive()
+                        } else {
+                            favouriteState.onActive()
+                        }
+                    }) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            imageVector = if (favouriteState.isActive) Icons.Outlined.BookmarkRemove else Icons.Outlined.BookmarkAdd,
+                            contentDescription = "Избранное",
+                        )
+                    }
+                }
+            }
         }
     }
 }
+
+class NavigationIcon(
+    val onActive: () -> Unit,
+    val onDeactive: () -> Unit,
+    val isActive: Boolean
+)
 
 @Preview(showBackground = true)
 @Composable
@@ -80,6 +131,8 @@ private fun CustomTopAppBarPreview() {
     CustomTopAppBar(
         image = "",
         onClickBack = {},
-        text = "Пример"
+        text = "Пример",
+        saveState = NavigationIcon({}, {}, false),
+        favouriteState = NavigationIcon({}, {}, false)
     )
 }

@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lapoushko.domain.usecase.SubscribeGetUser
+import com.lapoushko.domain.repo.UserRepository
 import com.lapoushko.ui.model.Error
 import com.lapoushko.ui.model.Input
 import com.lapoushko.ui.model.ProfileErrors
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
  * @author Lapoushko
  */
 class SettingProfileScreenViewModel(
-    private val getUserUseCase: SubscribeGetUser
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private var _state = MutableSettingProfileScreenState()
     val state = _state as SettingProfileScreenState
@@ -30,7 +30,7 @@ class SettingProfileScreenViewModel(
 
     private fun loadUser() {
         viewModelScope.launch {
-            val user = getUserUseCase.getUser()
+            val user = userRepository.getUser()
             updateName(user.name)
             updateEmail(user.email)
         }

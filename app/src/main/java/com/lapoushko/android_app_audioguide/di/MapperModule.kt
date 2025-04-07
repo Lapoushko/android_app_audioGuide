@@ -2,8 +2,12 @@ package com.lapoushko.android_app_audioguide.di
 
 import com.lapoushko.feature.mapper.ExcursionMapper
 import com.lapoushko.feature.mapper.ExcursionMapperImpl
+import com.lapoushko.network.mapper.CategoryNetworkMapper
+import com.lapoushko.network.mapper.CategoryNetworkMapperImpl
 import com.lapoushko.network.mapper.ExcursionNetworkMapper
 import com.lapoushko.network.mapper.ExcursionNetworkMapperImpl
+import com.lapoushko.storage.mapper.ExcursionDbMapper
+import com.lapoushko.storage.mapper.ExcursionDbMapperImpl
 import org.koin.dsl.module
 
 /**
@@ -12,4 +16,6 @@ import org.koin.dsl.module
 val mapperModule = module {
     factory<ExcursionMapper> { ExcursionMapperImpl() }
     factory<ExcursionNetworkMapper> { ExcursionNetworkMapperImpl() }
+    factory<ExcursionDbMapper> { ExcursionDbMapperImpl() }
+    factory<CategoryNetworkMapper> { CategoryNetworkMapperImpl() }
 }

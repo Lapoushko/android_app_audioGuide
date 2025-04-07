@@ -46,4 +46,13 @@ dependencies {
 
     implementation(libs.firebase.firestore)
     implementation(platform(libs.firebase.bom))
+
+    //Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.okhttp)
+
+    //MoShi
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.retrofit2converter.moshi)
 }

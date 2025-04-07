@@ -1,6 +1,3 @@
-import java.io.FileInputStream
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -11,18 +8,11 @@ android {
     namespace = "com.lapoushko.map"
     compileSdk = 35
 
-
-    val file = rootProject.file("local.properties")
-    val properties = Properties()
-    properties.load(FileInputStream(file))
-
     defaultConfig {
         minSdk = 26
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-
-        buildConfigField("String", "API_KEY", properties.getProperty("API_KEY"))
     }
 
     buildFeatures {
@@ -52,9 +42,10 @@ dependencies {
     implementation(project(":feature"))
     implementation(project(":common:ui"))
     implementation(libs.androidx.core.ktx)
+    implementation(project(":common:extension"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
 
     //MAP
-    implementation(libs.maps.compose)
+    implementation(libs.maps.mobile)
 }

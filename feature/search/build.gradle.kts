@@ -42,6 +42,7 @@ dependencies {
     implementation(project(":common:ui"))
     implementation(libs.androidx.core.ktx)
     implementation(project(":domain"))
+    implementation(project(":common:util"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
 }

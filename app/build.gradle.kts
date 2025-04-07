@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -9,6 +12,11 @@ android {
     namespace = "com.lapoushko.android_app_audioguide"
     compileSdk = 35
 
+
+    val file = rootProject.file("local.properties")
+    val properties = Properties()
+    properties.load(FileInputStream(file))
+
     defaultConfig {
         applicationId = "com.lapoushko.android_app_audioguide"
         minSdk = 26
@@ -17,6 +25,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "API_KEY", properties.getProperty("API_KEY"))
     }
 
     buildTypes {
@@ -37,6 +47,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -67,6 +78,8 @@ dependencies {
     implementation(project(":feature"))
     implementation(project(":data"))
     implementation(project(":data:network"))
+    implementation(project(":data:storage"))
+    implementation(project(":common:util"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -87,4 +100,11 @@ dependencies {
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.common)
     implementation(libs.androidx.media3.session)
+
+    //MAP
+    implementation(libs.maps.mobile)
+
+    //Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.okhttp)
 }
