@@ -19,6 +19,8 @@ interface ExcursionService {
 
     suspend fun getSize(excursion: Excursion): Double
 
+    suspend fun saveExcursion(excursion: Excursion, callBackFileDownloaded: (Double) -> Unit): Excursion?
+
     suspend fun getExcursionByName(name: String): Excursion?
 }
 

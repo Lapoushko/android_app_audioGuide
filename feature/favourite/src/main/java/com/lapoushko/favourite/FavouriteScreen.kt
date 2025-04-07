@@ -1,9 +1,13 @@
 package com.lapoushko.favourite
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.SelectionScreen
+import com.lapoushko.ui.theme.Typography
+import com.lapoushko.ui.theme.onSurfaceLight
+import com.lapoushko.util.ConnectivityObserver
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -17,13 +21,24 @@ fun FavouriteScreen(
     val state = viewModel.state
     val excursions = state.excursions
 
-    SelectionScreen(
-        onClickSearch = { viewModel.searchByName(it) },
-        onClickDetail = onClickDetail,
-        textSearch = "",
-        excursions = excursions,
-        nameScreen = "Избранное",
-    )
+    when(state.internetStatus){
+        ConnectivityObserver.Status.AVAILABLE -> {
+            SelectionScreen(
+                onClickSearch = { viewModel.searchByName(it) },
+                onClickDetail = onClickDetail,
+                textSearch = "",
+                excursions = excursions,
+                nameScreen = "Избранное",
+            )
+        }
+        else -> {
+            Text(
+                "Нет подключения к интернету",
+                style = Typography.titleLarge,
+                color = onSurfaceLight
+            )
+        }
+    }
 }
 
 @Preview(showBackground = true)

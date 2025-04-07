@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.Flow
  * @author Lapoushko
  */
 interface ExcursionDataSource{
+    suspend fun getSavedExcursion(id: String): Excursion
+
     suspend fun deleteExcursion(excursion: Excursion)
 
     suspend fun saveExcursion(excursion: Excursion)

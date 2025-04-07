@@ -19,11 +19,14 @@ interface ExcursionRepository {
 
     fun getRecommendations(excursion: Excursion): Flow<List<Excursion>>
 
+    suspend fun getSavedExcursion(id: String): Excursion
+
     suspend fun deleteExcursion(excursion: Excursion)
 
     suspend fun saveExcursion(
-        excursion: Excursion
-    )
+        excursion: Excursion,
+        callBackFileDownloaded: (Double) -> Unit
+    ): Excursion?
 
     suspend fun getSizeExcursion(excursion: Excursion): Double
 

@@ -43,6 +43,7 @@ import com.lapoushko.ui.theme.carouselSizeExcursion
 import com.lapoushko.ui.theme.onSecondaryContainerLight
 import com.lapoushko.ui.theme.primaryLight
 import com.lapoushko.ui.theme.smallCarouselSizeExcursion
+import com.lapoushko.util.ConnectivityObserver
 import org.koin.androidx.compose.koinViewModel
 
 /**
@@ -52,7 +53,7 @@ import org.koin.androidx.compose.koinViewModel
 fun ExcursionDetailScreen(
     excursion: ExcursionItem,
     viewModel: ExcursionDetailScreenViewModel = koinViewModel(),
-    handler: ExcursionDetailScreenHandler
+    handler: ExcursionDetailScreenHandler,
 ) {
     val state = viewModel.state
     val excursions = state.interestingExcursion
@@ -68,9 +69,12 @@ fun ExcursionDetailScreen(
     val curValue = state.downloadValues.curValue
     val endValue = state.downloadValues.endValue
 
+    val internetStatus = state.internetStatus
+
     LaunchedEffect(excursion.id) {
         viewModel.setCurrentExcursion(excursion)
         viewModel.loadInterestingExcursions(excursion)
+        viewModel.checkIsSaved()
     }
 
     Column(
@@ -78,12 +82,12 @@ fun ExcursionDetailScreen(
             .verticalScroll(rememberScrollState())
     ) {
         CustomTopAppBar(
-            image = excursion.points.firstOrNull()?.image,
+            image = state.curExcursion.points.firstOrNull()?.image,
             onClickBack = { handler.onBack() },
-            text = excursion.name,
+            text = state.curExcursion.name,
             saveState = NavigationIcon(
-                onActive = { viewModel.setIsSavedButtonActive(true) },
-                onDeactive = { viewModel.setIsSavedButtonActive(true) },
+                onActive = { viewModel.onSaveButtonClick() },
+                onDeactive = { viewModel.onSaveButtonClick() },
                 isActive = state.isSaved
             ),
             favouriteState = NavigationIcon({}, {}, false)
@@ -95,7 +99,7 @@ fun ExcursionDetailScreen(
                 .align(Alignment.CenterHorizontally)
         ) {
             ExtendedFloatingActionButton(
-                onClick = { handler.onPlayExcursion(excursion) },
+                onClick = { handler.onPlayExcursion(state.curExcursion) },
                 icon = {
                     Icon(
                         Icons.AutoMirrored.Filled.DirectionsWalk,
@@ -118,7 +122,7 @@ fun ExcursionDetailScreen(
                 style = Typography.headlineSmall
             )
             Text(
-                text = excursion.description,
+                text = state.curExcursion.description,
                 style = Typography.bodyLarge,
                 modifier = Modifier.padding(bottom = 20.dp)
             )
@@ -127,183 +131,140 @@ fun ExcursionDetailScreen(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            Text(
-                text = "Похожее",
-                style = Typography.headlineSmall
-            )
-            CustomCarousel(
-                onClick = { handler.onToDetail(excursions[it]) },
-                width = sizeCardExcursion.first.dp,
-                height = sizeCardExcursion.second.dp,
-                items = excursions.map {
-                    CarouselItem.TitleDescription(
-                        it.name,
-                        it.description,
-                        it.points.firstOrNull()?.image
-                    )
-                }
-            )
+            if (internetStatus == ConnectivityObserver.Status.AVAILABLE){
+                Text(
+                    text = "Похожее",
+                    style = Typography.headlineSmall
+                )
+                CustomCarousel(
+                    onClick = { handler.onToDetail(excursions[it]) },
+                    width = sizeCardExcursion.first.dp,
+                    height = sizeCardExcursion.second.dp,
+                    items = excursions.map {
+                        CarouselItem.TitleDescription(
+                            it.name,
+                            it.description,
+                            it.points.firstOrNull()?.image
+                        )
+                    }
+                )
+            }
         }
         if (state.isSaveButtonActive) {
             when (state.downloadAlertState) {
-                DownloadAlertState.DELETING ->
-                    SaveAlertDialog(
-                        content = { ContentText("Вы хотите удалить экскурсию?") },
-                        onAgree = {
-                            viewModel.deleteExcursion(excursion, context)
-                            viewModel.setIsSavedButtonActive(false)
-                            viewModel.setDownloadAlertState(DownloadAlertState.SAVING)
-                        },
-                        onDisagree = { viewModel.setIsSavedButtonActive(false) }
-                    )
-
-                DownloadAlertState.SAVING ->
-                    SaveAlertDialog(
-                        content = { ContentText("Вы хотите скачать экскурсию?") },
-                        onAgree = {
-                            viewModel.saveExcursion(excursion, context)
-                            viewModel.setDownloadAlertState(DownloadAlertState.DOWNLOADING)
-                        },
-                        onDisagree = { viewModel.setIsSavedButtonActive(false) }
-                    )
-
-                DownloadAlertState.DOWNLOADING -> {
-                    DownloadAlertDialog(
-                        content = { ContentDownload(curValue = state.downloadValues.curValue.toFloat(), endValue = state.downloadValues.endValue.toFloat()) },
-                        onAgree = {
-                            viewModel.setIsSavedButtonActive(false)
-                            viewModel.clearTimer()
-                            viewModel.setDownloadAlertState(DownloadAlertState.DELETING)
-                        },
-                        onDisagree = {
-                            viewModel.setIsSavedButtonActive(false)
-                            viewModel.clearTimer()
-                            viewModel.setDownloadAlertState(DownloadAlertState.SAVING)
-                        },
-                        title = "Скачивание",
-                        textDownloaded = "Готово",
-                        textNotDownloaded = "Отмена",
-                        isDownloaded = curValue >= endValue
+                DownloadAlertState.CONFIRM_SAVE -> {
+                    SimpleAlertDialog(
+                        title = "Скачать экскурсию?",
+                        onConfirm = { viewModel.confirmSave(excursion, context) },
+                        onDismiss = { viewModel.cancelDialog() }
                     )
                 }
 
-                DownloadAlertState.EMPTY -> {}
+                DownloadAlertState.CONFIRM_DELETE -> {
+                    SimpleAlertDialog(
+                        title = "Удалить сохранённую экскурсию?",
+                        onConfirm = {
+                            viewModel.confirmDelete(
+                                state.curExcursion,
+                                context,
+                                onBackIfFromDao = { if (internetStatus != ConnectivityObserver.Status.AVAILABLE) handler.onBack() }
+                            )
+                        },
+                        onDismiss = { viewModel.cancelDialog() }
+                    )
+                }
+
+                DownloadAlertState.DOWNLOADING -> {
+                    DownloadProgressDialog(
+                        curValue = curValue,
+                        endValue = endValue,
+                        onCancel = { viewModel.cancelDialog() }
+                    )
+                }
+                else -> {}
             }
         }
     }
 }
 
 @Composable
-private fun DownloadAlertDialog(
-    title: String = "Подтверждение",
-    content: @Composable () -> Unit,
-    textDownloaded: String = "Готово",
-    textNotDownloaded: String = "Отмена",
-    isDownloaded: Boolean,
-    onAgree: () -> Unit,
-    onDisagree: () -> Unit
+fun SimpleAlertDialog(
+    title: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
 ) {
     AlertDialog(
-        title = {
-            Text(text = title, style = Typography.titleMedium)
-        },
-        text = {
-            content()
-        },
-        onDismissRequest = if (isDownloaded) onAgree else onDisagree,
+        onDismissRequest = onDismiss,
+        title = { Text(text = title, style = Typography.titleMedium) },
         confirmButton = {
-            when (isDownloaded) {
-                true ->
-                    TextButton(onClick = onAgree) {
-                        Text(text = textDownloaded, style = Typography.bodyMedium)
-                    }
-
-                false ->
-                    TextButton(onClick = onDisagree) {
-                        Text(text = textNotDownloaded, style = Typography.bodyMedium)
-                    }
-            }
-        },
-    )
-}
-
-@Composable
-private fun SaveAlertDialog(
-    title: String = "Подтверждение",
-    content: @Composable () -> Unit,
-    textAgree: String = "Да",
-    textDisagree: String = "Нет",
-    onAgree: () -> Unit,
-    onDisagree: () -> Unit
-) {
-    AlertDialog(
-        title = {
-            Text(text = title, style = Typography.titleMedium)
-        },
-        text = {
-            content()
-        },
-        onDismissRequest = onDisagree,
-        confirmButton = {
-            TextButton(onClick = onAgree) {
-                Text(text = textAgree, style = Typography.bodyMedium)
+            TextButton(onClick = onConfirm) {
+                Text("Да")
             }
         },
         dismissButton = {
-            TextButton(onClick = onDisagree) {
-                Text(text = textDisagree, style = Typography.bodyMedium)
+            TextButton(onClick = onDismiss) {
+                Text("Нет")
             }
         }
     )
 }
 
 @Composable
-private fun ContentText(text: String) {
-    Text(text = text, style = Typography.titleMedium)
-}
-
-@Composable
-private fun ContentDownload(
-    curValue: Float,
-    endValue: Float,
+fun DownloadProgressDialog(
+    curValue: Double,
+    endValue: Double?,
+    onCancel: () -> Unit
 ) {
-    val percent = curValue / endValue
-    val animatedProgress by animateFloatAsState(
-        targetValue = percent,
-        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-        label = ""
-    )
-
-    Column {
-        Column {
-            LinearProgressIndicator(
-                modifier = Modifier.fillMaxWidth(),
-                progress = { animatedProgress },
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "$curValue", style = Typography.labelMedium)
-                Text(text = "${(percent * 100).toInt()} %", style = Typography.labelMedium)
-                Text(text = "$endValue", style = Typography.labelMedium)
+    if (endValue == null) {
+        AlertDialog(
+            onDismissRequest = onCancel,
+            title = { Text("Загрузка...", style = Typography.titleMedium) },
+            text = {
+                LinearProgressIndicator(
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = onCancel) {
+                    Text(text = "Отмена", style = Typography.bodyMedium)
+                }
             }
-        }
+        )
+    } else {
+        val percent = (curValue / endValue).coerceIn(0.0, 1.0)
+        val animatedProgress by animateFloatAsState(
+            targetValue = percent.toFloat(),
+            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+            label = ""
+        )
 
+        val isFinished = curValue >= endValue
+
+        AlertDialog(
+            onDismissRequest = { if (isFinished) onCancel() },
+            title = { Text("Скачивание", style = Typography.titleMedium) },
+            text = {
+                Column {
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth(),
+                        progress = { animatedProgress }
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("${curValue.toInt()} / ${endValue.toInt()}")
+                        Text("${(percent * 100).toInt()}%")
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = onCancel) {
+                    Text(if (isFinished) "Готово" else "Отмена")
+                }
+            }
+        )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun DownloadAlertPreview() {
-    SaveAlertDialog(
-        content = { ContentDownload(1f, 10f) },
-//        content = { ContentText("Вы хотите скачать экскурсию?")},
-        textAgree = "Да",
-        textDisagree = "Нет",
-        onAgree = {},
-        onDisagree = {}
-    )
 }
 
 @Preview

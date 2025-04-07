@@ -79,6 +79,7 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":data:network"))
     implementation(project(":data:storage"))
+    implementation(project(":common:util"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

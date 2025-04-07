@@ -16,6 +16,9 @@ interface ExcursionDao{
     @Query("SELECT * FROM ${ConstantsDatabase.EXCURSION_TABLE_NAME}")
     fun getSavedExcursions(): Flow<List<ExcursionDb>>
 
+    @Query("SELECT * FROM ${ConstantsDatabase.EXCURSION_TABLE_NAME} WHERE id = :id LIMIT 1")
+    suspend fun getSavedExcursion(id: String): ExcursionDb
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveExcursion(excursion: ExcursionDb)
 

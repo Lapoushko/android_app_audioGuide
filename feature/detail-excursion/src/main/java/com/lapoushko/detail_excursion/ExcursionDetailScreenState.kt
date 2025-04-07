@@ -1,12 +1,15 @@
 package com.lapoushko.detail_excursion
 
 import com.lapoushko.feature.model.ExcursionItem
+import com.lapoushko.util.ConnectivityObserver
+import kotlinx.coroutines.Job
 
 /**
  * @author Lapoushko
  */
 interface ExcursionDetailScreenState {
     val curExcursion: ExcursionItem
+
     val interestingExcursion: List<ExcursionItem>
     val downloadAlertState: DownloadAlertState
 
@@ -15,17 +18,21 @@ interface ExcursionDetailScreenState {
     val isSaveButtonActive: Boolean
 
     val downloadValues: DownloadValues
+
+    val downloadJob: Job?
+
+    val internetStatus: ConnectivityObserver.Status
 }
 
-enum class DownloadAlertState(){
-    DELETING,
-    SAVING,
-    DOWNLOADING,
-    EMPTY
+enum class DownloadAlertState {
+    NONE,
+    CONFIRM_SAVE,
+    CONFIRM_DELETE,
+    DOWNLOADING
 }
 
 data class DownloadValues(
     val startValue: Double,
-    val endValue: Double,
+    val endValue: Double?,
     val curValue: Double
 )

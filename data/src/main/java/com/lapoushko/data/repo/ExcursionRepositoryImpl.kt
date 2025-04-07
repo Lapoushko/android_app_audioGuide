@@ -21,9 +21,15 @@ class ExcursionRepositoryImpl(
         return excursionDataSource.deleteExcursion(excursion)
     }
 
-    override suspend fun saveExcursion(excursion: Excursion) {
-
-        excursionDataSource.saveExcursion(excursion)
+    override suspend fun saveExcursion(
+        excursion: Excursion,
+        callBackFileDownloaded: (Double) -> Unit
+    ): Excursion? {
+        val newExcursion = excursionService.saveExcursion(excursion, callBackFileDownloaded)
+        return newExcursion?.let {
+            excursionDataSource.saveExcursion(newExcursion)
+            newExcursion
+        }
     }
 
     override suspend fun getSizeExcursion(excursion: Excursion): Double {
@@ -67,6 +73,10 @@ class ExcursionRepositoryImpl(
 
     override fun getRecommendations(excursion: Excursion): Flow<List<Excursion>> {
         return excursionService.getRecommendation(excursion)
+    }
+
+    override suspend fun getSavedExcursion(id: String): Excursion {
+        return excursionDataSource.getSavedExcursion(id)
     }
 
     override suspend fun getExcursionByName(name: String): Excursion? {

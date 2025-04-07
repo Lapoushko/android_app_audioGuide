@@ -1,12 +1,14 @@
 package com.lapoushko.network.service
 
 import android.content.Context
+import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.lapoushko.domain.entity.Excursion
 import com.lapoushko.domain.service.ExcursionService
+import com.lapoushko.domain.service.TypeFile
 import com.lapoushko.network.entity.ExcursionNetwork
 import com.lapoushko.network.entity.Point
 import com.lapoushko.network.mapper.ExcursionNetworkMapper
@@ -15,6 +17,9 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
+import java.util.UUID
 
 /**
  * @author Lapoushko
@@ -118,6 +123,53 @@ class ExcursionServiceImpl(
         }
     }
 
+    override suspend fun saveExcursion(
+        excursion: Excursion,
+        callBackFileDownloaded: (Double) -> Unit
+    ): Excursion? {
+        val points = mutableListOf<com.lapoushko.domain.entity.Point>()
+        excursion.points.forEachIndexed { index, point ->
+            val image = downloadFile(url = point.image, typeFile = TypeFile.IMAGE) ?: return null
+            callBackFileDownloaded(image.second)
+            val audio = downloadFile(url = point.audio, typeFile = TypeFile.AUDIO) ?: return null
+            callBackFileDownloaded(audio.second)
+            points += excursion.points[index].copy(audio = audio.first, image = image.first)
+        }
+        return excursion.copy(points = points)
+    }
+
+    private suspend fun downloadFile(url: String, typeFile: TypeFile): Pair<String, Double>? {
+        return withContext(Dispatchers.IO) {
+            val response = downloadService.downloadFile(url)
+            val randomId = UUID.randomUUID().toString()
+            val contentLength = response.body()?.contentLength() ?: -1L
+            if (response.isSuccessful) {
+                val inputStream = response.body()?.byteStream()
+                val text = typeFile.naming
+                val file = File(context.filesDir, "excursion_${text}_$randomId")
+                try {
+                    inputStream?.use { input ->
+                        FileOutputStream(file).use { output ->
+                            val buffer = ByteArray(4096)
+                            var bytesRead: Int
+                            while (input.read(buffer).also { bytesRead = it } != -1) {
+                                output.write(buffer, 0, bytesRead)
+                            }
+                        }
+                    }
+                    Log.d("Download", "Файл скачан в ${file.absolutePath}")
+                    Pair(file.absolutePath, contentLength.toMByte())
+                } catch (e: Exception) {
+                    Log.e("Download", "Ошибка при сохранении файла", e)
+                    null
+                }
+            } else {
+                Log.e("Download", "Ошибка загрузки: ${response.code()}")
+                null
+            }
+        }
+    }
+
 //        return withContext(Dispatchers.IO){
 //            val response = downloadService.downloadFile(url)
 //            val randomId = UUID.randomUUID().toString()
@@ -160,7 +212,7 @@ class ExcursionServiceImpl(
     }
 }
 
-private fun Long.toMByte() : Double = this.toDouble() / (1024 * 1024)
+private fun Long.toMByte(): Double = this.toDouble() / (1024 * 1024)
 
 private sealed class TypeSearch {
     data class Category(val category: String) : TypeSearch()

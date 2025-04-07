@@ -17,10 +17,10 @@ import org.koin.dsl.module
  * @author Lapoushko
  */
 val viewModelModule = module {
-    viewModel { SearchScreenViewModel(get(), get(), get()) }
-    viewModel { ExcursionDetailScreenViewModel(get(), get()) }
+    viewModel { SearchScreenViewModel(get(), get(), get(), get()) }
+    viewModel { ExcursionDetailScreenViewModel(get(), get(), get()) }
     viewModel { CategoryScreenViewModel(get(), get()) }
-    viewModel { FavouriteScreenViewModel(get(), get()) }
+    viewModel { FavouriteScreenViewModel(get(), get(), get()) }
 
     //profile
     viewModel { ProfileScreenViewModel() }

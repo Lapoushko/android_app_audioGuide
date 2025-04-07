@@ -9,6 +9,7 @@ import com.lapoushko.android_app_audioguide.di.mapperModule
 import com.lapoushko.android_app_audioguide.di.mediaModule
 import com.lapoushko.android_app_audioguide.di.repositoryModule
 import com.lapoushko.android_app_audioguide.di.serviceModule
+import com.lapoushko.android_app_audioguide.di.utilModule
 import com.lapoushko.android_app_audioguide.di.viewModelModule
 import com.lapoushko.navigation.screen.BottomBarScreen
 import org.koin.android.ext.koin.androidContext
@@ -31,7 +32,8 @@ class App : Application() {
                 serviceModule,
                 mediaModule,
                 dataSourceModule,
-                daoModule
+                daoModule,
+                utilModule
             )
         }
     }

@@ -10,6 +10,8 @@ import androidx.lifecycle.viewModelScope
 import com.lapoushko.domain.repo.ExcursionRepository
 import com.lapoushko.feature.mapper.ExcursionMapper
 import com.lapoushko.feature.model.ExcursionItem
+import com.lapoushko.util.ConnectivityObserver
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -17,10 +19,22 @@ import kotlinx.coroutines.launch
 
 class ExcursionDetailScreenViewModel(
     private val repository: ExcursionRepository,
-    private val mapper: ExcursionMapper
+    private val mapper: ExcursionMapper,
+    private val networkConnectivityManager: ConnectivityObserver
 ) : ViewModel() {
     private var _state = MutableExcursionDetailScreenState()
     val state = _state as ExcursionDetailScreenState
+
+    init {
+        observeInternetStatus()
+    }
+
+    private fun observeInternetStatus(){
+        networkConnectivityManager.observe().onEach { status ->
+            _state.internetStatus = status
+        }.launchIn(viewModelScope)
+    }
+
 
     fun loadInterestingExcursions(excursion: ExcursionItem) {
         repository.getRecommendations(excursion = mapper.toDomain(excursion)).onEach { excursions ->
@@ -30,58 +44,106 @@ class ExcursionDetailScreenViewModel(
 
     fun setCurrentExcursion(excursion: ExcursionItem) {
         _state.curExcursion = excursion
-        checkIsSaved()
     }
 
-    fun setIsSavedButtonActive(value: Boolean) {
-        _state.isSaveButtonActive = value
-    }
-
-    fun setDownloadAlertState(value: DownloadAlertState) {
-        _state.downloadAlertState = value
-    }
-
-    fun clearTimer(){
-        _state.downloadValues = state.downloadValues.copy(curValue = state.downloadValues.startValue)
-    }
-
-    private fun checkIsSaved() {
+    fun checkIsSaved() {
         repository.getSavedExcursions()
             .map { excursions ->
                 excursions.any { it.id == _state.curExcursion.id }
             }
             .onEach { isSaved ->
                 _state.isSaved = isSaved
-                _state.downloadAlertState =
-                    if (isSaved) DownloadAlertState.DELETING else DownloadAlertState.SAVING
+                if (isSaved) {
+                    _state.downloadAlertState = DownloadAlertState.DOWNLOADING
+                    _state.curExcursion =
+                        mapper.toUi(repository.getSavedExcursion(state.curExcursion.id))
+                } else {
+                    _state.downloadAlertState = DownloadAlertState.CONFIRM_SAVE
+                }
             }
             .launchIn(viewModelScope)
     }
 
-    fun saveExcursion(excursion: ExcursionItem, context: Context) {
-        viewModelScope.launch {
-            val excursionDomain = mapper.toDomain(excursion)
-            val size = repository.getSizeExcursion(excursionDomain)
-            _state.downloadValues = state.downloadValues.copy(endValue = size)
-            Toast.makeText(context, "Save excursion $size", Toast.LENGTH_LONG).show()
-            repository.saveExcursion(excursionDomain)
+    fun onSaveButtonClick() {
+        _state.isSaveButtonActive = true
+        _state.downloadAlertState = if (_state.isSaved) {
+            DownloadAlertState.CONFIRM_DELETE
+        } else {
+            DownloadAlertState.CONFIRM_SAVE
         }
     }
 
-    fun deleteExcursion(excursion: ExcursionItem, context: Context) {
+    fun confirmSave(excursion: ExcursionItem, context: Context) {
+        _state.downloadAlertState = DownloadAlertState.DOWNLOADING
+        startDownload(excursion, context)
+    }
+
+    fun confirmDelete(excursion: ExcursionItem, context: Context, onBackIfFromDao: () -> Unit = {}) {
         viewModelScope.launch {
-            Toast.makeText(context, "Delete excursion", Toast.LENGTH_LONG).show()
             repository.deleteExcursion(mapper.toDomain(excursion))
+            Toast.makeText(context, "Экскурсия удалена", Toast.LENGTH_SHORT).show()
+            _state.isSaved = false
+            _state.downloadAlertState = DownloadAlertState.NONE
+            _state.isSaveButtonActive = false
+            onBackIfFromDao()
+        }
+    }
+
+    fun cancelDialog() {
+        _state.downloadJob?.cancel()
+        _state.downloadJob = null
+
+        _state.downloadAlertState = DownloadAlertState.NONE
+        _state.isSaveButtonActive = false
+        _state.downloadValues = _state.downloadValues.copy(curValue = 0.0)
+    }
+
+    private fun startDownload(excursion: ExcursionItem, context: Context) {
+        _state.downloadJob = viewModelScope.launch {
+            val domain = mapper.toDomain(excursion)
+            val size = repository.getSizeExcursion(domain)
+
+            _state.downloadValues = state.downloadValues.copy(
+                curValue = 0.0,
+                endValue = size
+            )
+
+            var currentProgress = 0.0
+
+            val newExcursion = repository.saveExcursion(domain) {
+                currentProgress += it
+                _state.downloadValues = _state.downloadValues.copy(curValue = currentProgress)
+            }
+
+            if (newExcursion != null) {
+                _state.isSaved = true
+                Toast.makeText(context, "Экскурсия скачана", Toast.LENGTH_SHORT).show()
+                _state.downloadAlertState = DownloadAlertState.NONE
+                _state.isSaveButtonActive = false
+                setCurrentExcursion(mapper.toUi(newExcursion))
+            } else {
+                Toast.makeText(context, "Не удалось скачать экскурсию", Toast.LENGTH_SHORT).show()
+                _state.downloadAlertState = DownloadAlertState.CONFIRM_SAVE
+            }
         }
     }
 
     private class MutableExcursionDetailScreenState : ExcursionDetailScreenState {
         override var curExcursion: ExcursionItem by mutableStateOf(ExcursionItem())
         override var interestingExcursion: List<ExcursionItem> by mutableStateOf(emptyList())
+
         override var isSaved: Boolean by mutableStateOf(false)
-        override var downloadAlertState: DownloadAlertState by mutableStateOf(DownloadAlertState.EMPTY)
+        override var downloadAlertState: DownloadAlertState by mutableStateOf(DownloadAlertState.NONE)
         override var isFavourite: Boolean by mutableStateOf(false)
         override var isSaveButtonActive: Boolean by mutableStateOf(false)
-        override var downloadValues: DownloadValues by mutableStateOf(DownloadValues(0.0, 100000.0, 0.0))
+        override var downloadValues: DownloadValues by mutableStateOf(
+            DownloadValues(
+                0.0,
+                null,
+                0.0
+            )
+        )
+        override var downloadJob: Job? by mutableStateOf(null)
+        override var internetStatus: ConnectivityObserver.Status by mutableStateOf(ConnectivityObserver.Status.UNAVAILABLE)
     }
 }

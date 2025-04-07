@@ -29,7 +29,7 @@ fun SelectionScreen(
     onClickDetail: (ExcursionItem) -> Unit,
     onClickSearch: (String) -> Unit,
     excursions: List<ExcursionItem>,
-    nameScreen: String
+    nameScreen: String,
 ) {
     LazyColumn(
         modifier = Modifier
