@@ -188,7 +188,7 @@ fun ExcursionDetailScreen(
 }
 
 @Composable
-fun SimpleAlertDialog(
+private fun SimpleAlertDialog(
     title: String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.lapoushko.network"
+    namespace = "com.lapoushko.user"
     compileSdk = 35
 
     defaultConfig {
@@ -34,34 +34,21 @@ android {
 }
 
 dependencies {
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+    implementation(libs.material)
     implementation(project(":domain"))
     testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 
     //Firebase-bom
     implementation(platform(libs.firebase.bom))
-
-    //Firebase-firestore
-    implementation(libs.firebase.firestore)
 
     //Firebase-auth
     implementation(libs.androidx.credentials)
     implementation(libs.firebase.auth)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
-
-    //Retrofit
-    implementation(libs.retrofit)
-    implementation(libs.okhttp)
-
-    //MoShi
-    implementation(libs.moshi)
-    implementation(libs.moshi.kotlin)
-    implementation(libs.retrofit2converter.moshi)
 }

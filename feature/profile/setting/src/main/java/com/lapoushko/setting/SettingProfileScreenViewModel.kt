@@ -1,17 +1,15 @@
 package com.lapoushko.setting
 
-import android.util.Patterns
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lapoushko.domain.repo.UserRepository
-import com.lapoushko.ui.model.Error
-import com.lapoushko.ui.model.Input
-import com.lapoushko.ui.model.ProfileErrors
-import com.lapoushko.ui.model.checkErrorInput
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 
 /**
  * @author Lapoushko
@@ -22,96 +20,38 @@ class SettingProfileScreenViewModel(
     private var _state = MutableSettingProfileScreenState()
     val state = _state as SettingProfileScreenState
 
-    private val errors: MutableSet<Error> = mutableSetOf()
-
-    init {
-        loadUser()
+    fun signUpUser(email: String, password: String) {
+        userRepository.signUpUser(email, password).onEach { response ->
+            Log.d("User", response.toString())
+            _state.response = response
+        }.launchIn(viewModelScope)
     }
 
-    private fun loadUser() {
-        viewModelScope.launch {
-            val user = userRepository.getUser()
-            updateName(user.name)
-            updateEmail(user.email)
+    fun signInUser(email: String, password: String) {
+        _state.isLoading = true
+        userRepository.signInUser(email, password).onEach { response ->
+            Log.d("User", response.toString())
+            _state.response = response
+            updateIsCorrectSignIn(state.response == UserRepository.AuthResponse.Success)
+            updateIsNeedToShowAuthDialog(state.response != UserRepository.AuthResponse.Success)
+        }.onCompletion {
+            _state.isLoading = false
         }
+            .launchIn(viewModelScope)
     }
 
-    fun updateName(input: String) {
-        val errorsByChecks = hashMapOf(
-            ProfileErrors.NameError.naming[0] to (input.length < 32 && Regex("^[a-zA-Z0-9-]+\$").matches(
-                input
-            )),
-        )
-        _state.name = input.checkErrorInput(
-            adding = { errors.add(it) },
-            removing = { if (it in errors) errors.remove(it) },
-            corrects = errorsByChecks
-        )
+    fun updateIsNeedToShowAuthDialog(value: Boolean) {
+        _state.isNeedToShowAuthDialog = value
     }
 
-    fun updateEmail(input: String) {
-        val errorsByChecks = hashMapOf(
-            ProfileErrors.EmailError.naming[0] to (input.length < 32 && Patterns.EMAIL_ADDRESS.matcher(
-                input
-            ).matches())
-        )
-        _state.email = input.checkErrorInput(
-            adding = { errors.add(it) },
-            removing = { if (it in errors) errors.remove(it) },
-            corrects = errorsByChecks
-        )
-    }
-
-    fun updateFirstPassword(input: String) {
-        val errorsByChecks = hashMapOf(
-            ProfileErrors.PasswordError.naming[0] to (
-                    input.length in 8..31 &&
-                            input != input.uppercase() &&
-                            input != input.lowercase() &&
-                            !input.all { it.isDigit() } &&
-                            !input.any { "!@#$%^&*()_+-=[]{}|;':\",.<>?/`~".contains(it) }
-                    )
-        )
-        _state.firstPassword = input.checkErrorInput(
-            adding = { errors.add(it) },
-            removing = { if (it in errors) errors.remove(it) },
-            corrects = errorsByChecks
-        )
-    }
-
-    fun updateSecondPassword(input: String) {
-        val errorsByChecks = hashMapOf(
-            ProfileErrors.PasswordError.naming[0] to (
-                    input.length in 8..31 &&
-                            input != input.uppercase() &&
-                            input != input.lowercase() &&
-                            !input.all { it.isDigit() } &&
-                            !input.any { "!@#$%^&*()_+-=[]{}|;':\",.<>?/`~".contains(it) }
-                    ),
-            ProfileErrors.PasswordError.naming[1] to
-                    (state.firstPassword.text == input)
-        )
-        _state.secondPassword = input.checkErrorInput(
-            adding = { errors.add(it) },
-            removing = { if (it in errors) errors.remove(it) },
-            corrects = errorsByChecks
-        )
-    }
-
-    fun saveSettings(onBack: () -> Unit) {
-        updateName(state.name.text)
-        updateEmail(state.email.text)
-        updateFirstPassword(state.firstPassword.text)
-        updateSecondPassword(state.secondPassword.text)
-        if (errors.isEmpty()) {
-            onBack()
-        }
+    private fun updateIsCorrectSignIn(value: Boolean) {
+        _state.isCorrectSignIn = value
     }
 
     private class MutableSettingProfileScreenState : SettingProfileScreenState {
-        override var name: Input by mutableStateOf(Input(text = "", error = null))
-        override var email: Input by mutableStateOf(Input(text = "", error = null))
-        override var firstPassword: Input by mutableStateOf(Input(text = "", error = null))
-        override var secondPassword: Input by mutableStateOf(Input(text = "", error = null))
+        override var response: UserRepository.AuthResponse? by mutableStateOf(null)
+        override var isLoading: Boolean by mutableStateOf(false)
+        override var isNeedToShowAuthDialog: Boolean by mutableStateOf(true)
+        override var isCorrectSignIn: Boolean by mutableStateOf(true)
     }
 }

@@ -1,10 +1,20 @@
 package com.lapoushko.domain.repo
 
 import com.lapoushko.domain.entity.User
+import kotlinx.coroutines.flow.Flow
 
 /**
  * @author Lapoushko
  */
 interface UserRepository {
-    suspend fun getUser(): User
+    fun signUpUser(email: String, password: String): Flow<AuthResponse>
+
+    fun signInUser(email: String, password: String): Flow<AuthResponse>
+
+    suspend fun getUser(): User?
+
+    sealed class AuthResponse{
+        data object Success: AuthResponse()
+        data class Error(val error: String): AuthResponse()
+    }
 }

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.lapoushko.network"
+    namespace = "com.lapoushko.excursion"
     compileSdk = 35
 
     defaultConfig {
@@ -49,12 +49,6 @@ dependencies {
 
     //Firebase-firestore
     implementation(libs.firebase.firestore)
-
-    //Firebase-auth
-    implementation(libs.androidx.credentials)
-    implementation(libs.firebase.auth)
-    implementation(libs.androidx.credentials.play.services.auth)
-    implementation(libs.googleid)
 
     //Retrofit
     implementation(libs.retrofit)

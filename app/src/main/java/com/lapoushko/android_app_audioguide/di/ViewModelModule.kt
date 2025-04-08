@@ -10,6 +10,7 @@ import com.lapoushko.save.SaveExcursionScreenViewModel
 import com.lapoushko.search.SearchScreenViewModel
 import com.lapoushko.selection.CategoryScreenViewModel
 import com.lapoushko.setting.SettingProfileScreenViewModel
+import com.lapoushko.ui.auth.AuthViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -30,4 +31,7 @@ val viewModelModule = module {
     viewModel { AudioScreenViewModel(get(),get()) }
     viewModel { MapScreenViewModel() }
     viewModel { GuideScreenViewModel(get()) }
+
+    //common
+    viewModel { AuthViewModel() }
 }
