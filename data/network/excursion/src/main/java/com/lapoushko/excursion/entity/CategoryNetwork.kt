@@ -1,4 +1,4 @@
-package com.lapoushko.network.entity
+package com.lapoushko.excursion.entity
 
 /**
  * @author Lapoushko

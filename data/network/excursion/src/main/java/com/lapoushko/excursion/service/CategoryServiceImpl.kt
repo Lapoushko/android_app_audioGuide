@@ -1,12 +1,12 @@
-package com.lapoushko.network.service
+package com.lapoushko.excursion.service
 
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.lapoushko.domain.entity.Category
 import com.lapoushko.domain.service.CategoryService
-import com.lapoushko.network.entity.CategoryNetwork
-import com.lapoushko.network.mapper.CategoryNetworkMapper
+import com.lapoushko.excursion.entity.CategoryNetwork
+import com.lapoushko.excursion.mapper.CategoryNetworkMapper
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

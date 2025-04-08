@@ -1,6 +1,6 @@
-package com.lapoushko.network.di
+package com.lapoushko.excursion.di
 
-import com.lapoushko.network.service.DownloadService
+import com.lapoushko.excursion.service.DownloadService
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 

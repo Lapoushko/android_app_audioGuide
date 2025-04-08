@@ -1,4 +1,4 @@
-package com.lapoushko.network.service
+package com.lapoushko.excursion.service
 
 import android.content.Context
 import android.util.Log
@@ -9,9 +9,9 @@ import com.google.firebase.firestore.firestore
 import com.lapoushko.domain.entity.Excursion
 import com.lapoushko.domain.service.ExcursionService
 import com.lapoushko.domain.service.TypeFile
-import com.lapoushko.network.entity.ExcursionNetwork
-import com.lapoushko.network.entity.Point
-import com.lapoushko.network.mapper.ExcursionNetworkMapper
+import com.lapoushko.excursion.entity.ExcursionNetwork
+import com.lapoushko.excursion.entity.Point
+import com.lapoushko.excursion.mapper.ExcursionNetworkMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -169,43 +169,6 @@ class ExcursionServiceImpl(
             }
         }
     }
-
-//        return withContext(Dispatchers.IO){
-//            val response = downloadService.downloadFile(url)
-//            val randomId = UUID.randomUUID().toString()
-//            if (response.isSuccessful) {
-//                // Получаем поток данных
-//                val inputStream = response.body()?.byteStream()
-//
-//                val text = typeFile.naming
-//                // Создаём файл в internal storage
-//                val file = File(context.filesDir, "excursion_${text}_$randomId")
-//
-//                try {
-//                    // Сохраняем данные в файл
-//                    inputStream?.use { input ->
-//                        FileOutputStream(file).use { output ->
-//                            val buffer = ByteArray(4096)
-//                            var bytesRead: Int
-//                            while (input.read(buffer).also { bytesRead = it } != -1) {
-//                                output.write(buffer, 0, bytesRead)
-//                            }
-//                        }
-//                    }
-//                    // Файл успешно скачан
-//                    Log.d("Download", "Файл скачан в ${file.absolutePath}")
-//                    file.absolutePath
-//                } catch (e: Exception) {
-//                    // Обработка ошибки при скачивании
-//                    Log.e("Download", "Ошибка при сохранении файла", e)
-//                    null
-//                }
-//            } else {
-//                // Обработка ошибки ответа
-//                Log.e("Download", "Ошибка загрузки: ${response.code()}")
-//                null
-//            }
-//        }
 
     override suspend fun getExcursionByName(name: String): Excursion? {
         TODO("Not yet implemented")

@@ -1,4 +1,4 @@
-package com.lapoushko.network.service
+package com.lapoushko.excursion.service
 
 import okhttp3.ResponseBody
 import retrofit2.Response

@@ -1,9 +1,9 @@
-package com.lapoushko.network.mapper
+package com.lapoushko.excursion.mapper
 
 import com.google.firebase.firestore.GeoPoint
 import com.lapoushko.domain.entity.Excursion
-import com.lapoushko.domain.entity.Point
-import com.lapoushko.network.entity.ExcursionNetwork
+import com.lapoushko.excursion.entity.ExcursionNetwork
+import com.lapoushko.excursion.entity.Point
 
 /**
  * @author Lapoushko
@@ -27,7 +27,7 @@ class ExcursionNetworkMapperImpl() : ExcursionNetworkMapper {
                 countRating = countRating ?: 0,
                 age = age ?: 0,
                 points = points?.map {
-                    Point(
+                    com.lapoushko.domain.entity.Point(
                         name = it.name ?: "",
                         text = it.text ?: "",
                         image = it.image ?: "",
@@ -51,7 +51,7 @@ class ExcursionNetworkMapperImpl() : ExcursionNetworkMapper {
                 age = age,
                 countRating = countRating,
                 points = points.map {
-                    com.lapoushko.network.entity.Point(
+                    Point(
                         name = it.name,
                         text = it.text,
                         image = it.image,
