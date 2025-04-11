@@ -91,9 +91,9 @@ private fun SignUpDialog(
         title = { Text("Регистрация", style = Typography.titleMedium) },
         confirmButton = {
             TextButton(onClick = {
-                signUp(signUpData)
+                onToSignIn()
             }) {
-                Text("Зарегистрироваться", style = Typography.labelMedium)
+                Text("Вход", style = Typography.labelMedium)
             }
         },
         dismissButton = {
@@ -132,9 +132,14 @@ private fun SignUpDialog(
                         onTextChange = updateSecondPassword,
                         isError = !secondPassword.error?.code?.second.isNullOrEmpty(),
                     )
-                    TextButton(onClick = onToSignIn, modifier = Modifier.fillMaxWidth()) {
+                    TextButton(
+                        onClick = { signUp(signUpData) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         Text(
-                            text = "Вход", style = Typography.bodyMedium, color = Color.Blue
+                            text = "Зарегистрироваться",
+                            style = Typography.bodyMedium,
+                            color = Color.Blue
                         )
                     }
                 }
@@ -158,10 +163,10 @@ private fun SignInDialog(
         title = { Text("Вход", style = Typography.titleMedium) },
         confirmButton = {
             TextButton(
-                onClick = { signIn(signInData) },
+                onClick = { onToSignUp() },
                 enabled = !isLoading
             ) {
-                Text("Вход", style = Typography.labelMedium)
+                Text("Регистрация", style = Typography.labelMedium)
             }
         },
         dismissButton = {
@@ -202,9 +207,9 @@ private fun SignInDialog(
                         onTextChange = updatePassword,
                         isError = !password.error?.code?.second.isNullOrEmpty(),
                     )
-                    TextButton(onClick = onToSignUp, modifier = Modifier.fillMaxWidth()) {
+                    TextButton(onClick = { signIn(signInData) }, modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            text = "Регистрация", style = Typography.bodyMedium, color = Color.Blue
+                            text = "Вход", style = Typography.bodyMedium, color = Color.Blue
                         )
                     }
                 }
