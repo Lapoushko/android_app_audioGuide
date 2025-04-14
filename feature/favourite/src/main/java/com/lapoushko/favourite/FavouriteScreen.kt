@@ -2,6 +2,7 @@ package com.lapoushko.favourite
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.SelectionScreen
@@ -28,12 +29,12 @@ fun FavouriteScreen(
                 onClickDetail = onClickDetail,
                 textSearch = "",
                 excursions = excursions,
-                nameScreen = "Избранное",
+                nameScreen = stringResource(R.string.favourite),
             )
         }
         else -> {
             Text(
-                "Нет подключения к интернету",
+                stringResource(R.string.error_internet),
                 style = Typography.titleLarge,
                 color = onSurfaceLight
             )

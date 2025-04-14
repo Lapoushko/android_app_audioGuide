@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search">Поиск</string>
+    <string name="popular">Популярное</string>
+    <string name="news">Новое</string>
+    <string name="interesting">Интересное</string>
+    <string name="categories">Категории</string>
+    <string name="downloaded_excursions">Загруженнные экскурсии</string>
+</resources>

@@ -81,7 +81,8 @@ class ExcursionDetailScreenViewModel(
     fun confirmDelete(excursion: ExcursionItem, context: Context, onBackIfFromDao: () -> Unit = {}) {
         viewModelScope.launch {
             repository.deleteExcursion(mapper.toDomain(excursion))
-            Toast.makeText(context, "Экскурсия удалена", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context,
+                context.getString(R.string.excursion_deleted), Toast.LENGTH_SHORT).show()
             _state.isSaved = false
             _state.downloadAlertState = DownloadAlertState.NONE
             _state.isSaveButtonActive = false
@@ -117,12 +118,14 @@ class ExcursionDetailScreenViewModel(
 
             if (newExcursion != null) {
                 _state.isSaved = true
-                Toast.makeText(context, "Экскурсия скачана", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,
+                    context.getString(R.string.excursion_downloaded), Toast.LENGTH_SHORT).show()
                 _state.downloadAlertState = DownloadAlertState.NONE
                 _state.isSaveButtonActive = false
                 setCurrentExcursion(mapper.toUi(newExcursion))
             } else {
-                Toast.makeText(context, "Не удалось скачать экскурсию", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context,
+                    context.getString(R.string.error_downloaded), Toast.LENGTH_SHORT).show()
                 _state.downloadAlertState = DownloadAlertState.CONFIRM_SAVE
             }
         }

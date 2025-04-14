@@ -14,6 +14,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,7 +40,7 @@ fun ProfileScreen(
             title = {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Профиль",
+                    text = stringResource(R.string.profile),
                     style = Typography.titleLarge,
                     textAlign = TextAlign.Center
                 )
@@ -51,12 +52,12 @@ fun ProfileScreen(
             TextButton(
                 onClick = { handler.onSettings() }
             ) {
-                Text(text = "Настройки профиля", style = Typography.bodyLarge)
+                Text(text = stringResource(R.string.profile_settings), style = Typography.bodyLarge)
             }
             TextButton(
                 onClick = { handler.onSaves() }
             ) {
-                Text(text = "Загруженные экскурсии", style = Typography.bodyLarge)
+                Text(text = stringResource(R.string.downloaded_excursions), style = Typography.bodyLarge)
             }
         }
 

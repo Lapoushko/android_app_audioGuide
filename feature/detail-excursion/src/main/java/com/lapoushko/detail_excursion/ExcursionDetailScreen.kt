@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -106,7 +107,7 @@ fun ExcursionDetailScreen(
                         contentDescription = null
                     )
                 },
-                text = { Text(text = "Запустить маршрут") },
+                text = { Text(text = stringResource(R.string.start_excursion)) },
                 shape = RoundedCornerShape(54.dp),
                 containerColor = onSecondaryContainerLight,
                 contentColor = primaryLight
@@ -118,7 +119,7 @@ fun ExcursionDetailScreen(
         ) {
             Text(
                 modifier = Modifier.padding(top = 30.dp),
-                text = "Описание",
+                text = stringResource(R.string.excursion_description),
                 style = Typography.headlineSmall
             )
             Text(
@@ -133,7 +134,7 @@ fun ExcursionDetailScreen(
         ) {
             if (internetStatus == ConnectivityObserver.Status.AVAILABLE){
                 Text(
-                    text = "Похожее",
+                    text = stringResource(R.string.similar_excursions),
                     style = Typography.headlineSmall
                 )
                 CustomCarousel(
@@ -154,7 +155,7 @@ fun ExcursionDetailScreen(
             when (state.downloadAlertState) {
                 DownloadAlertState.CONFIRM_SAVE -> {
                     SimpleAlertDialog(
-                        title = "Скачать экскурсию?",
+                        title = stringResource(R.string.download_excursion),
                         onConfirm = { viewModel.confirmSave(excursion, context) },
                         onDismiss = { viewModel.cancelDialog() }
                     )
@@ -162,7 +163,7 @@ fun ExcursionDetailScreen(
 
                 DownloadAlertState.CONFIRM_DELETE -> {
                     SimpleAlertDialog(
-                        title = "Удалить сохранённую экскурсию?",
+                        title = stringResource(R.string.delete_saved_excursion),
                         onConfirm = {
                             viewModel.confirmDelete(
                                 state.curExcursion,
@@ -198,12 +199,12 @@ private fun SimpleAlertDialog(
         title = { Text(text = title, style = Typography.titleMedium) },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Да")
+                Text(stringResource(R.string.yes))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Нет")
+                Text(stringResource(R.string.no))
             }
         }
     )
@@ -218,7 +219,7 @@ fun DownloadProgressDialog(
     if (endValue == null) {
         AlertDialog(
             onDismissRequest = onCancel,
-            title = { Text("Загрузка...", style = Typography.titleMedium) },
+            title = { Text(stringResource(R.string.loading), style = Typography.titleMedium) },
             text = {
                 LinearProgressIndicator(
                     modifier = Modifier.fillMaxWidth(),
@@ -226,7 +227,7 @@ fun DownloadProgressDialog(
             },
             confirmButton = {
                 TextButton(onClick = onCancel) {
-                    Text(text = "Отмена", style = Typography.bodyMedium)
+                    Text(text = stringResource(R.string.cancel), style = Typography.bodyMedium)
                 }
             }
         )
@@ -242,7 +243,7 @@ fun DownloadProgressDialog(
 
         AlertDialog(
             onDismissRequest = { if (isFinished) onCancel() },
-            title = { Text("Скачивание", style = Typography.titleMedium) },
+            title = { Text(stringResource(R.string.download), style = Typography.titleMedium) },
             text = {
                 Column {
                     LinearProgressIndicator(
@@ -260,7 +261,7 @@ fun DownloadProgressDialog(
             },
             confirmButton = {
                 TextButton(onClick = onCancel) {
-                    Text(if (isFinished) "Готово" else "Отмена")
+                    Text(if (isFinished) stringResource(R.string.ready) else stringResource(R.string.cancel))
                 }
             }
         )
@@ -274,7 +275,7 @@ fun ExcursionDetailScreenPreview() {
         ExcursionItem(
             "",
             "Название",
-            "Экскурсия включает такие объекты, как: здание Парламента, прогулка по крыше здания Оперы (построено в 2008 году), крепость Акершуз (возведена более 700 лет назад), набережная Акер-Бригге и посещение городской Ратуши, где ежегодно вручается Нобелевская премия мира.",
+            "Экскурсия включает такие объекты, как: здание Парламента, прогулка по крыше здания Оперы (построено в 2008 году), крепость Акершуз (возведена более 700 лет назад), набережная Акер-Бригге и посещение городской Ратуши, где ежегодно вручается Нобелевская премия мира.",
             listOf("Категория"),
             "1.2км",
             age = "0+",
