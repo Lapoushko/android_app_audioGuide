@@ -5,6 +5,5 @@ package com.lapoushko.domain.entity
  */
 class User(
     val email: String,
-    val password: String,
     val uuid: String
 )

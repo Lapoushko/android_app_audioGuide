@@ -11,7 +11,11 @@ interface UserRepository {
 
     fun signInUser(email: String, password: String): Flow<AuthResponse>
 
-    suspend fun getUser(): User?
+    fun signOutUser()
+
+    fun deleteUser(email: String, password: String): Flow<AuthResponse>
+
+    fun getUser(): Flow<User?>
 
     sealed class AuthResponse{
         data object Success: AuthResponse()

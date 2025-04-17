@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lapoushko.domain.entity.User
 import com.lapoushko.domain.repo.UserRepository
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
@@ -20,6 +21,19 @@ class SettingProfileScreenViewModel(
     private var _state = MutableSettingProfileScreenState()
     val state = _state as SettingProfileScreenState
 
+    init {
+        getUser()
+    }
+
+    private fun getUser() {
+        userRepository.getUser().onEach { user ->
+            user?.let {
+                _state.user = it
+                _state.dialogState = SettingProfileScreenState.DialogState.EMPTY
+            }
+        }.launchIn(viewModelScope)
+    }
+
     fun signUpUser(email: String, password: String) {
         userRepository.signUpUser(email, password).onEach { response ->
             Log.d("User", response.toString())
@@ -32,16 +46,29 @@ class SettingProfileScreenViewModel(
         userRepository.signInUser(email, password).onEach { response ->
             Log.d("User", response.toString())
             _state.response = response
-            updateIsCorrectSignIn(state.response == UserRepository.AuthResponse.Success)
-            updateIsNeedToShowAuthDialog(state.response != UserRepository.AuthResponse.Success)
+            when(state.response){
+                UserRepository.AuthResponse.Success ->{
+                    updateIsCorrectSignIn(true)
+                    _state.dialogState = SettingProfileScreenState.DialogState.EMPTY
+                }
+                else -> {
+                    updateIsCorrectSignIn(false)
+                    _state.dialogState = SettingProfileScreenState.DialogState.AUTH
+                }
+            }
         }.onCompletion {
             _state.isLoading = false
         }
             .launchIn(viewModelScope)
     }
 
-    fun updateIsNeedToShowAuthDialog(value: Boolean) {
-        _state.isNeedToShowAuthDialog = value
+    fun signOutUser() {
+        userRepository.signOutUser()
+        _state.user = null
+    }
+
+    fun updateIsNeedToShowAuthDialog(value: SettingProfileScreenState.DialogState) {
+        _state.dialogState = value
     }
 
     private fun updateIsCorrectSignIn(value: Boolean) {
@@ -49,9 +76,14 @@ class SettingProfileScreenViewModel(
     }
 
     private class MutableSettingProfileScreenState : SettingProfileScreenState {
+        override var user: User? by mutableStateOf(null)
         override var response: UserRepository.AuthResponse? by mutableStateOf(null)
         override var isLoading: Boolean by mutableStateOf(false)
-        override var isNeedToShowAuthDialog: Boolean by mutableStateOf(true)
+        override var dialogState: SettingProfileScreenState.DialogState by mutableStateOf(
+            SettingProfileScreenState.DialogState.AUTH
+        )
         override var isCorrectSignIn: Boolean by mutableStateOf(true)
+
+
     }
 }

@@ -13,9 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.lapoushko.ui.CustomInputField
+import com.lapoushko.ui.R
 import com.lapoushko.ui.model.SignInData
 import com.lapoushko.ui.model.SignUpData
 import com.lapoushko.ui.model.TypeInput
@@ -78,7 +80,7 @@ fun AuthDialog(
 }
 
 @Composable
-private fun SignUpDialog(
+fun SignUpDialog(
     signUpData: SignUpData,
     updateEmail: (String) -> Unit,
     updateFirstPassword: (String) -> Unit,
@@ -88,17 +90,17 @@ private fun SignUpDialog(
     onToSignIn: () -> Unit
 ) {
     AlertDialog(onDismissRequest = {},
-        title = { Text("Регистрация", style = Typography.titleMedium) },
+        title = { Text(stringResource(R.string.registration), style = Typography.titleMedium) },
         confirmButton = {
             TextButton(onClick = {
                 onToSignIn()
             }) {
-                Text("Вход", style = Typography.labelMedium)
+                Text(stringResource(R.string.enter), style = Typography.labelMedium)
             }
         },
         dismissButton = {
             TextButton(onClick = onClose) {
-                Text("Пропустить", style = Typography.labelMedium)
+                Text(stringResource(R.string.skip), style = Typography.labelMedium)
             }
         },
         text = {
@@ -106,17 +108,17 @@ private fun SignUpDialog(
                 signUpData.apply {
                     CustomInputField(
                         text = email.text,
-                        label = "Ваша почта",
+                        label = stringResource(R.string.email),
                         error = email.error?.code?.second ?: "",
-                        placeholder = "Ваша почта",
+                        placeholder = stringResource(R.string.email),
                         onTextChange = updateEmail,
                         isError = !email.error?.code?.second.isNullOrEmpty(),
                     )
                     CustomInputField(
                         text = firstPassword.text,
-                        label = "Пароль",
+                        label = stringResource(R.string.password),
                         error = firstPassword.error?.code?.second ?: "",
-                        placeholder = "Пароль",
+                        placeholder = stringResource(R.string.password),
                         isVisiblePassword = true,
                         keyboardType = KeyboardType.Password,
                         onTextChange = updateFirstPassword,
@@ -124,9 +126,9 @@ private fun SignUpDialog(
                     )
                     CustomInputField(
                         text = secondPassword.text,
-                        label = "Повторите пароль",
+                        label = stringResource(R.string.repeat_password),
                         error = secondPassword.error?.code?.second ?: "",
-                        placeholder = "Повторите пароль",
+                        placeholder = stringResource(R.string.repeat_password),
                         isVisiblePassword = true,
                         keyboardType = KeyboardType.Password,
                         onTextChange = updateSecondPassword,
@@ -137,7 +139,7 @@ private fun SignUpDialog(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Зарегистрироваться",
+                            text = stringResource(R.string.registrating),
                             style = Typography.bodyMedium,
                             color = Color.Blue
                         )
@@ -149,7 +151,7 @@ private fun SignUpDialog(
 }
 
 @Composable
-private fun SignInDialog(
+fun SignInDialog(
     signInData: SignInData,
     updateEmail: (String) -> Unit,
     updatePassword: (String) -> Unit,
@@ -160,18 +162,20 @@ private fun SignInDialog(
     isLoading: Boolean
 ) {
     AlertDialog(onDismissRequest = {},
-        title = { Text("Вход", style = Typography.titleMedium) },
+        title = { Text(stringResource(R.string.enter), style = Typography.titleMedium) },
         confirmButton = {
             TextButton(
-                onClick = { onToSignUp() },
+                onClick = {
+                    onToSignUp()
+                },
                 enabled = !isLoading
             ) {
-                Text("Регистрация", style = Typography.labelMedium)
+                Text(stringResource(R.string.registration), style = Typography.labelMedium)
             }
         },
         dismissButton = {
             TextButton(onClick = onClose) {
-                Text("Пропустить", style = Typography.labelMedium)
+                Text(stringResource(R.string.skip), style = Typography.labelMedium)
             }
         },
         text = {
@@ -182,7 +186,7 @@ private fun SignInDialog(
 
                 if (!isCorrectLogin && !isLoading) {
                     Text(
-                        text = "Неправильные данные",
+                        text = stringResource(R.string.incorrect_input),
                         style = Typography.bodyMedium,
                         color = Color.Red
                     )
@@ -191,30 +195,36 @@ private fun SignInDialog(
                 signInData.apply {
                     CustomInputField(
                         text = email.text,
-                        label = "Ваша почта",
+                        label = stringResource(R.string.email),
                         error = email.error?.code?.second ?: "",
-                        placeholder = "Ваша почта",
+                        placeholder = stringResource(R.string.email),
                         onTextChange = updateEmail,
                         isError = !email.error?.code?.second.isNullOrEmpty(),
                     )
                     CustomInputField(
                         text = password.text,
-                        label = "Пароль",
+                        label = stringResource(R.string.password),
                         error = password.error?.code?.second ?: "",
-                        placeholder = "Пароль",
+                        placeholder = stringResource(R.string.password),
                         isVisiblePassword = true,
                         keyboardType = KeyboardType.Password,
                         onTextChange = updatePassword,
                         isError = !password.error?.code?.second.isNullOrEmpty(),
                     )
-                    TextButton(onClick = { signIn(signInData) }, modifier = Modifier.fillMaxWidth()) {
+                    TextButton(
+                        onClick = { signIn(signInData) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         Text(
-                            text = "Вход", style = Typography.bodyMedium, color = Color.Blue
+                            text = stringResource(R.string.enter),
+                            style = Typography.bodyMedium,
+                            color = Color.Blue
                         )
                     }
                 }
             }
-        })
+        }
+    )
 }
 
 @Preview(showBackground = true)

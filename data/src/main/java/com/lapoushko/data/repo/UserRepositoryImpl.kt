@@ -23,11 +23,15 @@ class UserRepositoryImpl(private val userService: UserService) : UserRepository 
         return userService.signInUser(email, password)
     }
 
-    override suspend fun getUser(): User {
-        return User(
-            email = "",
-            password = "",
-            uuid = ""
-        )
+    override fun signOutUser() {
+        userService.signOutUser()
+    }
+
+    override fun deleteUser(email: String, password: String): Flow<UserRepository.AuthResponse> {
+        return userService.deleteUser(email = email, password = password)
+    }
+
+    override fun getUser(): Flow<User?> {
+        return userService.getUser()
     }
 }

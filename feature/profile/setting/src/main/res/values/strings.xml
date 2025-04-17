@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile">Настройки профиля</string>
+    <string name="sign_out">Выйти из профиля</string>
+    <string name="delete_profile">Удалить аккаунт</string>
+    <string name="question_sign_out">Вы точно хотите выйти из профиля?</string>
+    <string name="question_delete_profile">Вы точно хотите УДАЛИТЬ профиль?</string>
+    <string name="quit">Выйти</string>
+    <string name="delete">УДАЛИТЬ</string>
+    <string name="cancel">Отмена</string>
+</resources>
