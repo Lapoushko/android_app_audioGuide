@@ -50,12 +50,14 @@ class ExcursionDetailScreenViewModel(
     fun saveFavouriteExcursion(excursion: ExcursionItem, uuid: String) {
         viewModelScope.launch {
             repository.saveFavouriteExcursion(mapper.toDomain(excursion), uuid)
+            _state.isFavourite = true
         }
     }
 
     fun deleteFavouriteExcursion(excursion: ExcursionItem, uuid: String){
         viewModelScope.launch {
             repository.deleteFavouriteExcursion(mapper.toDomain(excursion), uuid)
+            _state.isFavourite = false
         }
     }
 

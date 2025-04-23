@@ -138,7 +138,7 @@ fun ExcursionDetailScreen(
                         )
                     }
                 },
-                false
+                isActive = state.isFavourite
             )
         )
         Box(
