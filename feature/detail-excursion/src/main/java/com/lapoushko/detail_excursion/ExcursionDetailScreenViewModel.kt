@@ -29,12 +29,35 @@ class ExcursionDetailScreenViewModel(
         observeInternetStatus()
     }
 
-    private fun observeInternetStatus(){
+    private fun observeInternetStatus() {
         networkConnectivityManager.observe().onEach { status ->
             _state.internetStatus = status
         }.launchIn(viewModelScope)
     }
 
+    fun updateIsNeedToShowAuthDialog(value: Boolean){
+        _state.isNeedToShowAuthDialog = value
+    }
+
+    fun checkIsFavourite(uid: String) {
+        repository.getFavoritesExcursion(uid)
+            .map { excursions -> excursions.any { it.id == _state.curExcursion.id } }
+            .onEach { isFavourite ->
+                _state.isFavourite = isFavourite
+            }.launchIn(viewModelScope)
+    }
+
+    fun saveFavouriteExcursion(excursion: ExcursionItem, uuid: String) {
+        viewModelScope.launch {
+            repository.saveFavouriteExcursion(mapper.toDomain(excursion), uuid)
+        }
+    }
+
+    fun deleteFavouriteExcursion(excursion: ExcursionItem, uuid: String){
+        viewModelScope.launch {
+            repository.deleteFavouriteExcursion(mapper.toDomain(excursion), uuid)
+        }
+    }
 
     fun loadInterestingExcursions(excursion: ExcursionItem) {
         repository.getRecommendations(excursion = mapper.toDomain(excursion)).onEach { excursions ->
@@ -78,11 +101,17 @@ class ExcursionDetailScreenViewModel(
         startDownload(excursion, context)
     }
 
-    fun confirmDelete(excursion: ExcursionItem, context: Context, onBackIfFromDao: () -> Unit = {}) {
+    fun confirmDelete(
+        excursion: ExcursionItem,
+        context: Context,
+        onBackIfFromDao: () -> Unit = {}
+    ) {
         viewModelScope.launch {
             repository.deleteExcursion(mapper.toDomain(excursion))
-            Toast.makeText(context,
-                context.getString(R.string.excursion_deleted), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                context.getString(R.string.excursion_deleted), Toast.LENGTH_SHORT
+            ).show()
             _state.isSaved = false
             _state.downloadAlertState = DownloadAlertState.NONE
             _state.isSaveButtonActive = false
@@ -118,14 +147,18 @@ class ExcursionDetailScreenViewModel(
 
             if (newExcursion != null) {
                 _state.isSaved = true
-                Toast.makeText(context,
-                    context.getString(R.string.excursion_downloaded), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.excursion_downloaded), Toast.LENGTH_SHORT
+                ).show()
                 _state.downloadAlertState = DownloadAlertState.NONE
                 _state.isSaveButtonActive = false
                 setCurrentExcursion(mapper.toUi(newExcursion))
             } else {
-                Toast.makeText(context,
-                    context.getString(R.string.error_downloaded), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.error_downloaded), Toast.LENGTH_SHORT
+                ).show()
                 _state.downloadAlertState = DownloadAlertState.CONFIRM_SAVE
             }
         }
@@ -147,6 +180,9 @@ class ExcursionDetailScreenViewModel(
             )
         )
         override var downloadJob: Job? by mutableStateOf(null)
-        override var internetStatus: ConnectivityObserver.Status by mutableStateOf(ConnectivityObserver.Status.UNAVAILABLE)
+        override var internetStatus: ConnectivityObserver.Status by mutableStateOf(
+            ConnectivityObserver.Status.UNAVAILABLE
+        )
+        override var isNeedToShowAuthDialog: Boolean by mutableStateOf(false)
     }
 }

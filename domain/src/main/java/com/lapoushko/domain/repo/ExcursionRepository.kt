@@ -30,9 +30,9 @@ interface ExcursionRepository {
 
     suspend fun getSizeExcursion(excursion: Excursion): Double
 
-    suspend fun saveFavouriteExcursion(excursion: Excursion)
+    fun getFavoritesExcursion(uid: String): Flow<List<Excursion>>
 
-    suspend fun deleteFavouriteExcursion(excursion: Excursion)
+    suspend fun saveFavouriteExcursion(excursion: Excursion, uid: String)
 
-    suspend fun getExcursionByName(name: String): Excursion?
+    suspend fun deleteFavouriteExcursion(excursion: Excursion, uid: String)
 }

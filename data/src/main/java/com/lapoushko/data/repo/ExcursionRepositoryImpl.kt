@@ -36,23 +36,16 @@ class ExcursionRepositoryImpl(
         return excursionService.getSize(excursion)
     }
 
-//    override suspend fun saveExcursionAndGetSize(excursion: Excursion): Double? {
-//        val points = mutableListOf<Point>()
-//        excursion.points.forEach {
-//            val image = excursionService.getFiles(url = it.image, typeFile = TypeFile.IMAGE)
-//            val audio = excursionService.getFiles(url = it.audio, typeFile = TypeFile.AUDIO)
-//            points.add(it.copy(audio = audio ?: it.audio, image = image ?: it.image))
-//        }
-//        val newExcursion = excursion.copy(points = points)
-//        excursionDataSource.saveExcursion(newExcursion)
-//    }
-
-    override suspend fun saveFavouriteExcursion(excursion: Excursion) {
-        TODO("Not yet implemented")
+    override fun getFavoritesExcursion(uid: String): Flow<List<Excursion>> {
+        return excursionService.getFavouriteExcursions(uid)
     }
 
-    override suspend fun deleteFavouriteExcursion(excursion: Excursion) {
-        TODO("Not yet implemented")
+    override suspend fun saveFavouriteExcursion(excursion: Excursion, uid: String) {
+        excursionService.saveFavouriteExcursion(excursion, uid)
+    }
+
+    override suspend fun deleteFavouriteExcursion(excursion: Excursion, uid: String) {
+        excursionService.deleteFavouriteExcursion(excursion, uid)
     }
 
     override fun getInterestingExcursions(): Flow<List<Excursion>> {
@@ -77,9 +70,5 @@ class ExcursionRepositoryImpl(
 
     override suspend fun getSavedExcursion(id: String): Excursion {
         return excursionDataSource.getSavedExcursion(id)
-    }
-
-    override suspend fun getExcursionByName(name: String): Excursion? {
-        TODO("Not yet implemented")
     }
 }

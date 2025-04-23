@@ -3,6 +3,7 @@ package com.lapoushko.excursion.service
 import android.content.Context
 import android.util.Log
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
@@ -13,9 +14,12 @@ import com.lapoushko.excursion.entity.ExcursionNetwork
 import com.lapoushko.excursion.entity.Point
 import com.lapoushko.excursion.mapper.ExcursionNetworkMapper
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
@@ -33,24 +37,7 @@ class ExcursionServiceImpl(
 
     private fun getExcursions(typeSearch: TypeSearch? = null): Flow<List<Excursion>> =
         callbackFlow {
-            var query: Query = fireStore.collection("excursions_v.01")
-
-            when (typeSearch) {
-                TypeSearch.Popular -> query = query.whereGreaterThan("rating", 0)
-                    .orderBy("rating", Query.Direction.DESCENDING)
-
-                is TypeSearch.Category -> query =
-                    query.whereArrayContains("categories", typeSearch.category)
-
-                TypeSearch.New -> query = query.whereEqualTo("countRating", 0)
-
-                is TypeSearch.Recommendation -> query =
-                    query.whereArrayContainsAny("categories", typeSearch.excursion.categories)
-
-                null -> {}
-            }
-
-            query.get()
+            getQuery(typeSearch).get()
                 .addOnSuccessListener { querySnapshot ->
                     val excursions = mutableListOf<Excursion>()
                     for (document in querySnapshot) {
@@ -82,6 +69,27 @@ class ExcursionServiceImpl(
             awaitClose {}
         }
 
+    private fun getQuery(typeSearch: TypeSearch?): Query {
+        var query: Query = fireStore.collection("excursions_v.01")
+
+        when (typeSearch) {
+            TypeSearch.Popular -> query = query.whereGreaterThan("rating", 0)
+                .orderBy("rating", Query.Direction.DESCENDING)
+
+            is TypeSearch.Category -> query =
+                query.whereArrayContains("categories", typeSearch.category)
+
+            TypeSearch.New -> query = query.whereEqualTo("countRating", 0)
+
+            is TypeSearch.Recommendation -> query =
+                query.whereArrayContainsAny("categories", typeSearch.excursion.categories)
+
+            is TypeSearch.Key -> query = query.whereIn(FieldPath.documentId(), typeSearch.keys)
+            null -> {}
+        }
+        return query
+    }
+
     override fun getInterestingExcursions(): Flow<List<Excursion>> {
         return getExcursions()
     }
@@ -100,6 +108,54 @@ class ExcursionServiceImpl(
 
     override fun getRecommendation(excursion: Excursion): Flow<List<Excursion>> {
         return getExcursions(TypeSearch.Recommendation(excursion))
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getFavouriteExcursions(uid: String): Flow<List<Excursion>>{
+        return getFavouriteKeys(uid).flatMapLatest { favorites ->
+            val keys = favorites.map { it.key }
+            if (keys.isEmpty()){
+                flowOf(emptyList())
+                }
+            else{
+                getExcursions(TypeSearch.Key(keys))
+            }
+        }
+    }
+
+    private fun getFavouriteKeys(uid: String): Flow<List<Favourite>> = callbackFlow{
+        fireStore.collection("users")
+            .document(uid)
+            .collection("favorites")
+            .get()
+            .addOnSuccessListener { task ->
+                val idsList = task.toObjects(Favourite::class.java)
+                trySend(idsList)
+            }.addOnFailureListener {
+                println("Error get users favorites excursions")
+                trySend(emptyList())
+            }
+        awaitClose()
+    }
+
+    override suspend fun saveFavouriteExcursion(excursion: Excursion, uid: String) {
+        withContext(Dispatchers.IO){
+            fireStore.collection("users")
+                .document(uid)
+                .collection("favorites")
+                .document(excursion.id)
+                .set(Favourite(excursion.id))
+        }
+    }
+
+    override suspend fun deleteFavouriteExcursion(excursion: Excursion, uid: String) {
+        withContext(Dispatchers.IO){
+            fireStore.collection("users")
+                .document(uid)
+                .collection("favorites")
+                .document(excursion.id)
+                .delete()
+        }
     }
 
     override suspend fun getSize(excursion: Excursion): Double {
@@ -138,6 +194,7 @@ class ExcursionServiceImpl(
         return excursion.copy(points = points)
     }
 
+
     private suspend fun downloadFile(url: String, typeFile: TypeFile): Pair<String, Double>? {
         return withContext(Dispatchers.IO) {
             val response = downloadService.downloadFile(url)
@@ -169,10 +226,6 @@ class ExcursionServiceImpl(
             }
         }
     }
-
-    override suspend fun getExcursionByName(name: String): Excursion? {
-        TODO("Not yet implemented")
-    }
 }
 
 private fun Long.toMByte(): Double = this.toDouble() / (1024 * 1024)
@@ -185,4 +238,10 @@ private sealed class TypeSearch {
     data object Popular : TypeSearch()
 
     data class Recommendation(val excursion: Excursion) : TypeSearch()
+
+    data class Key(val keys: List<String>) : TypeSearch()
 }
+
+private class Favourite(
+    val key: String = ""
+)

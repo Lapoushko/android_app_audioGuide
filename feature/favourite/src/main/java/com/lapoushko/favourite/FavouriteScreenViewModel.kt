@@ -25,12 +25,11 @@ class FavouriteScreenViewModel(
     val state = _state as FavouriteScreenState
 
     init {
-        loadExcursions()
         observeInternetStatus()
     }
 
-    private fun loadExcursions(){
-        repository.getInterestingExcursions().onEach { excursions ->
+    fun loadExcursions(uuid: String){
+        repository.getFavoritesExcursion(uuid).onEach { excursions ->
             _state.excursions = excursions.map { mapper.toUi(it) }
             _state.initialExcursions = state.excursions
         }.launchIn(viewModelScope)
@@ -41,6 +40,7 @@ class FavouriteScreenViewModel(
             _state.internetStatus = status
         }.launchIn(viewModelScope)
     }
+
 
     fun searchByName(text: String) {
         _state.excursions = text.searchByName(state.initialExcursions)

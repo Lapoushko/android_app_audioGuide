@@ -34,11 +34,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.lapoushko.feature.auth.AuthHelperViewModel
 import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.CarouselItem
 import com.lapoushko.ui.CustomCarousel
 import com.lapoushko.ui.CustomTopAppBar
 import com.lapoushko.ui.NavigationIcon
+import com.lapoushko.ui.auth.AuthDialog
 import com.lapoushko.ui.theme.Typography
 import com.lapoushko.ui.theme.carouselSizeExcursion
 import com.lapoushko.ui.theme.onSecondaryContainerLight
@@ -54,9 +56,12 @@ import org.koin.androidx.compose.koinViewModel
 fun ExcursionDetailScreen(
     excursion: ExcursionItem,
     viewModel: ExcursionDetailScreenViewModel = koinViewModel(),
+    authHelperViewModel: AuthHelperViewModel = koinViewModel(),
     handler: ExcursionDetailScreenHandler,
 ) {
     val state = viewModel.state
+    val user = authHelperViewModel.state.user
+    val stateHelper = authHelperViewModel.state
     val excursions = state.interestingExcursion
 
     val context = LocalContext.current
@@ -65,7 +70,6 @@ fun ExcursionDetailScreen(
     val screenWidth = configuration.screenWidthDp.dp
     val sizeCardExcursion =
         if (screenWidth < 400.dp) smallCarouselSizeExcursion else carouselSizeExcursion
-
 
     val curValue = state.downloadValues.curValue
     val endValue = state.downloadValues.endValue
@@ -76,6 +80,30 @@ fun ExcursionDetailScreen(
         viewModel.setCurrentExcursion(excursion)
         viewModel.loadInterestingExcursions(excursion)
         viewModel.checkIsSaved()
+        if (!stateHelper.isNeedToShowAuth) {
+            if (user != null) {
+                viewModel.checkIsFavourite(user.uuid)
+            }
+        }
+    }
+
+    if (state.isNeedToShowAuthDialog) {
+        AuthDialog(
+            onClose = {
+                authHelperViewModel.updateIsNeedToShowAuth(false)
+                viewModel.updateIsNeedToShowAuthDialog(false)
+            },
+            signUp = {
+                authHelperViewModel.signUpUser(it.email.text, it.firstPassword.text)
+                viewModel.updateIsNeedToShowAuthDialog(false)
+            },
+            signIn = {
+                authHelperViewModel.signInUser(it.email.text, it.password.text)
+                viewModel.updateIsNeedToShowAuthDialog(false)
+            },
+            isCorrectLogin = stateHelper.isCorrectSignIn,
+            isLoading = stateHelper.isLoading
+        )
     }
 
     Column(
@@ -87,11 +115,31 @@ fun ExcursionDetailScreen(
             onClickBack = { handler.onBack() },
             text = state.curExcursion.name,
             saveState = NavigationIcon(
-                onActive = { viewModel.onSaveButtonClick() },
-                onDeactive = { viewModel.onSaveButtonClick() },
+                onActive = {
+                    viewModel.onSaveButtonClick()
+                },
+                onDeactive = {
+                    viewModel.onSaveButtonClick()
+                },
                 isActive = state.isSaved
             ),
-            favouriteState = NavigationIcon({}, {}, false)
+            favouriteState = NavigationIcon(
+                onActive = {
+                    if (user != null) viewModel.saveFavouriteExcursion(
+                        excursion,
+                        user.uuid
+                    ) else viewModel.updateIsNeedToShowAuthDialog(true)
+                },
+                onDeactive = {
+                    if (user != null) {
+                        viewModel.deleteFavouriteExcursion(
+                            excursion,
+                            user.uuid
+                        )
+                    }
+                },
+                false
+            )
         )
         Box(
             modifier = Modifier
@@ -132,7 +180,7 @@ fun ExcursionDetailScreen(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            if (internetStatus == ConnectivityObserver.Status.AVAILABLE){
+            if (internetStatus == ConnectivityObserver.Status.AVAILABLE) {
                 Text(
                     text = stringResource(R.string.similar_excursions),
                     style = Typography.headlineSmall
@@ -182,6 +230,7 @@ fun ExcursionDetailScreen(
                         onCancel = { viewModel.cancelDialog() }
                     )
                 }
+
                 else -> {}
             }
         }
@@ -283,6 +332,9 @@ fun ExcursionDetailScreenPreview() {
             1,
             points = emptyList()
         ),
-        handler = ExcursionDetailScreenHandler(onBack = {}, onToDetail = {}, onPlayExcursion = {})
+        handler = ExcursionDetailScreenHandler(
+            onBack = {},
+            onToDetail = {},
+            onPlayExcursion = {})
     )
 }

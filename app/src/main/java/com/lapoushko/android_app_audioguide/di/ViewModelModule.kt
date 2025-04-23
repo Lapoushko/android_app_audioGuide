@@ -3,6 +3,7 @@ package com.lapoushko.android_app_audioguide.di
 import com.lapoushko.audio.screen.AudioScreenViewModel
 import com.lapoushko.detail_excursion.ExcursionDetailScreenViewModel
 import com.lapoushko.favourite.FavouriteScreenViewModel
+import com.lapoushko.feature.auth.AuthHelperViewModel
 import com.lapoushko.guide.GuideScreenViewModel
 import com.lapoushko.map.MapScreenViewModel
 import com.lapoushko.profile.ProfileScreenViewModel
@@ -18,6 +19,7 @@ import org.koin.dsl.module
  * @author Lapoushko
  */
 val viewModelModule = module {
+    //screen
     viewModel { SearchScreenViewModel(get(), get(), get(), get()) }
     viewModel { ExcursionDetailScreenViewModel(get(), get(), get()) }
     viewModel { CategoryScreenViewModel(get(), get()) }
@@ -34,4 +36,7 @@ val viewModelModule = module {
 
     //common
     viewModel { AuthViewModel() }
+
+    //helper
+    viewModel { AuthHelperViewModel(get()) }
 }
