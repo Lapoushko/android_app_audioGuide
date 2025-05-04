@@ -26,6 +26,7 @@ class FavouriteScreenViewModel(
 
     init {
         observeInternetStatus()
+        println("косяк")
     }
 
     fun loadExcursions(uuid: String){

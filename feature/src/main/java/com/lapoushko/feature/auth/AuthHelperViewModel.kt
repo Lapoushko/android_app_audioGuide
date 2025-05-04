@@ -40,6 +40,14 @@ class AuthHelperViewModel(
     fun signUpUser(email: String, password: String) {
         userRepository.signUpUser(email, password).onEach { response ->
             _state.response = response
+            when(state.response){
+                UserRepository.AuthResponse.Success ->{
+                    _state.isNeedToShowAuth = false
+                }
+                else -> {
+                    _state.isNeedToShowAuth = true
+                }
+            }
         }.launchIn(viewModelScope)
     }
 

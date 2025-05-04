@@ -27,6 +27,7 @@ class ExcursionDetailScreenViewModel(
 
     init {
         observeInternetStatus()
+        println("косяк")
     }
 
     private fun observeInternetStatus() {

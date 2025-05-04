@@ -20,14 +20,6 @@ class AuthViewModel : ViewModel() {
     private var _state = MutableAuthState()
     val state = _state as AuthState
 
-    init {
-        getUser()
-    }
-
-    private fun getUser() {
-//        TODO("Not yet implemented")
-    }
-
     fun updateDialogState(dialogState: AuthState.DialogState) {
         _state.dialogState = dialogState
     }

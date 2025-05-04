@@ -80,6 +80,7 @@ fun GuideScreen(
                     excursion,
                     onNext = { guideViewModel.updateIndex(state.indexCurrentScreen + 1) },
                     onBack = { guideViewModel.updateIndex(state.indexCurrentScreen - 1) },
+                    onClickCancel = { handler.onBack() }
                 )
 
                 1 -> guideViewModel.state.apply {

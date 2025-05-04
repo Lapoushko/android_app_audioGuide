@@ -2,4 +2,5 @@
 <resources>
     <string name="media_notification_channel">media_notification_channel</string>
     <string name="media_notification_channel_description">media_notification_channel_description</string>
+    <string name="rate">Оценка</string>
 </resources>

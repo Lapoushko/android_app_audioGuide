@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -29,12 +30,15 @@ import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -50,6 +54,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -75,6 +80,7 @@ fun AudioScreen(
     viewModel: AudioScreenViewModel = koinViewModel(),
     onNext: (Int) -> Unit,
     onBack: (Int) -> Unit,
+    onClickCancel: () -> Unit
 ) {
     val state = viewModel.state
     val pagerState = rememberPagerState { excursion.points.size }
@@ -87,7 +93,7 @@ fun AudioScreen(
     PermissionCheck(Manifest.permission.POST_NOTIFICATIONS)
 
     LaunchedEffect(Unit) {
-        if (state.excursion != excursion){
+        if (state.excursion != excursion) {
             viewModel.setExcursion(excursion)
             val playlist = excursion.points.map { PlaylistItem(it.text, it.audio) }
             viewModel.preparePlayer(context = context, playlist)
@@ -144,7 +150,7 @@ fun AudioScreen(
                 isPlaying = state.isPlaying,
                 onPlayPause = { viewModel.updatePlaylist(ControlButtons.PLAY) },
                 onNext = {
-                    if (state.currentIndex != excursion.points.size - 1){
+                    if (state.currentIndex != excursion.points.size - 1) {
                         viewModel.updatePlaylist(ControlButtons.NEXT)
                         onNext(state.currentIndex)
                     }
@@ -168,6 +174,13 @@ fun AudioScreen(
                 onSeekTo = { viewModel.updatePlayerPosition(it) }
             )
         }
+    }
+    if (state.currentIndex == excursion.points.lastIndex) {
+        RateDialog(
+            startRate = 0,
+            onClickCancel = onClickCancel,
+            onClickRate = {}
+        )
     }
 }
 
@@ -288,6 +301,43 @@ private fun PlayerButton(
     }
 }
 
+@Composable
+private fun RateDialog(
+    startRate: Int,
+    onClickRate: (Int) -> Unit,
+    onClickCancel: () -> Unit
+) {
+    AlertDialog(onDismissRequest = {},
+        title = {
+            Text(
+                stringResource(com.lapoushko.audio.R.string.rate),
+                style = Typography.titleMedium
+            )
+        },
+        confirmButton = {
+        },
+        dismissButton = {
+            TextButton(onClick = onClickCancel) {
+                Text(stringResource(R.string.skip), style = Typography.labelMedium)
+            }
+        },
+        text = {
+            LazyRow(modifier = Modifier.fillMaxWidth()) {
+                items(5) { i ->
+                    val color = if (startRate >= i) primaryLight else Color.Black
+                    IconButton(onClick = { onClickRate(i + 1) }) {
+                        Icon(
+                            imageVector = Icons.Filled.Star,
+                            contentDescription = null,
+                            tint = color
+                        )
+                    }
+                }
+            }
+        }
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun AudioScreenPreview() {
@@ -304,6 +354,7 @@ private fun AudioScreenPreview() {
         ),
         onNext = {},
         onBack = {},
+        onClickCancel = {}
     )
 }
 

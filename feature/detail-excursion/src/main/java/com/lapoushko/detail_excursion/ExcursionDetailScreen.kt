@@ -95,11 +95,11 @@ fun ExcursionDetailScreen(
             },
             signUp = {
                 authHelperViewModel.signUpUser(it.email.text, it.firstPassword.text)
-                viewModel.updateIsNeedToShowAuthDialog(false)
+                viewModel.updateIsNeedToShowAuthDialog(state.isNeedToShowAuthDialog)
             },
             signIn = {
                 authHelperViewModel.signInUser(it.email.text, it.password.text)
-                viewModel.updateIsNeedToShowAuthDialog(false)
+                viewModel.updateIsNeedToShowAuthDialog(state.isNeedToShowAuthDialog)
             },
             isCorrectLogin = stateHelper.isCorrectSignIn,
             isLoading = stateHelper.isLoading
