@@ -108,12 +108,17 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    fun updateIsAgreeSignUp(value: Boolean){
+        _state.signUpData = state.signUpData.copy(isAgree = value)
+    }
+
     fun clearState(state: AuthState.DialogState) {
         when (state) {
             AuthState.DialogState.SIGN_UP -> _state.signUpData = SignUpData(
                 email = Input(text = "", error = null),
                 firstPassword = Input(text = "", error = null),
-                secondPassword = Input(text = "", error = null)
+                secondPassword = Input(text = "", error = null),
+                isAgree = false
             )
 
             AuthState.DialogState.SIGN_IN -> _state.signInData = SignInData(
@@ -128,7 +133,7 @@ class AuthViewModel : ViewModel() {
         updateSignUpEmail(state.signUpData.email.text)
         updateFirstPassword(state.signUpData.firstPassword.text)
         updateSecondPassword(state.signUpData.secondPassword.text)
-        _state.isCanSignUp = state.errors.isEmpty()
+        _state.isCanSignUp = state.errors.isEmpty() && state.signUpData.isAgree
     }
 
     fun checkCanSignIn() {
@@ -143,7 +148,8 @@ class AuthViewModel : ViewModel() {
             SignUpData(
                 email = Input(text = "", error = null),
                 firstPassword = Input(text = "", error = null),
-                secondPassword = Input(text = "", error = null)
+                secondPassword = Input(text = "", error = null),
+                isAgree = false
             )
         )
         override var signInData: SignInData by mutableStateOf(

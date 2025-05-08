@@ -154,6 +154,9 @@ fun AudioScreen(
                         viewModel.updatePlaylist(ControlButtons.NEXT)
                         onNext(state.currentIndex)
                     }
+                    if (state.currentIndex == excursion.points.lastIndex) {
+                        viewModel.updatesNeedToShowRateDialog(true)
+                    }
                     scope.launch {
                         pagerState.animateScrollToPage(
                             (pagerState.currentPage + 1).coerceAtMost(
@@ -175,11 +178,17 @@ fun AudioScreen(
             )
         }
     }
-    if (state.currentIndex == excursion.points.lastIndex) {
+    if (state.isNeedToShowRateDialog) {
         RateDialog(
-            startRate = 0,
-            onClickCancel = onClickCancel,
-            onClickRate = {}
+            startRate = state.rate,
+            onClickCancel = {
+                viewModel.updatesNeedToShowRateDialog(false)
+                onClickCancel()
+            },
+            onClickRate = {
+                viewModel.updateRate(it)
+                /*TODO*/
+            }
         )
     }
 }
@@ -324,8 +333,10 @@ private fun RateDialog(
         text = {
             LazyRow(modifier = Modifier.fillMaxWidth()) {
                 items(5) { i ->
-                    val color = if (startRate >= i) primaryLight else Color.Black
-                    IconButton(onClick = { onClickRate(i + 1) }) {
+                    val color = if (startRate > i) primaryLight else Color.Gray
+                    IconButton(onClick = {
+                        onClickRate(i + 1)
+                    }) {
                         Icon(
                             imageVector = Icons.Filled.Star,
                             contentDescription = null,

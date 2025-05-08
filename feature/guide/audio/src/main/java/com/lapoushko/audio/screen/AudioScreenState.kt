@@ -11,4 +11,6 @@ interface AudioScreenState {
     val totalDurationInMS: Long
     val currentIndex: Int
     val currentPosition: Long
+    val rate: Int
+    val isNeedToShowRateDialog: Boolean
 }

@@ -3,13 +3,19 @@
 package com.lapoushko.ui.auth
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,6 +62,7 @@ fun AuthDialog(
                 }
             },
             onClose = onClose,
+            onIsAgree = {viewModel.updateIsAgreeSignUp(it)}
         )
 
         AuthState.DialogState.SIGN_IN -> SignInDialog(
@@ -87,8 +94,11 @@ fun SignUpDialog(
     updateSecondPassword: (String) -> Unit,
     signUp: (SignUpData) -> Unit,
     onClose: () -> Unit,
-    onToSignIn: () -> Unit
+    onToSignIn: () -> Unit,
+    onIsAgree: (Boolean) -> Unit
 ) {
+    var isAgree by remember { mutableStateOf(false) }
+
     AlertDialog(onDismissRequest = {},
         title = { Text(stringResource(R.string.registration), style = Typography.titleMedium) },
         confirmButton = {
@@ -134,6 +144,19 @@ fun SignUpDialog(
                         onTextChange = updateSecondPassword,
                         isError = !secondPassword.error?.code?.second.isNullOrEmpty(),
                     )
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        RadioButton(onClick = { isAgree = !isAgree }, selected = isAgree)
+                        TextButton(
+                            onClick = { onIsAgree(isAgree) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = stringResource(R.string.policy),
+                                style = Typography.bodyMedium,
+                                color = Color.Blue
+                            )
+                        }
+                    }
                     TextButton(
                         onClick = { signUp(signUpData) },
                         modifier = Modifier.fillMaxWidth()

@@ -8,4 +8,5 @@
     <string name="password">Пароль</string>
     <string name="repeat_password">Повторите пароль</string>
     <string name="registrating">Зарегистрироваться</string>
+    <string name="policy">Политика конфиденциальности</string>
 </resources>

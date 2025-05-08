@@ -6,7 +6,8 @@ package com.lapoushko.ui.model
 data class SignUpData(
     val email: Input,
     val firstPassword: Input,
-    val secondPassword: Input
+    val secondPassword: Input,
+    val isAgree: Boolean
 )
 
 data class SignInData(
