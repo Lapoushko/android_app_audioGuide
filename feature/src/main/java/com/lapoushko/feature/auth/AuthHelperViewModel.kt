@@ -29,6 +29,9 @@ class AuthHelperViewModel(
             user?.let {
                 _state.user = user
                 _state.isNeedToShowAuth = false
+            } ?: run {
+                _state.user = null
+                _state.isNeedToShowAuth = true
             }
         }.launchIn(viewModelScope)
     }
@@ -48,6 +51,7 @@ class AuthHelperViewModel(
                     _state.isNeedToShowAuth = true
                 }
             }
+            getUser()
         }.launchIn(viewModelScope)
     }
 
@@ -65,6 +69,7 @@ class AuthHelperViewModel(
                     _state.isNeedToShowAuth = true
                 }
             }
+            getUser()
         }.onCompletion {
             _state.isLoading = false
         }

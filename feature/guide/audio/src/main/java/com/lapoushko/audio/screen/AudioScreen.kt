@@ -153,8 +153,7 @@ fun AudioScreen(
                     if (state.currentIndex != excursion.points.size - 1) {
                         viewModel.updatePlaylist(ControlButtons.NEXT)
                         onNext(state.currentIndex)
-                    }
-                    if (state.currentIndex == excursion.points.lastIndex) {
+                    } else{
                         viewModel.updatesNeedToShowRateDialog(true)
                     }
                     scope.launch {
@@ -187,6 +186,8 @@ fun AudioScreen(
             },
             onClickRate = {
                 viewModel.updateRate(it)
+                viewModel.updatesNeedToShowRateDialog(false)
+                onClickCancel()
                 /*TODO*/
             }
         )

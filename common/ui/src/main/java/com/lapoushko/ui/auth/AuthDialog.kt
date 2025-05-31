@@ -62,7 +62,7 @@ fun AuthDialog(
                 }
             },
             onClose = onClose,
-            onIsAgree = {viewModel.updateIsAgreeSignUp(it)}
+            onIsAgree = { viewModel.updateIsAgreeSignUp(it) }
         )
 
         AuthState.DialogState.SIGN_IN -> SignInDialog(
@@ -145,9 +145,14 @@ fun SignUpDialog(
                         isError = !secondPassword.error?.code?.second.isNullOrEmpty(),
                     )
                     Row(modifier = Modifier.fillMaxWidth()) {
-                        RadioButton(onClick = { isAgree = !isAgree }, selected = isAgree)
+                        RadioButton(onClick = {
+                            isAgree = !isAgree
+                            onIsAgree(isAgree)
+                        }, selected = isAgree)
                         TextButton(
-                            onClick = { onIsAgree(isAgree) },
+                            onClick = {
+                                //TODO
+                            },
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(

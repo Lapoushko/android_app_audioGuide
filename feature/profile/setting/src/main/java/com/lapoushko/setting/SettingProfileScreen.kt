@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.lapoushko.feature.auth.AuthHelperViewModel
 import com.lapoushko.ui.auth.AuthDialog
 import com.lapoushko.ui.theme.Typography
 import org.koin.androidx.compose.koinViewModel
@@ -30,7 +31,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun SettingProfileScreen(
     onBack: () -> Unit,
-    viewModel: SettingProfileScreenViewModel = koinViewModel()
+    viewModel: SettingProfileScreenViewModel = koinViewModel(),
+    authHelperViewModel: AuthHelperViewModel = koinViewModel()
 ) {
     val state = viewModel.state
 
@@ -64,16 +66,16 @@ fun SettingProfileScreen(
                     ) {
                         Text(text = stringResource(R.string.sign_out), style = Typography.bodyLarge)
                     }
-                    TextButton(
-                        onClick = {
-                            viewModel.updateIsNeedToShowAuthDialog(SettingProfileScreenState.DialogState.DELETE)
-                        }
-                    ) {
-                        Text(
-                            text = stringResource(R.string.delete_profile),
-                            style = Typography.bodyLarge
-                        )
-                    }
+//                    TextButton(
+//                        onClick = {
+//                            viewModel.updateIsNeedToShowAuthDialog(SettingProfileScreenState.DialogState.DELETE)
+//                        }
+//                    ) {
+//                        Text(
+//                            text = stringResource(R.string.delete_profile),
+//                            style = Typography.bodyLarge
+//                        )
+//                    }
                 }
             }
         }
@@ -81,14 +83,14 @@ fun SettingProfileScreen(
         SettingProfileScreenState.DialogState.AUTH -> {
             AuthDialog(
                 onClose = {
-                    viewModel.updateIsNeedToShowAuthDialog(SettingProfileScreenState.DialogState.EMPTY)
+                    authHelperViewModel.updateIsNeedToShowAuth(false)
                     onBack()
                 },
                 signUp = {
-                    viewModel.signUpUser(it.email.text, it.firstPassword.text)
+                    authHelperViewModel.signUpUser(it.email.text, it.firstPassword.text)
                 },
                 signIn = {
-                    viewModel.signInUser(it.email.text, it.password.text)
+                    authHelperViewModel.signInUser(it.email.text, it.password.text)
                 },
                 isCorrectLogin = state.isCorrectSignIn,
                 isLoading = state.isLoading

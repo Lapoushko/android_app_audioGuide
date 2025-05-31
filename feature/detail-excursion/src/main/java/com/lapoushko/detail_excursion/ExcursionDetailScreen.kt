@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.lapoushko.domain.entity.User
 import com.lapoushko.feature.auth.AuthHelperViewModel
 import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.CarouselItem
@@ -60,8 +61,8 @@ fun ExcursionDetailScreen(
     handler: ExcursionDetailScreenHandler,
 ) {
     val state = viewModel.state
-    val user = authHelperViewModel.state.user
     val stateHelper = authHelperViewModel.state
+    val user : User? = stateHelper.user
     val excursions = state.interestingExcursion
 
     val context = LocalContext.current
@@ -87,7 +88,7 @@ fun ExcursionDetailScreen(
         }
     }
 
-    if (state.isNeedToShowAuthDialog) {
+    if (state.isNeedToShowAuthDialog && stateHelper.isNeedToShowAuth) {
         AuthDialog(
             onClose = {
                 authHelperViewModel.updateIsNeedToShowAuth(false)
@@ -95,11 +96,11 @@ fun ExcursionDetailScreen(
             },
             signUp = {
                 authHelperViewModel.signUpUser(it.email.text, it.firstPassword.text)
-                viewModel.updateIsNeedToShowAuthDialog(state.isNeedToShowAuthDialog)
+                viewModel.updateIsNeedToShowAuthDialog(stateHelper.isNeedToShowAuth)
             },
             signIn = {
                 authHelperViewModel.signInUser(it.email.text, it.password.text)
-                viewModel.updateIsNeedToShowAuthDialog(state.isNeedToShowAuthDialog)
+                viewModel.updateIsNeedToShowAuthDialog(stateHelper.isNeedToShowAuth)
             },
             isCorrectLogin = stateHelper.isCorrectSignIn,
             isLoading = stateHelper.isLoading
