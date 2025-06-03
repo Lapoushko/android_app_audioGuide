@@ -32,7 +32,9 @@ fun FavouriteScreen(
         ConnectivityObserver.Status.AVAILABLE -> {
             if (stateHelper.isNeedToShowAuth) {
                 AuthDialog(
-                    onClose = { authHelperViewModel.updateIsNeedToShowAuth(false) },
+                    onClose = {
+                        authHelperViewModel.updateIsNeedToShowAuth(false)
+                    },
                     signUp = {
                         authHelperViewModel.signUpUser(it.email.text, it.firstPassword.text)
                     },

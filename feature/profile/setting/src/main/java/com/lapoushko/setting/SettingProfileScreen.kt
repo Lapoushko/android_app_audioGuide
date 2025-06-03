@@ -81,20 +81,23 @@ fun SettingProfileScreen(
         }
 
         SettingProfileScreenState.DialogState.AUTH -> {
-            AuthDialog(
-                onClose = {
-                    authHelperViewModel.updateIsNeedToShowAuth(false)
-                    onBack()
-                },
-                signUp = {
-                    authHelperViewModel.signUpUser(it.email.text, it.firstPassword.text)
-                },
-                signIn = {
-                    authHelperViewModel.signInUser(it.email.text, it.password.text)
-                },
-                isCorrectLogin = state.isCorrectSignIn,
-                isLoading = state.isLoading
-            )
+            if (authHelperViewModel.state.isNeedToShowAuth){
+                AuthDialog(
+                    onClose = {
+                        authHelperViewModel.updateIsNeedToShowAuth(false)
+                    },
+                    signUp = {
+                        authHelperViewModel.signUpUser(it.email.text, it.firstPassword.text)
+                    },
+                    signIn = {
+                        authHelperViewModel.signInUser(it.email.text, it.password.text)
+                    },
+                    isCorrectLogin = state.isCorrectSignIn,
+                    isLoading = state.isLoading
+                )
+            } else{
+                viewModel.updateIsNeedToShowAuthDialog(SettingProfileScreenState.DialogState.EMPTY)
+            }
         }
 
         SettingProfileScreenState.DialogState.SING_OUT -> {
