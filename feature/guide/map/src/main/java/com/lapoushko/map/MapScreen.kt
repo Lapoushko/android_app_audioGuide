@@ -90,8 +90,14 @@ fun MapScreen(
         nextPoint?.let {
             viewModel.setPosition(point = it.point.setPoint(), typePosition = TypePosition.NEXT)
         } ?: viewModel.setPosition(null, TypePosition.NEXT)
+
         previousPosition = viewModel.state.previousPosition
         nextPosition = viewModel.state.nextPosition
+
+        viewModel.setPosition(
+            point = state.previousPosition,
+            typePosition = TypePosition.CAMERA,
+        )
 
         zoom(startZooming)
     }

@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -73,7 +74,7 @@ fun SearchScreen(
                         viewModel.updateIsSearch(true)
                     },
                     excursions = state.allInteresting,
-                    nameScreen = "Поиск"
+                    nameScreen = stringResource(R.string.search)
                 )
             } else {
                 LazyColumn(
@@ -102,14 +103,14 @@ fun SearchScreen(
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             TextTitle(
-                                text = "Популярное",
+                                text = stringResource(R.string.popular),
                                 onClick = {
                                     isNew.value = false
                                 },
                                 isActive = !isNew.value
                             )
                             TextTitle(
-                                text = "Новое",
+                                text = stringResource(R.string.news),
                                 onClick = {
                                     isNew.value = true
                                 },
@@ -135,7 +136,7 @@ fun SearchScreen(
                     }
 
                     item {
-                        TextTitle("Интересное")
+                        TextTitle(stringResource(R.string.interesting))
                         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                             interesting.forEach { excursion ->
                                 ExcursionCard(
@@ -147,7 +148,7 @@ fun SearchScreen(
                     }
 
                     item {
-                        TextTitle("Категории")
+                        TextTitle(stringResource(R.string.categories))
                         if (isCategoriesLoaded) {
                             CustomCarousel(
                                 onClick = {
@@ -175,7 +176,7 @@ fun SearchScreen(
             onClickDetail = { handler.onToDetail(it) },
             onClickSearch = { viewModel.searchByName(it) },
             excursions = state.excursionFromDao,
-            nameScreen = "Загруженнные экскурсии",
+            nameScreen = stringResource(R.string.downloaded_excursions),
         )
     }
 }

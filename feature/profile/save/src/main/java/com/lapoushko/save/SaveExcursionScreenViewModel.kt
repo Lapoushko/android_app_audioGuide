@@ -24,6 +24,7 @@ class SaveExcursionScreenViewModel(
 
     init {
         loadExcursions()
+        println("косяк")
     }
 
     private fun loadExcursions() {

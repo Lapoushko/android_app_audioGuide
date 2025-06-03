@@ -17,11 +17,15 @@ interface ExcursionService {
 
     fun getRecommendation(excursion: Excursion): Flow<List<Excursion>>
 
+    fun getFavouriteExcursions(uid: String): Flow<List<Excursion>>
+
+    suspend fun saveFavouriteExcursion(excursion: Excursion, uid: String)
+
+    suspend fun deleteFavouriteExcursion(excursion: Excursion, uid: String)
+
     suspend fun getSize(excursion: Excursion): Double
 
     suspend fun saveExcursion(excursion: Excursion, callBackFileDownloaded: (Double) -> Unit): Excursion?
-
-    suspend fun getExcursionByName(name: String): Excursion?
 }
 
 enum class TypeFile(val naming: String) {

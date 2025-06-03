@@ -22,6 +22,8 @@ interface ExcursionDetailScreenState {
     val downloadJob: Job?
 
     val internetStatus: ConnectivityObserver.Status
+
+    val isNeedToShowAuthDialog: Boolean
 }
 
 enum class DownloadAlertState {

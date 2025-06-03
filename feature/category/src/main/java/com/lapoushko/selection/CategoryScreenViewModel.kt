@@ -21,6 +21,10 @@ class CategoryScreenViewModel(
     private var _state = MutableCategoryScreenState()
     val state = _state as CategoryScreenState
 
+    init {
+        println("косяк")
+    }
+
     fun loadExcursions(category: String) {
         repository.getExcursionsByCategory(category).onEach { excursions ->
             _state.excursions = excursions.map { mapper.toUi(it) }

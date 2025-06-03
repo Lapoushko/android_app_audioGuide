@@ -1,6 +1,7 @@
 package com.lapoushko.save
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.lapoushko.feature.model.ExcursionItem
 import com.lapoushko.ui.SelectionScreen
@@ -24,46 +25,8 @@ fun SaveExcursionScreen(
         textSearch = "",
         excursions = excursions,
         onClickSearch = { viewModel.searchByName(it) },
-        nameScreen = "Загруженнные экскурсии",
+        nameScreen = stringResource(R.string.downloaded_excursions),
     )
-
-//    LazyColumn(
-//        modifier = Modifier.fillMaxWidth(),
-//        verticalArrangement = Arrangement.spacedBy(20.dp),
-//    ) {
-//        item {
-//            TopAppBar(
-//                title = {
-//                    Text(
-//                        "Загруженные экскурсии",
-//                        style = Typography.titleLarge,
-//                        color = onSurfaceLight
-//                    )
-//                },
-//                navigationIcon = {
-//                    IconButton(
-//                        onClick = onBack
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-//                            contentDescription = null,
-//                            tint = onSurfaceLight
-//                        )
-//                    }
-//                },
-//                colors = TopAppBarDefaults.topAppBarColors(
-//                    containerColor = Color.Transparent
-//                )
-//            )
-//        }
-//        items(excursions) { excursion ->
-//            ExcursionCard(
-//                onClick = { onDetail(excursion) },
-//                excursion = excursion,
-//                modifier = Modifier.padding(horizontal = 16.dp)
-//            )
-//        }
-//    }
 }
 
 @Preview(showBackground = true)

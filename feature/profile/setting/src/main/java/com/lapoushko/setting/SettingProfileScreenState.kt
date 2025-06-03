@@ -1,13 +1,22 @@
 package com.lapoushko.setting
 
-import com.lapoushko.ui.model.Input
+import com.lapoushko.domain.entity.User
+import com.lapoushko.domain.repo.UserRepository
 
 /**
  * @author Lapoushko
  */
 interface SettingProfileScreenState {
-    val name: Input
-    val email: Input
-    val firstPassword: Input
-    val secondPassword: Input
+    val user: User?
+    val response: UserRepository.AuthResponse?
+    val isLoading: Boolean
+    val dialogState: DialogState
+    val isCorrectSignIn: Boolean
+
+    enum class DialogState{
+        EMPTY,
+        AUTH,
+        SING_OUT,
+        DELETE
+    }
 }

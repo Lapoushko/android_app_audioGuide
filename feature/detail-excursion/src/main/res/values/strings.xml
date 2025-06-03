@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="start_excursion">Запустить маршрут</string>
+    <string name="excursion_description">Описание</string>
+    <string name="similar_excursions">Похожее</string>
+    <string name="download_excursion">Скачать экскурсию?</string>
+    <string name="delete_saved_excursion">Удалить сохранённую экскурсию?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="loading">Загрузка...</string>
+    <string name="cancel">Отмена</string>
+    <string name="download">Скачивание</string>
+    <string name="ready">Готово</string>
+    <string name="excursion_deleted">Экскурсия удалена</string>
+    <string name="error_downloaded">Не удалось скачать экскурсию</string>
+    <string name="excursion_downloaded">Экскурсия скачана</string>
+</resources>

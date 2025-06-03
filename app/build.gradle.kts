@@ -36,6 +36,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -80,6 +81,8 @@ dependencies {
     implementation(project(":data:network"))
     implementation(project(":data:storage"))
     implementation(project(":common:util"))
+    implementation(project(":data:network:excursion"))
+    implementation(project(":data:network:user"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -248,12 +248,22 @@ class AudioScreenViewModel(
         _state.totalDurationInMS = player.duration.coerceAtLeast(0L)
     }
 
+    fun updateRate(value: Int){
+        _state.rate = value
+    }
+
+    fun updatesNeedToShowRateDialog(value: Boolean){
+        _state.isNeedToShowRateDialog = value
+    }
+
     private class MutableAudioScreenState() : AudioScreenState {
         override var excursion: ExcursionItem by mutableStateOf(ExcursionItem())
         override var isPlaying: Boolean by mutableStateOf(false)
         override var totalDurationInMS: Long by mutableLongStateOf(0L)
         override var currentIndex: Int by mutableIntStateOf(0)
         override var currentPosition: Long by mutableLongStateOf(0)
+        override var rate: Int by mutableIntStateOf(0)
+        override var isNeedToShowRateDialog: Boolean by mutableStateOf(false)
     }
 }
 

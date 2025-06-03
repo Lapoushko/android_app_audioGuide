@@ -44,8 +44,17 @@ dependencies {
     implementation(project(":domain"))
     testImplementation(libs.junit)
 
-    implementation(libs.firebase.firestore)
+    //Firebase-bom
     implementation(platform(libs.firebase.bom))
+
+    //Firebase-firestore
+    implementation(libs.firebase.firestore)
+
+    //Firebase-auth
+    implementation(libs.androidx.credentials)
+    implementation(libs.firebase.auth)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
 
     //Retrofit
     implementation(libs.retrofit)

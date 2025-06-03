@@ -9,17 +9,24 @@ data class Input(
     val error: Error?
 )
 
+enum class TypeInput{
+    EMAIL,
+    PASSWORD
+}
+
 fun String.checkErrorInput(
-    adding: (Error) -> Unit = {},
-    removing: (Error) -> Unit = {},
+    adding: ((Error) -> Unit)?,
+    removing: ((Error) -> Unit)?,
     corrects: Map<Error, Boolean>
 ): Input {
-    corrects.forEach { correct ->
-        if (correct.value) {
-            removing(correct.key)
-        } else {
-            adding(correct.key)
-            return Input(text = this, error = correct.key)
+    if (adding != null && removing != null) {
+        corrects.forEach { correct ->
+            if (correct.value) {
+                removing(correct.key)
+            } else {
+                adding(correct.key)
+                return Input(text = this, error = correct.key)
+            }
         }
     }
     return Input(text = this, error = null)
@@ -34,17 +41,6 @@ class Error(
 )
 
 sealed class ProfileErrors(override val naming: List<Error>) : CustomErrors {
-    data object NameError : ProfileErrors(
-        listOf("Неправильое имя", "Такое имя уже существует").mapIndexed { index, s ->
-            Error(
-                Pair(
-                    index,
-                    s
-                )
-            )
-        }
-    )
-
     data object EmailError : ProfileErrors(
         listOf("Неправильая почта", "Такая почта уже существует").mapIndexed { index, s ->
             Error(
