@@ -1,21 +1,32 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace = "com.lapoushko.android_app_audioguide"
-    compileSdk = 34
+    compileSdk = 35
+
+
+    val file = rootProject.file("local.properties")
+    val properties = Properties()
+    properties.load(FileInputStream(file))
 
     defaultConfig {
         applicationId = "com.lapoushko.android_app_audioguide"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "API_KEY", properties.getProperty("API_KEY"))
     }
 
     buildTypes {
@@ -36,6 +47,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -49,6 +61,25 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(project(":common:ui"))
+    implementation(libs.androidx.navigation.compose)
+    implementation(project(":navigation"))
+    implementation(project(":feature:search"))
+    implementation(project(":feature:detail-excursion"))
+    implementation(project(":feature:profile:setting"))
+    implementation(project(":feature:category"))
+    implementation(project(":feature:favourite"))
+    implementation(project(":feature:guide:audio"))
+    implementation(project(":feature:guide:map"))
+    implementation(project(":feature:guide"))
+    implementation(project(":feature:profile:save"))
+    implementation(project(":feature:profile"))
+    implementation(project(":domain"))
+    implementation(project(":feature"))
+    implementation(project(":data"))
+    implementation(project(":data:network"))
+    implementation(project(":data:storage"))
+    implementation(project(":common:util"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -56,4 +87,24 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Koin
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.navigation)
+    implementation(libs.koin.androidx.compose)
+
+    //firebase
+    implementation(platform(libs.firebase.bom))
+
+    //media3
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.common)
+    implementation(libs.androidx.media3.session)
+
+    //MAP
+    implementation(libs.maps.mobile)
+
+    //Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.okhttp)
 }

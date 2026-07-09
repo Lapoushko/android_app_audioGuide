@@ -1,0 +1,11 @@
+package com.lapoushko.save
+
+import com.lapoushko.feature.model.ExcursionItem
+
+/**
+ * @author Lapoushko
+ */
+interface SaveExcursionsScreenState {
+    val initialExcursions: List<ExcursionItem>
+    val excursions: List<ExcursionItem>
+}
